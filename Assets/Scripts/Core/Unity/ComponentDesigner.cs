@@ -9,27 +9,17 @@ namespace Core.Unity
 	/// </summary>
 	public class ComponentDesigner : MonoBehaviour
 	{
-		[SerializeField, HideInInspector]
-		private List<string> components = new List<string>();
+		[SerializeReference, SubclassSelector]
+		private List<IComponent> components = new List<IComponent>();
 
-		public List<string> Components => components;
+		public List<IComponent> Components => components;
 	}
 
 	/// <summary>
-	/// 리플렉션에 의해 컴포넌트의 정보를 수집하기 위한 어트리뷰트
+	/// 컴포넌트 디자이너에게 정보를 주기위해서 상속받아야하는 인터페이스
 	/// </summary>
-	public class ComponentDescriptionAttribute : Attribute
+	public interface IComponent
 	{
-		public string DisplayName { get; }
 		
-		public ComponentDescriptionAttribute()
-		{
-			DisplayName = string.Empty;
-		}
-
-		public ComponentDescriptionAttribute(string displayName)
-		{
-			DisplayName = displayName;
-		}
 	}
 }

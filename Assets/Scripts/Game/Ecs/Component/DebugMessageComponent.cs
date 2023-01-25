@@ -1,9 +1,10 @@
-﻿using Core.Unity;
+﻿using System;
+using Core.Unity;
 
 namespace Game.Ecs.Component
 {
-	[ComponentDescription("DebugMessageComponent")]
-	public struct DebugMessageComponent
+	[Serializable]
+	public struct DebugMessageComponent : IComponent
 	{
 		public string message;
 	}
