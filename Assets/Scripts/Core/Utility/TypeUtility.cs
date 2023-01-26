@@ -7,6 +7,12 @@ namespace Core.Utility
 {
 	public class TypeUtility
 	{
+		/// <summary>
+		/// TypeCache.GetTypesWithAttribute()을 사용하거나 이것을 사용하거나 둘 중 하나
+		/// 다만 TypeCache쪽은 UnityEditor에 속하기 때문에 런타임에서는 이것을 사용해야 한다.
+		/// </summary>
+		/// <param name="attributeType"></param>
+		/// <returns></returns>
 		public static Type[] GetTypesWithAttribute(Type attributeType)
 		{
 			List<Type> results = new List<Type>();

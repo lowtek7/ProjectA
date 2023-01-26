@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BlitzEcs;
 using UnityEngine;
 
@@ -11,8 +12,6 @@ namespace Core.Unity
 	{
 		[SerializeReference, SubclassSelector]
 		private List<IComponent> components = new List<IComponent>();
-
-		public List<IComponent> Components => components;
 
 		/// <summary>
 		/// 해당 컴포넌트 디자이너에 의해서 엔티티를 생성하는 함수
