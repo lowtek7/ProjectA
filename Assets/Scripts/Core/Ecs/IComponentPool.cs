@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-
 namespace BlitzEcs {
     public interface IComponentPool {
         int Count { get; }
@@ -9,6 +6,8 @@ namespace BlitzEcs {
         int HighestEntityId { get; }
 
         bool Contains(int entityId);
+        void Add(int entityId);
+        void Add(int entityId, object component);
         void Remove(int entityId);
         void ExecuteBufferedRemoves();
 

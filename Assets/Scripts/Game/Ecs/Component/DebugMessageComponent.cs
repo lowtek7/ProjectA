@@ -7,5 +7,13 @@ namespace Game.Ecs.Component
 	public struct DebugMessageComponent : IComponent
 	{
 		public string message;
+		
+		public IComponent Clone()
+		{
+			return new DebugMessageComponent
+			{
+				message = message
+			};
+		}
 	}
 }

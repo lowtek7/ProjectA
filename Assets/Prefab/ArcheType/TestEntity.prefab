@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   components:
   - rid: 5061506696724611128
+  - rid: 5061506696724611134
   references:
     version: 2
     RefIds:
@@ -53,3 +54,9 @@ MonoBehaviour:
       type: {class: DebugMessageComponent, ns: Game.Ecs.Component, asm: Game}
       data:
         message: I am Test Entity
+    - rid: 5061506696724611134
+      type: {class: TestStatusComponent, ns: Game.Ecs.Component, asm: Game}
+      data:
+        name: TestEntity
+        maxHp: 100
+        damage: 5

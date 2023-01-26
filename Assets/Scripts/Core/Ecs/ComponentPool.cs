@@ -70,6 +70,8 @@ namespace BlitzEcs {
 
         public void Add(int entityId) => Add(entityId, default);
 
+        public void Add(int entityId, object component) => Add(entityId, (TComponent)component);
+
         public void Add(int entityId, TComponent component) {
             bool isAlreadyContained = Contains(entityId);
 

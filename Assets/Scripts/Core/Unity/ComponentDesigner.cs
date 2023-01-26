@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using BlitzEcs;
 using UnityEngine;
 
 namespace Core.Unity
@@ -13,6 +13,30 @@ namespace Core.Unity
 		private List<IComponent> components = new List<IComponent>();
 
 		public List<IComponent> Components => components;
+
+		/// <summary>
+		/// 해당 컴포넌트 디자이너에 의해서 엔티티를 생성하는 함수
+		/// </summary>
+		/// <param name="world">엔티티를 생성할 월드</param>
+		/// <returns></returns>
+		public Entity ToEntity(World world)
+		{
+			var entity = world.Spawn();
+
+			foreach (var component in components)
+			{
+				var componentType = component.GetType();
+
+				if (world.TryGetIComponentPool(componentType, out var pool))
+				{
+					// 현재는 내부에서 박싱 & 언박싱이 일어나고 있기 때문에 이부분에 관해서 최적화가 필요하다.
+					// 아마 ToEntity를 이용해서 미리 Entity들을 충분히 Pooling 시켜둔 후 재사용하는 테크닉이 필요 할 것 같아 보인다.
+					pool.Add(entity.Id, component.Clone());
+				}
+			}
+			
+			return entity;
+		}
 	}
 
 	/// <summary>
@@ -20,6 +44,6 @@ namespace Core.Unity
 	/// </summary>
 	public interface IComponent
 	{
-		
+		IComponent Clone();
 	}
 }
