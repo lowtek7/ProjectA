@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 3d391f36d8715774da3054bae24d556a
   m_currentHash:
     serializedVersion: 2
-    Hash: 533920f12f9635358acace445d9493e4
+    Hash: dc58045b51fb1672764f233bf1d645e5
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -88,6 +88,8 @@ MonoBehaviour:
     m_LabelNames:
     - default
     - GameObject
+    - Archetype
+    - Sprite
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 5f2a0a12926881a46bc382e144bc9044, type: 2}

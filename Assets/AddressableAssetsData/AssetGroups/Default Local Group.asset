@@ -21,7 +21,13 @@ MonoBehaviour:
     m_Address: ArcheType
     m_ReadOnly: 0
     m_SerializedLabels:
-    - GameObject
+    - Archetype
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3092eea109e01da43b82756914fedbca
+    m_Address: Sprite/Actor
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sprite
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 71554528ed30bbe4098c32edfac362f1, type: 2}

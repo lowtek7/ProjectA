@@ -10,8 +10,7 @@ namespace Core.Unity
 	/// </summary>
 	public class ComponentDesigner : MonoBehaviour
 	{
-		[SerializeReference, SubclassSelector]
-		private List<IComponent> components = new List<IComponent>();
+		[SerializeReference, SubclassSelector] private List<IComponent> components = new List<IComponent>();
 
 		/// <summary>
 		/// 해당 컴포넌트 디자이너에 의해서 엔티티를 생성하는 함수
@@ -33,7 +32,7 @@ namespace Core.Unity
 					pool.Add(entity.Id, component.Clone());
 				}
 			}
-			
+
 			return entity;
 		}
 	}
