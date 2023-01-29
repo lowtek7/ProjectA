@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 3d391f36d8715774da3054bae24d556a
   m_currentHash:
     serializedVersion: 2
-    Hash: dc58045b51fb1672764f233bf1d645e5
+    Hash: 00000000000000000000000000000000
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -88,7 +88,7 @@ MonoBehaviour:
     m_LabelNames:
     - default
     - GameObject
-    - Archetype
+    - EntityPreset
     - Sprite
   m_SchemaTemplates: []
   m_GroupTemplateObjects:

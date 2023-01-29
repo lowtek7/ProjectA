@@ -14,7 +14,7 @@ namespace Game
 	/// </summary>
 	public class AssetFactory : MonoBehaviour
 	{
-		private readonly Dictionary<string, GameObject> archetypes = new Dictionary<string, GameObject>();
+		private readonly Dictionary<string, GameObject> entityPresets = new Dictionary<string, GameObject>();
 		private readonly Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
 
 		private bool isLoading = false;
@@ -27,23 +27,23 @@ namespace Game
 		/// <summary>
 		/// 모든 아키타입 리소스를 불러오는 함수
 		/// </summary>
-		public void LoadAllArchetype()
+		public void LoadAllEntityPreset()
 		{
 			isLoading = true;
-			archetypes.Clear();
-			Addressables.LoadAssetsAsync<GameObject>("Archetype", null).Completed += OnArchetypeLoadCompleted;
+			entityPresets.Clear();
+			Addressables.LoadAssetsAsync<GameObject>("EntityPreset", null).Completed += OnEntityPresetLoadCompleted;
 		}
 
-		public bool TryGetArchetype(string key, out GameObject go) => archetypes.TryGetValue(key, out go);
+		public bool TryGetEntityPreset(string key, out GameObject go) => entityPresets.TryGetValue(key, out go);
 
-		private void OnArchetypeLoadCompleted(AsyncOperationHandle<IList<GameObject>> archetypeList)
+		private void OnEntityPresetLoadCompleted(AsyncOperationHandle<IList<GameObject>> archetypeList)
 		{
 			if (archetypeList.Result != null)
 			{
 				foreach (var go in archetypeList.Result)
 				{
 					Debug.Log($"Loading Archetype [{go.name}]");
-					archetypes.Add(go.name, go);
+					entityPresets.Add(go.name, go);
 				}
 				
 				GC.Collect();

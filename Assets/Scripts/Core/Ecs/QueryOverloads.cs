@@ -14,7 +14,7 @@ namespace BlitzEcs {
         where C1 : struct {
 
         public Query(World world) : base(world) {
-            Inc<C1>();
+            Include<C1>();
         }
 
         public delegate void RefAction(
@@ -123,8 +123,8 @@ namespace BlitzEcs {
         where C2 : struct {
 
         public Query(World world) : base(world) {
-            Inc<C1>();
-            Inc<C2>();
+            Include<C1>();
+            Include<C2>();
         }
 
         public delegate void RefAction(
@@ -244,9 +244,9 @@ namespace BlitzEcs {
         where C3 : struct {
 
         public Query(World world) : base(world) {
-            Inc<C1>();
-            Inc<C2>();
-            Inc<C3>();
+            Include<C1>();
+            Include<C2>();
+            Include<C3>();
         }
 
         public delegate void RefAction(
@@ -377,10 +377,10 @@ namespace BlitzEcs {
         where C4 : struct {
 
         public Query(World world) : base(world) {
-            Inc<C1>();
-            Inc<C2>();
-            Inc<C3>();
-            Inc<C4>();
+            Include<C1>();
+            Include<C2>();
+            Include<C3>();
+            Include<C4>();
         }
 
         public delegate void RefAction(
@@ -522,11 +522,11 @@ namespace BlitzEcs {
         where C5 : struct {
 
         public Query(World world) : base(world) {
-            Inc<C1>();
-            Inc<C2>();
-            Inc<C3>();
-            Inc<C4>();
-            Inc<C5>();
+            Include<C1>();
+            Include<C2>();
+            Include<C3>();
+            Include<C4>();
+            Include<C5>();
         }
 
         public delegate void RefAction(
@@ -679,12 +679,12 @@ namespace BlitzEcs {
         where C6 : struct {
 
         public Query(World world) : base(world) {
-            Inc<C1>();
-            Inc<C2>();
-            Inc<C3>();
-            Inc<C4>();
-            Inc<C5>();
-            Inc<C6>();
+            Include<C1>();
+            Include<C2>();
+            Include<C3>();
+            Include<C4>();
+            Include<C5>();
+            Include<C6>();
         }
 
         public delegate void RefAction(
@@ -848,13 +848,13 @@ namespace BlitzEcs {
         where C7 : struct {
 
         public Query(World world) : base(world) {
-            Inc<C1>();
-            Inc<C2>();
-            Inc<C3>();
-            Inc<C4>();
-            Inc<C5>();
-            Inc<C6>();
-            Inc<C7>();
+            Include<C1>();
+            Include<C2>();
+            Include<C3>();
+            Include<C4>();
+            Include<C5>();
+            Include<C6>();
+            Include<C7>();
         }
 
         public delegate void RefAction(
@@ -1029,14 +1029,14 @@ namespace BlitzEcs {
         where C8 : struct {
 
         public Query(World world) : base(world) {
-            Inc<C1>();
-            Inc<C2>();
-            Inc<C3>();
-            Inc<C4>();
-            Inc<C5>();
-            Inc<C6>();
-            Inc<C7>();
-            Inc<C8>();
+            Include<C1>();
+            Include<C2>();
+            Include<C3>();
+            Include<C4>();
+            Include<C5>();
+            Include<C6>();
+            Include<C7>();
+            Include<C8>();
         }
 
         public delegate void RefAction(

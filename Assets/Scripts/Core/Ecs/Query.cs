@@ -61,14 +61,14 @@ namespace BlitzEcs {
             hot = true;
         }
 
-        public Query Inc<TComponent>() where TComponent : struct {
+        public Query Include<TComponent>() where TComponent : struct {
             if (hot)
                 throw new InvalidOperationException("A query's mask cannot be changed after caching.");
             mask.Inc<TComponent>();
             return this;
         }
 
-        public Query Exc<TComponent>() where TComponent : struct {
+        public Query Exclude<TComponent>() where TComponent : struct {
             if (hot)
                 throw new InvalidOperationException("A query's mask cannot be changed after caching.");
             mask.Exc<TComponent>();

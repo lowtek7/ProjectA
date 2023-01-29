@@ -6,7 +6,7 @@ namespace Game.World
 	/// <summary>
 	/// 임시용 게임 월드
 	/// </summary>
-	public class GameWorld
+	public class GameManager
 	{
 		private GameObject player;
 		private GameObject enemy;
@@ -31,7 +31,7 @@ namespace Game.World
 			world = new BlitzEcs.World();
 
 			// 테스트 엔티티를 가져와서 스폰 시키기
-			if (assetFactory.TryGetArchetype("TestEntity", out var gameObject))
+			if (assetFactory.TryGetEntityPreset("TestEntity", out var gameObject))
 			{
 				if (gameObject.TryGetComponent<ComponentDesigner>(out var componentDesigner))
 				{

@@ -17,7 +17,7 @@ namespace Game
 		
 		private bool canPlay = false;
 
-		private GameWorld gameWorld;
+		private GameManager _gameManager;
 		
 		/// <summary>
 		/// 여기서 게임 환경을 로드하게 된다
@@ -33,7 +33,7 @@ namespace Game
 		{
 			if (canPlay)
 			{
-				gameWorld.Update();
+				_gameManager.Update();
 			}
 		}
 
@@ -47,7 +47,7 @@ namespace Game
 				yield return null;
 			}
 			
-			assetFactory.LoadAllArchetype();
+			assetFactory.LoadAllEntityPreset();
 
 			// 로딩 중이면 기달려주자
 			while (assetFactory.IsLoading)
@@ -56,8 +56,8 @@ namespace Game
 			}
 			
 			// 월드 셋팅
-			gameWorld = new GameWorld();
-			gameWorld.Init(assetFactory, camera);
+			_gameManager = new GameManager();
+			_gameManager.Init(assetFactory, camera);
 			
 			// 이제 플레이 가능한 상태
 			canPlay = true;
