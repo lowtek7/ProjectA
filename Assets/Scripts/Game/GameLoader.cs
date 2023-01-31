@@ -27,6 +27,7 @@ namespace Game
 			canPlay = false;
 			// 필요한 에셋들을 로드시키기
 			StartCoroutine(LoadAll());
+			// manager self register  manager가 모든 게임오브젝트를 update 돌리는게 빠름
 		}
 
 		private void Update()
@@ -39,6 +40,7 @@ namespace Game
 
 		private IEnumerator LoadAll()
 		{
+			// 스프라이트 다 불러오기
 			assetFactory.LoadAllSprite();
 			
 			// 로딩 중이면 기달려주자
