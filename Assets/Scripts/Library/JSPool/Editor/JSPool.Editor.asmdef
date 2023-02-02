@@ -1,0 +1,16 @@
+{
+    "name": "JSPool.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:68201a683bc9fe74e9d319d5319cb33b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -94,6 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3188337526194031561}
   - component: {fileID: 6869307805883367691}
+  - component: {fileID: 5024437096475733916}
   m_Layer: 0
   m_Name: TestEntity
   m_TagString: Untagged
@@ -145,3 +146,16 @@ MonoBehaviour:
         name: sfdasf
         maxHp: 123
         damage: 123
+--- !u!114 &5024437096475733916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437570332950855499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4144da266abf4ce987589c1738634c9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemGuid: 311e70cf-8129-45f3-a9ae-ef359a942bae
