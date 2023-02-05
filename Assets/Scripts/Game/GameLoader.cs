@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Game.World;
+using Library.JSPool;
 using UnityEngine;
 
 namespace Game
@@ -15,10 +16,13 @@ namespace Game
 		[SerializeField]
 		private Camera camera;
 		
+		[SerializeField]
+		private PoolManager poolManager;
+		
 		private bool canPlay = false;
 
 		private GameManager _gameManager;
-		
+
 		/// <summary>
 		/// 여기서 게임 환경을 로드하게 된다
 		/// </summary>
@@ -59,7 +63,7 @@ namespace Game
 			
 			// 월드 셋팅
 			_gameManager = new GameManager();
-			_gameManager.Init(assetFactory, camera);
+			_gameManager.Init(assetFactory, camera, poolManager);
 			
 			// 이제 플레이 가능한 상태
 			canPlay = true;

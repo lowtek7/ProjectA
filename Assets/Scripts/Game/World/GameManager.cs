@@ -1,4 +1,5 @@
 ﻿using Core.Unity;
+using Library.JSPool;
 using UnityEngine;
 
 namespace Game.World
@@ -8,6 +9,8 @@ namespace Game.World
 	/// </summary>
 	public class GameManager
 	{
+		private PoolManager poolManager;
+		
 		private GameObject player;
 		private GameObject enemy;
 		private GameObject camera;
@@ -25,8 +28,11 @@ namespace Game.World
 		/// 카메라 또한 카메라 엔티티를 따로 만들어서 컨트롤 해야함
 		/// </summary>
 		/// <param name="assetFactory"></param>
-		public void Init(AssetFactory assetFactory, Camera camera)
+		public void Init(AssetFactory assetFactory, Camera camera, PoolManager poolManager)
 		{
+			this.poolManager = poolManager;
+			poolManager.Init();
+			
 			// ecs 월드를 생성하자.
 			world = new BlitzEcs.World();
 

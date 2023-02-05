@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Library.JSPool
@@ -9,15 +10,36 @@ namespace Library.JSPool
 	/// </summary>
 	public class PoolManager : MonoBehaviour
 	{
+		[Serializable]
+		class PoolItemSetting
+		{
+			[SerializeField]
+			private PoolItem item;
+
+			[SerializeField]
+			private int initialPoolSize = 10;
+
+			public int InitialPoolSize => initialPoolSize;
+
+			public PoolItem Item => item;
+		}
+		
 		class PoolEntity
 		{
 			private PoolItem original;
 
-			private PoolItem[] pool;
+			public PoolItem[] pool;
+
+			public PoolItem Original => original;
+
+			public PoolEntity(PoolItem original)
+			{
+				this.original = original;
+			}
 		}
 
 		[SerializeField]
-		private List<PoolItem> poolItems = new List<PoolItem>();
+		private List<PoolItemSetting> poolItems = new List<PoolItemSetting>();
 
 		private readonly Dictionary<string, PoolEntity> poolEntities = new Dictionary<string, PoolEntity>();
 
@@ -36,6 +58,20 @@ namespace Library.JSPool
 
 			foreach (var poolItem in poolItems)
 			{
+				var item = poolItem.Item;
+				var size = poolItem.InitialPoolSize;
+				var entity = new PoolEntity(item)
+				{
+					pool = new PoolItem[size]
+				};
+
+				for (int i = 0; i < size; i++)
+				{
+					entity.pool[i] = GameObject.Instantiate(item, transform);
+					entity.pool[i].gameObject.SetActive(false);
+				}
+
+				poolEntities.Add(item.ItemGuid, entity);
 			}
 		}
 	}
