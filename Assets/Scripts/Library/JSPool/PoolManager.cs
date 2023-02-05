@@ -28,13 +28,19 @@ namespace Library.JSPool
 		{
 			private PoolItem original;
 
+			private Transform parent;
+
 			public PoolItem[] pool;
 
 			public PoolItem Original => original;
 
-			public PoolEntity(PoolItem original)
+			public Transform Parent => parent;
+
+			public PoolEntity(string name, PoolItem original)
 			{
 				this.original = original;
+				var go = new GameObject(name);
+				parent = go.transform;
 			}
 		}
 
@@ -60,14 +66,15 @@ namespace Library.JSPool
 			{
 				var item = poolItem.Item;
 				var size = poolItem.InitialPoolSize;
-				var entity = new PoolEntity(item)
+				var entity = new PoolEntity($"{item.name} ({item.ItemGuid})", item)
 				{
 					pool = new PoolItem[size]
 				};
+				entity.Parent.SetParent(transform);
 
 				for (int i = 0; i < size; i++)
 				{
-					entity.pool[i] = GameObject.Instantiate(item, transform);
+					entity.pool[i] = GameObject.Instantiate(item, entity.Parent);
 					entity.pool[i].gameObject.SetActive(false);
 				}
 
