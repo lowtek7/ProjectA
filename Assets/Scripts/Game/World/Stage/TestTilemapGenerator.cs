@@ -9,23 +9,44 @@ namespace Game.World.Stage
 	public enum TileType
 	{
 		Floor,
-		WallBottom,
-		WallTop,
-		Ceil
+		SideLow,
+		SideHigh,
+		Ceil,
+		None,
 	}
 
-	[Serializable]
 	public struct CustomTileInfo
 	{
 		public TileBase tile;
-		public string name;
-
 		public TileType type;
 
-		// FIXME : 같이 혹은 여러 타일을 한 개로 묶어서 그려주는 방식을 데이터화하여 같이 묶어야 함
-		// 관련 기능을 Custom Rule Tile로 구현할 수 있는지 확인 필요!!!
-		public Vector2Int size;
-		public string connectedTileName;
+		public CustomTileInfo(TileBase _tile)
+		{
+			tile = _tile;
+
+			var tile_name = tile.name;
+
+			if (tile_name.StartsWith("ceil"))
+			{
+				type = TileType.Ceil;
+			}
+			else if (tile_name.StartsWith("side_low"))
+			{
+				type = TileType.SideLow;
+			}
+			else if (tile_name.StartsWith("side_high"))
+			{
+				type = TileType.SideHigh;
+			}
+			else if (tile_name.StartsWith("floor"))
+			{
+				type = TileType.Floor;
+			}
+			else
+			{
+				type = TileType.None;
+			}
+		}
 	}
 
 	[Serializable]
@@ -37,21 +58,22 @@ namespace Game.World.Stage
 
 	// 런타임 Tilemap 생성 매니지먼트 테스트용
 	// TODO : 데이터셋 구성은 MonoBehaviour가 아니라 ScriptableObject로 분리
+	// 테스트용이므로 지우고 새로 만들 것임
 	public class TestTilemapGenerator : MonoBehaviour
 	{
 		// FIXME : 이걸 내부에서 정해주지 않고 소팅 오더 및 레이어 관련 데이터 파일을 만들어야 할 듯
-		public static Dictionary<TileType, int> TileTypeToOrder = new Dictionary<TileType, int>()
+		public static Dictionary<TileType, int> TileTypeToOrder = new()
 		{
 			[TileType.Floor] = 0,
-			[TileType.WallBottom] = 1,
-			[TileType.WallTop] = 2,
+			[TileType.SideLow] = 1,
+			[TileType.SideHigh] = 2,
 			[TileType.Ceil] = 3,
 		};
 
 		[SerializeField]
-		private List<CustomTileInfo> tiles;
+		private List<TileBase> tiles;
 
-		private Dictionary<string, CustomTileInfo> tileDict;
+		private Dictionary<string, CustomTileInfo> tileInfoDict = new();
 
 		[SerializeField]
 		private List<TileLayerInfo> tileLayers;
@@ -71,45 +93,84 @@ namespace Game.World.Stage
 
 		private void Awake()
 		{
-			tileDict = tiles.ToDictionary(keySelector: tile => tile.name);
+			for (int i = 0; i < tiles.Count; i++)
+			{
+				var tile = tiles[i];
+				tileInfoDict.Add(tile.name, new CustomTileInfo(tile));
+			}
 
 			for (int i = 0; i < tileLayers.Count; i++)
 			{
 				var tilemap = tileLayers[i].tilemap;
 				
 				var renderer = tilemap.GetComponent<Renderer>();
+				var order = TileTypeToOrder[tileLayers[i].drawTileType];
 
-				renderer.sortingOrder = TileTypeToOrder[tileLayers[i].drawTileType];
+				renderer.sortingOrder = order;
+				tilemap.transform.localPosition = new Vector3(0, order, 0);
 			}
 
 			tilemapDict = tileLayers.ToDictionary(info => info.drawTileType, info => info.tilemap);
 
 			for (int i = 0; i < map.GetLength(0); i++)
 			{
-				for (int j = 0; j< map.GetLength(1); j++)
+				for (int j = 0; j < map.GetLength(1); j++)
 				{
 					string tileKey = map[i, j];
-					var tileInfo = tileDict[tileKey];
 
-					DrawTile(j, i, tileInfo);
-					
-					if (!string.IsNullOrEmpty(tileInfo.connectedTileName))
+					if (tileKey == "wall")
 					{
-						var connectedTileInfo = tileDict[tileInfo.connectedTileName];
+						var tileInfo = tileInfoDict["ceil"];
+						var tilemap = tilemapDict[tileInfo.type];
 
-						DrawTile(j, i, connectedTileInfo);
+						var drawPos = new Vector3Int(j, i);
+
+						tilemap.SetTile(drawPos, tileInfo.tile);
+
+						var tileData = new TileData
+						{
+							color = Color.white,
+							transform = Matrix4x4.identity,
+							flags = TileFlags.None,
+							colliderType = Tile.ColliderType.None
+						};
+						
+						tileInfo.tile.GetTileData(drawPos, tilemap, ref tileData);
+						var splitStrs = tileData.sprite.name.Split('_');
+						var dirStr = splitStrs[^1];
+
+						{
+							var sideHighName = $"side_high_{dirStr}";
+
+							if (tileInfoDict.TryGetValue(sideHighName, out var sideHighTileInfo))
+							{
+								var sideHighTilemap = tilemapDict[TileType.SideHigh];
+
+								sideHighTilemap.SetTile(drawPos, sideHighTileInfo.tile);
+							}
+						}
+
+						{
+							var sideLowName = $"side_low_{dirStr}";
+
+							if (tileInfoDict.TryGetValue(sideLowName, out var sideLowTileInfo))
+							{
+								var sideLowTilemap = tilemapDict[TileType.SideLow];
+
+								sideLowTilemap.SetTile(drawPos, sideLowTileInfo.tile);
+							}
+						}
+					}
+					else
+					{
+						var tileInfo = tileInfoDict["floor_default_0"];
+						var tilemap = tilemapDict[tileInfo.type];
+
+						var drawPos = new Vector3Int(j, i);
+
+						tilemap.SetTile(drawPos, tileInfo.tile);
 					}
 				}
-			}
-		}
-
-		private void DrawTile(int xIndex, int yIndex, CustomTileInfo info)
-		{
-			if (tilemapDict.TryGetValue(info.type, out var tilemap))
-			{
-				var drawPos = new Vector3Int(xIndex, yIndex);
-
-				tilemap.SetTile(drawPos, info.tile);
 			}
 		}
 	}
