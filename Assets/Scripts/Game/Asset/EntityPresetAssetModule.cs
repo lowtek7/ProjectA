@@ -18,7 +18,7 @@ namespace Game.Asset
 		{
 			isLoading = true;
 			entityPresets.Clear();
-			Addressables.LoadAssetsAsync<GameObject>("EntityPreset", null).Completed += OnEntityPresetLoadCompleted;
+			Addressables.LoadAssetsAsync<GameObject>("EntityPreset", null).Completed += OnLoadCompleted;
 
 			while (isLoading)
 			{
@@ -37,8 +37,8 @@ namespace Game.Asset
 
 			return false;
 		}
-		
-		private void OnEntityPresetLoadCompleted(AsyncOperationHandle<IList<GameObject>> archetypeList)
+
+		private void OnLoadCompleted(AsyncOperationHandle<IList<GameObject>> archetypeList)
 		{
 			if (archetypeList.Result != null)
 			{

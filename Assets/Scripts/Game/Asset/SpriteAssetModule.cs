@@ -17,7 +17,7 @@ namespace Game.Asset
 		{
 			isLoading = true;
 			sprites.Clear();
-			Addressables.LoadAssetsAsync<Sprite>("Sprite", null).Completed += OnSpriteLoadCompleted;
+			Addressables.LoadAssetsAsync<Sprite>("Sprite", null).Completed += OnLoadCompleted;
 
 			while (isLoading)
 			{
@@ -37,7 +37,7 @@ namespace Game.Asset
 			return false;
 		}
 
-		private void OnSpriteLoadCompleted(AsyncOperationHandle<IList<Sprite>> spriteList)
+		private void OnLoadCompleted(AsyncOperationHandle<IList<Sprite>> spriteList)
 		{
 			if (spriteList.Result != null)
 			{
@@ -46,7 +46,7 @@ namespace Game.Asset
 					Debug.Log($"Loading Sprite [{sprite.name}]");
 					sprites.Add(sprite.name, sprite);
 				}
-				
+
 				GC.Collect();
 
 				isLoading = false;
