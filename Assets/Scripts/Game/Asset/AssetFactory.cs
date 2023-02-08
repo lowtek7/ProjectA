@@ -13,12 +13,12 @@ namespace Game
 	{
 		bool TryGet<CT>(string key, out CT result) where CT : UnityEngine.Object;
 	}
-	
+
 	public interface IAssetModule : IAssetReader
 	{
 		IEnumerator LoadAll();
 	}
-	
+
 	/// <summary>
 	/// 에셋 팩토리의 수명을 인게임 씬을 따라가기 위해서 MonoBehaviour
 	/// 에셋 팩토리의 인스턴스는 게임 로더 측에서 가지고 있음.
@@ -27,10 +27,16 @@ namespace Game
 	/// </summary>
 	public class AssetFactory : MonoBehaviour
 	{
+		private static AssetFactory instance;
+
+		public static AssetFactory Instance => instance;
+
 		private readonly Dictionary<Type, IAssetModule> modules = new Dictionary<Type, IAssetModule>();
 
 		public void Init()
 		{
+			instance = this;
+
 			modules.Clear();
 			var types = TypeUtility.GetTypesWithInterface(typeof(IAssetModule));
 
@@ -60,7 +66,7 @@ namespace Game
 				assetReader = module;
 				return true;
 			}
-			
+
 			return false;
 		}
 
