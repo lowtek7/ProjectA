@@ -14,7 +14,7 @@ namespace Game
 		private AssetFactory assetFactory;
 
 		[SerializeField]
-		private Camera camera;
+		private Camera gameCamera;
 		
 		[SerializeField]
 		private PoolManager poolManager;
@@ -27,7 +27,7 @@ namespace Game
 
 		public PoolManager PoolManager => poolManager;
 
-		public Camera Camera => camera;
+		public Camera Camera => gameCamera;
 
 		public AssetFactory AssetFactory => assetFactory;
 
