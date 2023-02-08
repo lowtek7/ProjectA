@@ -4,6 +4,7 @@ using System.Linq;
 using Core.Unity;
 using Core.Utility;
 using Game.Asset;
+using Game.World.Stage;
 using Library.JSPool;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace Game.World
 	public class GameManager
 	{
 		private PoolManager poolManager;
-		
+
 		private GameObject player;
 		private GameObject enemy;
 		private GameObject camera;
@@ -27,6 +28,8 @@ namespace Game.World
 		private BlitzEcs.World world;
 
 		private readonly List<ISystem> systems = new List<ISystem>();
+
+		private StageController stage;
 
 		/// <summary>
 		/// 원래는 에셋 팩토리에 직접 접근하는 일이 없어야 함
@@ -58,7 +61,7 @@ namespace Game.World
 				}
 			}
 
-			
+
 			var systemLists = systemOrders.OrderBy(pair => pair.Key).Select(x => x.Value).ToArray();
 
 			foreach (var systemList in systemLists)
@@ -73,10 +76,10 @@ namespace Game.World
 			poolManager.Init();
 
 			// 1. Service 레이어 구축 (동준님)
-			// 유사하게 해야할듯. ECS 
-			// 스포너든 뭐 기타 서비스는 나올 수 있는데 그런거 만들어서 통신 할 수 있게 
-			// 뷰 영역이나 아래쪽 레이어에서 
-			
+			// 유사하게 해야할듯. ECS
+			// 스포너든 뭐 기타 서비스는 나올 수 있는데 그런거 만들어서 통신 할 수 있게
+			// 뷰 영역이나 아래쪽 레이어에서
+
 			// 2. Spawn Manager or Spawner 필요... (혁인님)
 			// Service layer 위치해서 그런걸 호출해서 월드에 편하게 스폰하는게 필요하다
 			// Spawner를 구독하는 게임오브젝트가 있어야 해서 그걸 받아서 아래 작업해야 할듯
@@ -93,7 +96,7 @@ namespace Game.World
 			// 수제 오브젝트 풀 해도 되고 C# 오브젝트 풀 해도 되고 라이브러리 땅겨와도되고
 
 			// 서비스 같은게 돌아가고있어서...
-			// 엔티티가 스폰되면 자기가 알아 게임오브젝트 만들어서 ... 추가작업을 진행해서 알아서 조립된다. Factory 
+			// 엔티티가 스폰되면 자기가 알아 게임오브젝트 만들어서 ... 추가작업을 진행해서 알아서 조립된다. Factory
 
 			var assetFactory = gameLoader.AssetFactory;
 			// 테스트 엔티티를 가져와서 스폰 시키기
@@ -109,13 +112,13 @@ namespace Game.World
 					// Spawner.Spawn("Player", SpawnInfo)
 					// Spawner.Spawn("Player", Position)
 					// spawn 내부에서 try get transform position 에다가 스폰하게 해도 될듯 ?
-					
+
 					// 컴포넌트 측에서 게임오브젝트에 의존적이면 안된다.
 					// Component에서 GameObject를 들고 있는다던가 그런걸 피해야함.
 					// GameObject에서 entity 들고 있고 이런건 ok
-					// 게임오브젝트의 update에서 계속 관찰 or 
-					// 스타일의 차이지 컴포넌트를 런타임중에 삽입 / 삭제를 할지는 
-					// 커스텀 update 돌리기 모든 gameobject 
+					// 게임오브젝트의 update에서 계속 관찰 or
+					// 스타일의 차이지 컴포넌트를 런타임중에 삽입 / 삭제를 할지는
+					// 커스텀 update 돌리기 모든 gameobject
 					//
 
 					var enemyEntity = componentDesigner.ToEntity(world);
@@ -124,6 +127,8 @@ namespace Game.World
 
 				camera = gameLoader.Camera.gameObject;
 			}
+
+			stage = new StageController();
 		}
 
 		/// <summary>
