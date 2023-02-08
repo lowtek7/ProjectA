@@ -1,4 +1,8 @@
-﻿using Core.Unity;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Core.Unity;
+using Core.Utility;
 using Library.JSPool;
 using UnityEngine;
 
@@ -21,6 +25,8 @@ namespace Game.World
 
 		private BlitzEcs.World world;
 
+		private readonly List<ISystem> systems = new List<ISystem>();
+
 		/// <summary>
 		/// 원래는 에셋 팩토리에 직접 접근하는 일이 없어야 함
 		/// 현재 엔티티 스폰을 위해서 임시적으로 이렇게 구성했음
@@ -28,13 +34,42 @@ namespace Game.World
 		/// 카메라 또한 카메라 엔티티를 따로 만들어서 컨트롤 해야함
 		/// </summary>
 		/// <param name="assetFactory"></param>
-		public void Init(AssetFactory assetFactory, Camera camera, PoolManager poolManager)
+		public void Init(GameLoader gameLoader)
 		{
-			this.poolManager = poolManager;
-			poolManager.Init();
-			
 			// ecs 월드를 생성하자.
 			world = new BlitzEcs.World();
+
+			Dictionary<int, List<ISystem>> systemOrders = new Dictionary<int, List<ISystem>>();
+
+			// 리플렉션을 이용해서 ISystem의 구현체들을 모은다.
+			foreach (var systemType in TypeUtility.GetTypesWithInterface(typeof(ISystem)))
+			{
+				if (Activator.CreateInstance(systemType) is ISystem system)
+				{
+					if (!systemOrders.TryGetValue(system.Order, out var systems))
+					{
+						systems = new List<ISystem>();
+						systemOrders[system.Order] = systems;
+					}
+
+					system.Init(world);
+					systems.Add(system);
+				}
+			}
+
+			
+			var systemLists = systemOrders.OrderBy(pair => pair.Key).Select(x => x.Value).ToArray();
+
+			foreach (var systemList in systemLists)
+			{
+				foreach (var system in systemList)
+				{
+					systems.Add(system);
+				}
+			}
+
+			poolManager = gameLoader.PoolManager;
+			poolManager.Init();
 
 			// 1. Service 레이어 구축 (동준님)
 			// 유사하게 해야할듯. ECS 
@@ -59,6 +94,7 @@ namespace Game.World
 			// 서비스 같은게 돌아가고있어서...
 			// 엔티티가 스폰되면 자기가 알아 게임오브젝트 만들어서 ... 추가작업을 진행해서 알아서 조립된다. Factory 
 
+			var assetFactory = gameLoader.AssetFactory;
 			// 테스트 엔티티를 가져와서 스폰 시키기
 			if (assetFactory.TryGetEntityPreset("TestEntity", out var gameObject))
 			{
@@ -85,7 +121,7 @@ namespace Game.World
 					enemy = GameObject.Instantiate(gameObject, new Vector3(1, 1, 0), Quaternion.identity);
 				}
 
-				this.camera = camera.gameObject;
+				camera = gameLoader.Camera.gameObject;
 			}
 		}
 
@@ -117,6 +153,11 @@ namespace Game.World
 			}
 
 			camera.transform.position = player.transform.position + cameraDist;
+
+			foreach (var system in systems)
+			{
+				system.Update(dt);
+			}
 		}
 	}
 }

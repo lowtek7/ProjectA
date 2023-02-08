@@ -23,6 +23,14 @@ namespace Game
 
 		private GameManager _gameManager;
 
+		public GameManager GameManager => _gameManager;
+
+		public PoolManager PoolManager => poolManager;
+
+		public Camera Camera => camera;
+
+		public AssetFactory AssetFactory => assetFactory;
+
 		/// <summary>
 		/// 여기서 게임 환경을 로드하게 된다
 		/// </summary>
@@ -63,7 +71,7 @@ namespace Game
 			
 			// 월드 셋팅
 			_gameManager = new GameManager();
-			_gameManager.Init(assetFactory, camera, poolManager);
+			_gameManager.Init(this);
 			
 			// 이제 플레이 가능한 상태
 			canPlay = true;
