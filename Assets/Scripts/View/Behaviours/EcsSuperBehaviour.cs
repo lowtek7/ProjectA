@@ -21,4 +21,9 @@ namespace View.Behaviours
 			selfEntity = entity;
 		}
 	}
+
+	public interface IComponentBinder<T> where T : struct
+	{
+		
+	}
 }

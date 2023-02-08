@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -38,6 +39,16 @@ namespace BlitzEcs {
 
         public bool Has<TComponent>() where TComponent : struct {
             return world.GetComponentPool<TComponent>().Contains(id);
+        }
+
+        public bool Has(Type type)
+        {
+	        if (world.TryGetIComponentPool(type, out var pool))
+	        {
+		        return pool.Contains(id);
+	        }
+
+	        return false;
         }
 
         public void Despawn() {

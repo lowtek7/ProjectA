@@ -3,7 +3,7 @@ using Game.Ecs.Component;
 
 namespace View.Behaviours
 {
-	public class PlayerBehaviour : EcsSuperBehaviour
+	public class PlayerBehaviour : EcsSuperBehaviour, IComponentBinder<PlayerComponent>
 	{
 		public override void SetupEntity(Entity entity)
 		{

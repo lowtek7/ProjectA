@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BlitzEcs;
 using Game.Ecs.Component;
 using Game.Service;
@@ -14,6 +15,13 @@ namespace View
 	/// </summary>
 	public class SpawnerController : MonoBehaviour
 	{
+		private Dictionary<Type, EcsSuperBehaviour> behaviourMap = new Dictionary<Type, EcsSuperBehaviour>();
+
+		public void Init()
+		{
+			// IComponentBinder 구현체들을 수집하면 어떨까 
+		}
+		
 		// 얘가 활동을 시작한다
 		public void Start()
 		{
@@ -34,6 +42,11 @@ namespace View
 			{
 				// 셋업
 				go.AddComponent<PlayerBehaviour>().SetupEntity(entity);
+			}
+
+			foreach (var type in behaviourMap)
+			{
+				// entity.Has(type) 이걸 사용
 			}
 		}
 	}
