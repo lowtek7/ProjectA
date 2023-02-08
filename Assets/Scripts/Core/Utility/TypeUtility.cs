@@ -55,8 +55,11 @@ namespace Core.Utility
 					var types = assembly.GetTypes();
 					foreach (var type in types)
 					{
-						var result = type.GetInterface(interfaceType.FullName);
-						if (result != null)
+						if (interfaceType == type) continue;
+
+						var interfaces = type.GetInterfaces();
+						var resultIndex = Array.FindIndex(interfaces, t => t == interfaceType);
+						if (resultIndex >= 0)
 						{
 							results.Add(type);
 						}
