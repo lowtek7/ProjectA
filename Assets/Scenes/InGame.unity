@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   assetFactory: {fileID: 1935476811}
-  camera: {fileID: 247149165}
+  gameCamera: {fileID: 247149165}
   poolManager: {fileID: 1498554580712856601}
 --- !u!4 &1550368726
 Transform:
