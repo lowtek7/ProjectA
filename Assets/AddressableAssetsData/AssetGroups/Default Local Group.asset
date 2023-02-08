@@ -29,6 +29,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - Sprite
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45a0f57d3739ea74fb83b712d6c85c53
+    m_Address: Assets/GameAsset/Tile
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Tile
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bcdffd2ad953a504ca28bb6cd33ce427
+    m_Address: Assets/GameAsset/Prefab/Tilemap
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - TileRenderer
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 71554528ed30bbe4098c32edfac362f1, type: 2}
   m_SchemaSet:
