@@ -6,10 +6,8 @@ using Game.Service;
 using UnityEngine;
 using UnityEngine.Pool;
 using View.Behaviours;
-using System.Reflection;
 using Core.Utility;
 using Core.Unity;
-using static PlasticGui.WorkspaceWindow.Diff.GetRestorePathData;
 
 namespace View
 {
