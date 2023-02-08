@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using BlitzEcs;
 using UnityEngine;
@@ -35,13 +35,5 @@ namespace Core.Unity
 
 			return entity;
 		}
-	}
-
-	/// <summary>
-	/// 컴포넌트 디자이너에게 정보를 주기위해서 상속받아야하는 인터페이스
-	/// </summary>
-	public interface IComponent
-	{
-		IComponent Clone();
 	}
 }
