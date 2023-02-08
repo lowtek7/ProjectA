@@ -13,9 +13,6 @@ namespace Game.Asset
 		private readonly Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
 
 		private bool isLoading = false;
-
-		public string Name => "Sprite";
-
 		public IEnumerator LoadAll()
 		{
 			isLoading = true;

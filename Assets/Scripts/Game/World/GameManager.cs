@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Unity;
 using Core.Utility;
+using Game.Asset;
 using Library.JSPool;
 using UnityEngine;
 
@@ -96,7 +97,7 @@ namespace Game.World
 
 			var assetFactory = gameLoader.AssetFactory;
 			// 테스트 엔티티를 가져와서 스폰 시키기
-			if (assetFactory.TryGetAsset("EntityPreset", "TestEntity", out GameObject gameObject))
+			if (assetFactory.TryGetAsset<EntityPresetAssetModule, GameObject>("TestEntity", out var gameObject))
 			{
 				if (gameObject.TryGetComponent<ComponentDesigner>(out var componentDesigner))
 				{

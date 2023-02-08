@@ -14,8 +14,6 @@ namespace Game.Asset
 
 		private bool isLoading = false;
 
-		public string Name => "EntityPreset";
-
 		public IEnumerator LoadAll()
 		{
 			isLoading = true;

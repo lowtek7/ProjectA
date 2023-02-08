@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Core.Utility;
+using Game.Asset;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -15,7 +16,6 @@ namespace Game
 	
 	public interface IAssetModule : IAssetReader
 	{
-		string Name { get; }
 		IEnumerator LoadAll();
 	}
 	
@@ -27,7 +27,7 @@ namespace Game
 	/// </summary>
 	public class AssetFactory : MonoBehaviour
 	{
-		private readonly Dictionary<string, IAssetModule> modules = new Dictionary<string, IAssetModule>();
+		private readonly Dictionary<Type, IAssetModule> modules = new Dictionary<Type, IAssetModule>();
 
 		public void Init()
 		{
@@ -38,7 +38,7 @@ namespace Game
 			{
 				if (Activator.CreateInstance(type) is IAssetModule assetModule)
 				{
-					modules.Add(assetModule.Name, assetModule);
+					modules.Add(assetModule.GetType(), assetModule);
 				}
 			}
 		}
@@ -51,11 +51,11 @@ namespace Game
 			}
 		}
 
-		public bool TryGetAssetReader(string moduleName, out IAssetReader assetReader)
+		public bool TryGetAssetReader<CT>(out IAssetReader assetReader) where CT : IAssetReader
 		{
 			assetReader = null;
 
-			if (modules.TryGetValue(moduleName, out var module))
+			if (modules.TryGetValue(typeof(CT), out var module))
 			{
 				assetReader = module;
 				return true;
@@ -64,11 +64,11 @@ namespace Game
 			return false;
 		}
 
-		public bool TryGetAsset<CT>(string moduleName, string assetKey, out CT result) where CT : UnityEngine.Object
+		public bool TryGetAsset<CT, CU>(string assetKey, out CU result) where CT : IAssetReader where CU : UnityEngine.Object
 		{
 			result = null;
 
-			if (modules.TryGetValue(moduleName, out var module) && module.TryGet(assetKey, out result))
+			if (modules.TryGetValue(typeof(CT), out var module) && module.TryGet(assetKey, out result))
 			{
 				return true;
 			}
