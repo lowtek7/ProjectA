@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor.Compilation;
+using Assembly = System.Reflection.Assembly;
 
 namespace Core.Utility
 {
@@ -15,10 +17,11 @@ namespace Core.Utility
 		/// <returns></returns>
 		public static Type[] GetTypesWithAttribute(Type attributeType)
 		{
+			var playerAssemblies = CompilationPipeline.GetAssemblies(AssembliesType.Player);
 			List<Type> results = new List<Type>();
-			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-			foreach (var assembly in assemblies)
+			foreach (var playerAssembly in playerAssemblies)
 			{
+				var assembly = Assembly.Load(playerAssembly.name);
 				var types = assembly.GetTypes();
 				foreach (var type in types)
 				{
@@ -35,10 +38,11 @@ namespace Core.Utility
 		
 		public static Type[] GetTypesWithInterface(Type interfaceType)
 		{
+			var playerAssemblies = CompilationPipeline.GetAssemblies(AssembliesType.Player);
 			List<Type> results = new List<Type>();
-			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-			foreach (var assembly in assemblies)
+			foreach (var playerAssembly in playerAssemblies)
 			{
+				var assembly = Assembly.Load(playerAssembly.name);
 				var types = assembly.GetTypes();
 				foreach (var type in types)
 				{
