@@ -1,11 +1,24 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Core.Utility;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Game
 {
+	public interface IAssetReader
+	{
+		bool TryGet<CT>(string key, out CT result) where CT : UnityEngine.Object;
+	}
+	
+	public interface IAssetModule : IAssetReader
+	{
+		string Name { get; }
+		IEnumerator LoadAll();
+	}
+	
 	/// <summary>
 	/// 에셋 팩토리의 수명을 인게임 씬을 따라가기 위해서 MonoBehaviour
 	/// 에셋 팩토리의 인스턴스는 게임 로더 측에서 가지고 있음.
@@ -14,65 +27,53 @@ namespace Game
 	/// </summary>
 	public class AssetFactory : MonoBehaviour
 	{
-		private readonly Dictionary<string, GameObject> entityPresets = new Dictionary<string, GameObject>();
-		private readonly Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
+		private readonly Dictionary<string, IAssetModule> modules = new Dictionary<string, IAssetModule>();
 
-		private bool isLoading = false;
-
-		/// <summary>
-		/// 임시적으로 로딩 체크를 위해서 만듬
-		/// </summary>
-		public bool IsLoading => isLoading;
-
-		/// <summary>
-		/// 모든 아키타입 리소스를 불러오는 함수
-		/// </summary>
-		public void LoadAllEntityPreset()
+		public void Init()
 		{
-			isLoading = true;
-			entityPresets.Clear();
-			Addressables.LoadAssetsAsync<GameObject>("EntityPreset", null).Completed += OnEntityPresetLoadCompleted;
-		}
+			modules.Clear();
+			var types = TypeUtility.GetTypesWithInterface(typeof(IAssetModule));
 
-		public bool TryGetEntityPreset(string key, out GameObject go) => entityPresets.TryGetValue(key, out go);
-
-		private void OnEntityPresetLoadCompleted(AsyncOperationHandle<IList<GameObject>> archetypeList)
-		{
-			if (archetypeList.Result != null)
+			foreach (var type in types)
 			{
-				foreach (var go in archetypeList.Result)
+				if (Activator.CreateInstance(type) is IAssetModule assetModule)
 				{
-					Debug.Log($"Loading Archetype [{go.name}]");
-					entityPresets.Add(go.name, go);
+					modules.Add(assetModule.Name, assetModule);
 				}
-				
-				GC.Collect();
-
-				isLoading = false;
 			}
 		}
 
-		public void LoadAllSprite()
+		public IEnumerator LoadAll()
 		{
-			isLoading = true;
-			sprites.Clear();
-			Addressables.LoadAssetsAsync<Sprite>("Sprite", null).Completed += OnSpriteLoadCompleted;
+			foreach (var keyValuePair in modules)
+			{
+				yield return keyValuePair.Value.LoadAll();
+			}
 		}
 
-		private void OnSpriteLoadCompleted(AsyncOperationHandle<IList<Sprite>> spriteList)
+		public bool TryGetAssetReader(string moduleName, out IAssetReader assetReader)
 		{
-			if (spriteList.Result != null)
-			{
-				foreach (var sprite in spriteList.Result)
-				{
-					Debug.Log($"Loading Sprite [{sprite.name}]");
-					sprites.Add(sprite.name, sprite);
-				}
-				
-				GC.Collect();
+			assetReader = null;
 
-				isLoading = false;
+			if (modules.TryGetValue(moduleName, out var module))
+			{
+				assetReader = module;
+				return true;
 			}
+			
+			return false;
+		}
+
+		public bool TryGetAsset<CT>(string moduleName, string assetKey, out CT result) where CT : UnityEngine.Object
+		{
+			result = null;
+
+			if (modules.TryGetValue(moduleName, out var module) && module.TryGet(assetKey, out result))
+			{
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

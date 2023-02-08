@@ -96,7 +96,7 @@ namespace Game.World
 
 			var assetFactory = gameLoader.AssetFactory;
 			// 테스트 엔티티를 가져와서 스폰 시키기
-			if (assetFactory.TryGetEntityPreset("TestEntity", out var gameObject))
+			if (assetFactory.TryGetAsset("EntityPreset", "TestEntity", out GameObject gameObject))
 			{
 				if (gameObject.TryGetComponent<ComponentDesigner>(out var componentDesigner))
 				{

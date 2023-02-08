@@ -52,22 +52,8 @@ namespace Game
 
 		private IEnumerator LoadAll()
 		{
-			// 스프라이트 다 불러오기
-			assetFactory.LoadAllSprite();
-			
-			// 로딩 중이면 기달려주자
-			while (assetFactory.IsLoading)
-			{
-				yield return null;
-			}
-			
-			assetFactory.LoadAllEntityPreset();
-
-			// 로딩 중이면 기달려주자
-			while (assetFactory.IsLoading)
-			{
-				yield return null;
-			}
+			assetFactory.Init();
+			yield return assetFactory.LoadAll();
 			
 			// 월드 셋팅
 			_gameManager = new GameManager();
