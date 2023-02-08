@@ -16,23 +16,16 @@ namespace Core.Utility
 		public static Type[] GetTypesWithAttribute(Type attributeType)
 		{
 			List<Type> results = new List<Type>();
-			var currentAssembly = Assembly.GetExecutingAssembly();
-			var referencedAssemblies = currentAssembly.GetReferencedAssemblies().ToList();
-
-			referencedAssemblies.Insert(0, currentAssembly.GetName());
-			foreach (var assemblyName in referencedAssemblies)
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			foreach (var assembly in assemblies)
 			{
-				var assembly = Assembly.Load(assemblyName);
-				if (assembly != null)
+				var types = assembly.GetTypes();
+				foreach (var type in types)
 				{
-					var types = assembly.GetTypes();
-					foreach (var type in types)
+					var result = type.GetCustomAttribute(attributeType);
+					if (result != null)
 					{
-						var result = type.GetCustomAttribute(attributeType);
-						if (result != null)
-						{
-							results.Add(type);
-						}
+						results.Add(type);
 					}
 				}
 			}
@@ -43,26 +36,19 @@ namespace Core.Utility
 		public static Type[] GetTypesWithInterface(Type interfaceType)
 		{
 			List<Type> results = new List<Type>();
-			var currentAssembly = Assembly.GetExecutingAssembly();
-			var referencedAssemblies = currentAssembly.GetReferencedAssemblies().ToList();
-
-			referencedAssemblies.Insert(0, currentAssembly.GetName());
-			foreach (var assemblyName in referencedAssemblies)
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			foreach (var assembly in assemblies)
 			{
-				var assembly = Assembly.Load(assemblyName);
-				if (assembly != null)
+				var types = assembly.GetTypes();
+				foreach (var type in types)
 				{
-					var types = assembly.GetTypes();
-					foreach (var type in types)
-					{
-						if (interfaceType == type) continue;
+					if (interfaceType == type) continue;
 
-						var interfaces = type.GetInterfaces();
-						var resultIndex = Array.FindIndex(interfaces, t => t == interfaceType);
-						if (resultIndex >= 0)
-						{
-							results.Add(type);
-						}
+					var interfaces = type.GetInterfaces();
+					var resultIndex = Array.FindIndex(interfaces, t => t == interfaceType);
+					if (resultIndex >= 0)
+					{
+						results.Add(type);
 					}
 				}
 			}
