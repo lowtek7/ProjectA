@@ -16,7 +16,7 @@ namespace View
 	/// </summary>
 	public class SpawnerController : MonoBehaviour
 	{
-		private List<(Type componentType, Type behaviourType)> comnentPairList;
+		private List<(Type componentType, Type behaviourType)> componentPairList;
 
 		// 추후 init 호출 시점 추가되면 Start 내용 init으로 옮기기
 		public void Init()
@@ -35,7 +35,7 @@ namespace View
 				
 				foreach (var resultType in result)
 				{
-					comnentPairList.Add((type, resultType));
+					componentPairList.Add((type, resultType));
 				}
 			}
 
@@ -52,7 +52,7 @@ namespace View
 			// TODO:오브젝트풀 추가되면 빈 게임오브젝트 가져오는게 좋을듯
 			var go = new GameObject();
 
-			foreach (var pair in comnentPairList)
+			foreach (var pair in componentPairList)
 			{
 				if (entity.Has(pair.componentType))
 				{
