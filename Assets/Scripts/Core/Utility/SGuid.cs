@@ -18,7 +18,7 @@ namespace Core.Utility
 		{
 			get
 			{
-				if (guid == Guid.Empty)
+				if (guid != Guid.Empty)
 				{
 					guid = new Guid(guidBytes);
 				}
