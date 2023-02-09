@@ -11,7 +11,20 @@ namespace Library.JSPool
 		[SerializeField, HideInInspector]
 		private string itemGuid = string.Empty;
 
-		public string ItemGuid => itemGuid;
+		private Guid itemGuidInternal;
+
+		public Guid ItemGuid
+		{
+			get
+			{
+				if (itemGuidInternal == Guid.Empty)
+				{
+					itemGuidInternal = Guid.Parse(itemGuid);
+				}
+
+				return itemGuidInternal;
+			}
+		}
 
 #if UNITY_EDITOR
 		private void OnValidate()

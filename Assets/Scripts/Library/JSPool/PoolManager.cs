@@ -30,7 +30,7 @@ namespace Library.JSPool
 
 			private Transform parent;
 
-			public PoolItem[] pool;
+			public Queue<PoolItem> pool;
 
 			public PoolItem Original => original;
 
@@ -45,9 +45,9 @@ namespace Library.JSPool
 		}
 
 		[SerializeField]
-		private List<PoolItemSetting> poolItems = new List<PoolItemSetting>();
+		private List<PoolItemSetting> poolItems = new ();
 
-		private readonly Dictionary<string, PoolEntity> poolEntities = new Dictionary<string, PoolEntity>();
+		private readonly Dictionary<Guid, PoolEntity> poolEntities = new ();
 
 		/// <summary>
 		/// 풀 초기화 작업
@@ -68,18 +68,70 @@ namespace Library.JSPool
 				var size = poolItem.InitialPoolSize;
 				var entity = new PoolEntity($"{item.name} ({item.ItemGuid})", item)
 				{
-					pool = new PoolItem[size]
+					pool = new Queue<PoolItem>()
 				};
 				entity.Parent.SetParent(transform);
 
 				for (int i = 0; i < size; i++)
 				{
-					entity.pool[i] = GameObject.Instantiate(item, entity.Parent);
-					entity.pool[i].gameObject.SetActive(false);
+					var result = GameObject.Instantiate(item, entity.Parent);
+					result.gameObject.SetActive(false);
+					entity.pool.Enqueue(result);
 				}
 
 				poolEntities.Add(item.ItemGuid, entity);
 			}
 		}
+
+		public void Despawn(GameObject gameObject)
+		{
+			if (gameObject.TryGetComponent<PoolItem>(out var poolItem) &&
+				gameObject.TryGetComponent<PoolController>(out var poolController))
+			{
+				poolController.DespawnEvent();
+				var guid = poolItem.ItemGuid;
+				if (poolEntities.TryGetValue(guid, out var poolEntity))
+				{
+					poolEntity.pool.Enqueue(poolItem);
+					poolItem.transform.SetParent(poolEntity.Parent);
+				}
+			}
+		}
+		
+		public GameObject Spawn(Guid originalGuid, Vector3 position, Quaternion rotation, Transform parent = null)
+		{
+			if (poolEntities.TryGetValue(originalGuid, out var poolEntity))
+			{
+				if (poolEntity.pool.Count == 0)
+				{
+					var poolParent = poolEntity.Parent;
+					for (int i = 0; i < 10; i++)
+					{
+						var result = GameObject.Instantiate(poolEntity.Original, poolParent);
+						result.gameObject.SetActive(false);
+						poolEntity.pool.Enqueue(result);
+					}
+
+					var item = poolEntity.pool.Dequeue();
+					item.transform.SetParent(parent);
+					item.transform.position = position;
+					item.transform.rotation = rotation;
+					item.gameObject.SetActive(true);
+
+					if (item.gameObject.TryGetComponent<PoolController>(out var poolController))
+					{
+						poolController.SpawnEvent();
+					}
+
+					return item.gameObject;
+				}
+			}
+			
+			return null;
+		}
+
+		public GameObject Spawn(Guid originalGuid, Vector3 position, Transform parent = null) => Spawn(originalGuid, position, Quaternion.identity, parent);
+
+		public GameObject Spawn(Guid originalGuid, Transform parent = null) => Spawn(originalGuid, Vector3.zero, Quaternion.identity, parent);
 	}
 }
