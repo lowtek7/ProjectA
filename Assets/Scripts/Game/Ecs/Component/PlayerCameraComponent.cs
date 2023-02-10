@@ -1,10 +1,12 @@
-﻿using Core.Unity;
+﻿using System;
+using Core.Unity;
 
 namespace Game.Ecs.Component
 {
 	/// <summary>
 	/// 플레이어 카메라 컴포넌트는 무조건 하나만 다뤄야 한다.
 	/// </summary>
+	[Serializable]
 	public struct PlayerCameraComponent : IComponent
 	{
 		public IComponent Clone()

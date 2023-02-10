@@ -1,10 +1,11 @@
 ﻿using System;
+using Core.Unity;
 using UnityEngine;
 
 namespace Game.Ecs.Component
 {
 	[Serializable]
-	public struct MovementComponent
+	public struct MovementComponent : IComponent
 	{
 		[SerializeField]
 		private float moveSpeed;
@@ -25,6 +26,15 @@ namespace Game.Ecs.Component
 		{
 			get => moveSpeed;
 			set => moveSpeed = value;
+		}
+
+		public IComponent Clone()
+		{
+			return new MovementComponent
+			{
+				moveDir = moveDir,
+				moveSpeed = moveSpeed
+			};
 		}
 	}
 }
