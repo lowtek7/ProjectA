@@ -26,6 +26,32 @@ namespace Library.JSPool
 			}
 		}
 
+		/// <summary>
+		/// 풀 매니저를 제외하고 다른데서 호출하는 행위 절대 금지.
+		/// </summary>
+		public void SpawnEvent()
+		{
+			var components = gameObject.GetComponents<IPoolEvent>();
+
+			foreach (var poolEvent in components)
+			{
+				poolEvent.OnSpawned();
+			}
+		}
+		
+		/// <summary>
+		/// 풀 매니저를 제외하고 다른데서 호출하는 행위 절대 금지.
+		/// </summary>
+		public void DespawnEvent()
+		{
+			var components = gameObject.GetComponents<IPoolEvent>();
+
+			foreach (var poolEvent in components)
+			{
+				poolEvent.OnDespawned();
+			}
+		}
+
 #if UNITY_EDITOR
 		private void OnValidate()
 		{

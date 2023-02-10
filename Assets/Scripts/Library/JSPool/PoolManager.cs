@@ -87,10 +87,7 @@ namespace Library.JSPool
 		{
 			if (targetGameObject.TryGetComponent<PoolItem>(out var poolItem))
 			{
-				if (targetGameObject.TryGetComponent<PoolController>(out var poolController))
-				{
-					poolController.DespawnEvent();
-				}
+				poolItem.DespawnEvent();
 
 				var guid = poolItem.ItemGuid;
 				if (poolEntities.TryGetValue(guid, out var poolEntity))
@@ -123,9 +120,9 @@ namespace Library.JSPool
 				item.transform.rotation = rotation;
 				item.gameObject.SetActive(true);
 
-				if (item.gameObject.TryGetComponent<PoolController>(out var poolController))
+				if (item.gameObject.TryGetComponent<PoolItem>(out var poolItem))
 				{
-					poolController.SpawnEvent();
+					poolItem.SpawnEvent();
 				}
 
 				return item.gameObject;
