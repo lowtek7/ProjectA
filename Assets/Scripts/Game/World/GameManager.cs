@@ -6,7 +6,6 @@ using Core.Unity;
 using Core.Utility;
 using Game.Ecs.Component;
 using Game.Service;
-using Game.World.Stage;
 using Library.JSPool;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -29,8 +28,6 @@ namespace Game.World
 
 		private readonly List<ISystem> systems = new List<ISystem>();
 
-		private StageController stage;
-
 		private Query<PlayerComponent, MovementComponent> playerQuery;
 
 		/// <summary>
@@ -39,7 +36,7 @@ namespace Game.World
 		/// 추후에 spawner를 따로 만들거나 따로 그러한 작업을 위한 서비스를 구축해야함
 		/// 카메라 또한 카메라 엔티티를 따로 만들어서 컨트롤 해야함
 		/// </summary>
-		/// <param name="assetFactory"></param>
+		/// <param name="gameLoader"></param>
 		public void Init(GameLoader gameLoader)
 		{
 			poolManager = gameLoader.PoolManager;
@@ -136,7 +133,6 @@ namespace Game.World
 			}
 
 			playerQuery = new Query<PlayerComponent, MovementComponent>(world);
-			stage = new StageController();
 		}
 
 		/// <summary>
