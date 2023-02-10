@@ -1,4 +1,5 @@
 ﻿using BlitzEcs;
+using Core.Unity;
 using Game.Ecs.Component;
 using Game.Unit;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace View.Behaviours
 	/// <summary>
 	/// 해당 비헤이비어를 부착시키면 매 업데이트마다 관측중인 엔티티의 Transform을 유니티 Transform에 반영합니다.
 	/// </summary>
-	public class EntityTransformBehaviour : MonoBehaviour, IUnitBehaviour
+	public class EntityTransformBehaviour : CustomBehaviour, IUnitBehaviour, IUpdate
 	{
 		private Entity selfEntity;
 
@@ -22,7 +23,7 @@ namespace View.Behaviours
 			selfEntity = new Entity();
 		}
 
-		public void Update()
+		public void UpdateProcess(float deltaTime)
 		{
 			if (selfEntity.IsAlive)
 			{
