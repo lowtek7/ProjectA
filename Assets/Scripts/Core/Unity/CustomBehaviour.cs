@@ -24,7 +24,7 @@ namespace Core.Unity
 			}
 		}
 
-		protected void OnDestroy()
+		protected virtual void OnDestroy()
 		{
 			if (CoreMachine.TryGetInstance(out var coreMachine))
 			{
