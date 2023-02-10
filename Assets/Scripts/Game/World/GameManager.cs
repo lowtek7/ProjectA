@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BlitzEcs;
 using Core.Unity;
 using Core.Utility;
-using Game.Asset;
 using Game.Ecs.Component;
 using Game.Service;
 using Game.World.Stage;
@@ -30,6 +30,8 @@ namespace Game.World
 		private readonly List<ISystem> systems = new List<ISystem>();
 
 		private StageController stage;
+
+		private Query<PlayerComponent, MovementComponent> playerQuery;
 
 		/// <summary>
 		/// 원래는 에셋 팩토리에 직접 접근하는 일이 없어야 함
@@ -92,7 +94,8 @@ namespace Game.World
 				{
 					SourceGuid = sourceGuid
 				})
-				.Add<PlayerCameraComponent>()
+				.Add(new PlayerCameraComponent())
+				.Add(new PlayerComponent())
 				.Add(new TransformComponent
 				{
 					Position = Vector3.zero
@@ -100,6 +103,11 @@ namespace Game.World
 				.Add(new ZoneComponent
 				{
 					StageId = 0
+				})
+				.Add(new MovementComponent
+				{
+					MoveDir = Vector3.zero,
+					MoveSpeed = 1
 				}));
 
 			// 다른 캐릭터들 그려주기
@@ -127,6 +135,7 @@ namespace Game.World
 				commander.Commit();
 			}
 
+			playerQuery = new Query<PlayerComponent, MovementComponent>(world);
 			stage = new StageController();
 		}
 
@@ -137,21 +146,35 @@ namespace Game.World
 		{
 			var dt = Time.deltaTime;
 
-			if (Input.GetKeyDown(KeyCode.W))
+			float x = 0;
+			float y = 0;
+
+			if (Input.GetKey(KeyCode.W))
 			{
+				y += 1;
 			}
 
-			if (Input.GetKeyDown(KeyCode.S))
+			if (Input.GetKey(KeyCode.S))
 			{
+				y -= 1;
 			}
 
-			if (Input.GetKeyDown(KeyCode.A))
+			if (Input.GetKey(KeyCode.A))
 			{
+				x -= 1;
 			}
 
-			if (Input.GetKeyDown(KeyCode.D))
+			if (Input.GetKey(KeyCode.D))
 			{
+				x += 1;
 			}
+
+			playerQuery.Fetch();
+			playerQuery.ForEach((ref PlayerComponent playerComponent,
+				ref MovementComponent movementComponent) =>
+			{
+				movementComponent.MoveDir = new Vector3(x, y, 0);
+			});
 
 			foreach (var system in systems)
 			{
