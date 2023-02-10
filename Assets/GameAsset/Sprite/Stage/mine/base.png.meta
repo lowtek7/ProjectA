@@ -107,7 +107,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ceil_8
+      name: ceil-a_8
       rect:
         serializedVersion: 2
         x: 48
@@ -128,7 +128,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_low_2
+      name: side_lower-a_2
       rect:
         serializedVersion: 2
         x: 32
@@ -149,7 +149,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_low_8
+      name: side_lower-a_8
       rect:
         serializedVersion: 2
         x: 48
@@ -170,7 +170,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_6
+      name: ceil-a_6
       rect:
         serializedVersion: 2
         x: 0
@@ -191,7 +191,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_12
+      name: ceil-a_12
       rect:
         serializedVersion: 2
         x: 16
@@ -212,7 +212,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_4
+      name: ceil-a_4
       rect:
         serializedVersion: 2
         x: 48
@@ -233,7 +233,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_3
+      name: ceil-a_3
       rect:
         serializedVersion: 2
         x: 0
@@ -254,7 +254,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_9
+      name: ceil-a_9
       rect:
         serializedVersion: 2
         x: 16
@@ -275,7 +275,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_1
+      name: ceil-a_1
       rect:
         serializedVersion: 2
         x: 48
@@ -296,7 +296,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_14
+      name: ceil-a_14
       rect:
         serializedVersion: 2
         x: 32
@@ -317,7 +317,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_low_3
+      name: side_lower-a_3
       rect:
         serializedVersion: 2
         x: 0
@@ -338,7 +338,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_low_9
+      name: side_lower-a_9
       rect:
         serializedVersion: 2
         x: 16
@@ -359,7 +359,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_5
+      name: ceil-a_5
       rect:
         serializedVersion: 2
         x: 32
@@ -380,7 +380,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_low_1
+      name: side_lower-a_1
       rect:
         serializedVersion: 2
         x: 48
@@ -401,7 +401,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_15
+      name: ceil-a_15
       rect:
         serializedVersion: 2
         x: 0
@@ -422,7 +422,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_7
+      name: ceil-a_7
       rect:
         serializedVersion: 2
         x: 16
@@ -443,7 +443,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_13
+      name: ceil-a_13
       rect:
         serializedVersion: 2
         x: 32
@@ -464,7 +464,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_11
+      name: ceil-a_11
       rect:
         serializedVersion: 2
         x: 0
@@ -485,7 +485,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_10
+      name: ceil-a_10
       rect:
         serializedVersion: 2
         x: 16
@@ -506,7 +506,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_0
+      name: ceil-a_0
       rect:
         serializedVersion: 2
         x: 32
@@ -527,7 +527,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_low_11
+      name: side_lower-a_11
       rect:
         serializedVersion: 2
         x: 0
@@ -548,7 +548,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_low_10
+      name: side_lower-a_10
       rect:
         serializedVersion: 2
         x: 16
@@ -569,7 +569,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_low_0
+      name: side_lower-a_0
       rect:
         serializedVersion: 2
         x: 32
@@ -590,7 +590,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ceil_2
+      name: ceil-a_2
       rect:
         serializedVersion: 2
         x: 32
@@ -611,7 +611,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_high_2
+      name: side_upper-a_2
       rect:
         serializedVersion: 2
         x: 32
@@ -632,7 +632,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_high_8
+      name: side_upper-a_8
       rect:
         serializedVersion: 2
         x: 48
@@ -653,7 +653,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_high_3
+      name: side_upper-a_3
       rect:
         serializedVersion: 2
         x: 0
@@ -674,7 +674,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_high_9
+      name: side_upper-a_9
       rect:
         serializedVersion: 2
         x: 16
@@ -695,7 +695,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_high_1
+      name: side_upper-a_1
       rect:
         serializedVersion: 2
         x: 48
@@ -716,7 +716,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_high_11
+      name: side_upper-a_11
       rect:
         serializedVersion: 2
         x: 0
@@ -737,7 +737,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_high_10
+      name: side_upper-a_10
       rect:
         serializedVersion: 2
         x: 16
@@ -758,7 +758,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: side_high_0
+      name: side_upper-a_0
       rect:
         serializedVersion: 2
         x: 32
@@ -778,6 +778,174 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: ceil-b_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 240
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c8c2ac7a587d3b4ea4f4ef7e32337f8
+      internalID: -1584552075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ceil-c_10
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 240
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd9b9dd043a7ed244904694874fe5ef8
+      internalID: 801574436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: side_upper-b_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 224
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 270026c55ed387442921e1df0b049668
+      internalID: -1683229043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: side_upper-c_10
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 224
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c96846be512e4f40b8564764cb51b50
+      internalID: 1132981827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: side_lower-b_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 208
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5c49f4c4733b3140bf91d3ddc8f8b03
+      internalID: -657991352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: side_lower-c_10
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 208
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b33702c78928ca04eb76145ef3fb58b9
+      internalID: -465111938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ceil-d_5
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 192
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9cd6e541cacc32a47b16db25f826be72
+      internalID: -1626041019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ceil-e_5
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 176
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec3524bb81fdddb4b9ee65720b769f63
+      internalID: 1589991065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -789,66 +957,72 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      side_lower-a_0: -1937108713
       base_57: -1737463884
-      side_high_10: -1262033547
-      ceil_3: -1779687850
-      ceil_4: 524219783
+      side_lower-a_9: -2137556805
+      side_lower-a_1: -2009972603
+      ceil-a_8: -1926425057
+      side_upper-b_10: -1683229043
+      side_lower-a_8: -1887716480
+      ceil-a_1: 715374210
       base_44: 1929203003
       base_7: -1164815739
-      side_low_3: -687826219
+      ceil-a_6: 1340382105
+      side_upper-a_3: 1060917146
       base_58: 1309576139
+      ceil-a_4: 524219783
       base_49: 453479933
-      ceil_11: 1943856484
+      side_lower-a_2: -1414267136
       base_54: 1142221983
+      side_upper-c_10: 1132981827
       base_55: 772376004
-      ceil_1: 715374210
+      side_upper-a_9: 1849783511
+      ceil-e_5: 1589991065
       base_59: -2136485575
-      side_low_9: -2137556805
+      side_lower-a_10: 1275866238
+      side_upper-a_11: -1614342164
+      ceil-a_7: 1749311979
+      side_lower-b_10: -657991352
       base_6: -1791732267
-      base_1: -1706911559
+      side_lower-a_11: -459581614
+      ceil-a_9: 1650498710
+      ceil-c_10: 801574436
       base_43: -54492508
-      side_high_9: 1849783511
-      ceil_10: -1108277323
-      side_high_3: 1060917146
-      ceil_0: -528110851
-      side_high_8: -394695235
+      ceil-a_0: -528110851
+      ceil-a_13: -671133643
+      side_upper-a_1: -390483451
       base_50: 1516481031
-      side_low_1: -2009972603
-      ceil_8: -1926425057
       base_4: 1492381667
-      ceil_2: -69756312
-      ceil_15: 514659706
-      side_high_1: -390483451
-      side_low_11: -459581614
-      base_0: -832032594
-      base_5: -1163851722
+      ceil-a_3: -1779687850
+      ceil-a_14: 1432823968
+      ceil-a_10: -1108277323
       base_45: -1895906293
+      base_5: -1163851722
+      ceil-a_2: -69756312
+      side_upper-a_0: -140850830
+      side_lower-c_10: -465111938
       base_11: 64488228
+      ceil-a_15: 514659706
       base_56: -1280064782
-      ceil_12: 1039171154
       base_51: -131787304
-      ceil_9: 1650498710
       base_52: -792472612
       base_21: -1297450126
       base_48: 430718581
       base_12: -75450962
-      ceil_5: 230295452
-      ceil_14: 1432823968
-      ceil_6: 1340382105
-      side_low_8: -1887716480
-      ceil_13: -671133643
-      side_low_10: 1275866238
+      ceil-b_10: -1584552075
+      ceil-a_12: 1039171154
+      side_upper-a_2: -1835746960
       base_10: 1685385620
-      side_high_2: -1835746960
-      side_high_0: -140850830
-      side_low_0: -1937108713
-      side_high_11: -1614342164
       base_53: 1880408110
+      side_lower-a_3: -687826219
+      ceil-a_11: 1943856484
+      side_upper-a_10: -1262033547
       base_46: -274310957
+      ceil-a_5: 230295452
       base_47: 2571909
+      side_upper-a_8: -394695235
       base_17: -1744354748
-      ceil_7: 1749311979
-      side_low_2: -1414267136
+      ceil-d_5: -1626041019
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
