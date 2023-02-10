@@ -9,7 +9,7 @@ namespace Game.Ecs.Component
 	{
 		public IComponent Clone()
 		{
-			return null;
+			return new PlayerComponent();
 		}
 	}
 }
