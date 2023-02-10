@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2820118482747694241}
   - component: {fileID: 2820118482747694247}
   - component: {fileID: 2820118482747694246}
-  - component: {fileID: 8219054102643256966}
   m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
@@ -121,19 +120,6 @@ TilemapRenderer:
   m_Mode: 0
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
---- !u!114 &8219054102643256966
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2820118482747694240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96ae91f5be264e339da2348f2841ecb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TileType: 0
 --- !u!1 &2820118483183324594
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,7 +177,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2820118483905560917}
-  - component: {fileID: 3026950428616440400}
   m_Layer: 0
   m_Name: TilemapTemplate
   m_TagString: Untagged
@@ -215,23 +200,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3026950428616440400
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2820118483905560916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d102623903ec4e8488b73b3432f2a9d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tilemapLayers:
-  - {fileID: 8219054102643256966}
-  - {fileID: 7094254263957349929}
-  - {fileID: 606114704855495945}
-  - {fileID: 2366433422668870581}
 --- !u!1 &2820118483914000863
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,7 +211,6 @@ GameObject:
   - component: {fileID: 2820118483914000860}
   - component: {fileID: 2820118483914000834}
   - component: {fileID: 2820118483914000861}
-  - component: {fileID: 7094254263957349929}
   m_Layer: 0
   m_Name: SideLow
   m_TagString: Untagged
@@ -353,19 +320,6 @@ TilemapRenderer:
   m_Mode: 0
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
---- !u!114 &7094254263957349929
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2820118483914000863}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96ae91f5be264e339da2348f2841ecb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TileType: 1
 --- !u!1 &2820118484168040671
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,7 +331,6 @@ GameObject:
   - component: {fileID: 2820118484168040668}
   - component: {fileID: 2820118484168040642}
   - component: {fileID: 2820118484168040669}
-  - component: {fileID: 606114704855495945}
   m_Layer: 0
   m_Name: SideHigh
   m_TagString: Untagged
@@ -487,19 +440,6 @@ TilemapRenderer:
   m_Mode: 0
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
---- !u!114 &606114704855495945
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2820118484168040671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96ae91f5be264e339da2348f2841ecb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TileType: 2
 --- !u!1 &2820118484349581922
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,7 +451,6 @@ GameObject:
   - component: {fileID: 2820118484349581923}
   - component: {fileID: 2820118484349581921}
   - component: {fileID: 2820118484349581920}
-  - component: {fileID: 2366433422668870581}
   m_Layer: 0
   m_Name: Ceil
   m_TagString: Untagged
@@ -621,16 +560,3 @@ TilemapRenderer:
   m_Mode: 0
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
---- !u!114 &2366433422668870581
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2820118484349581922}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96ae91f5be264e339da2348f2841ecb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TileType: 3
