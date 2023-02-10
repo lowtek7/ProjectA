@@ -92,6 +92,7 @@ MonoBehaviour:
     - Tile
     - TileRenderer
     - UnitPrefab
+    - ScriptableObject
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 5f2a0a12926881a46bc382e144bc9044, type: 2}
