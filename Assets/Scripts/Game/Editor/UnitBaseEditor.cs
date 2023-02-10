@@ -10,7 +10,7 @@ namespace Game.Editor
 	public class UnitBaseEditor : UnityEditor.Editor
 	{
 		private UnitTemplate current;
-		
+
 		public void OnEnable()
 		{
 			current = target as UnitTemplate;

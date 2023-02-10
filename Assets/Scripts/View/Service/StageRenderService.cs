@@ -104,13 +104,8 @@ namespace View.Service
 				// ZoneComponent를 지닌 엔티티들을 가져와야한다.
 				var query = new Query<UnitComponent, ZoneComponent>(selfWorld);
 				query.Fetch();
-
-				// 읽기전용으로 루프를 돌릴꺼기 때문에 query 내부 foreach를 이용 안한다
-				foreach (var entity in query)
+				query.ForEach((Entity entity, ref UnitComponent unitComponent, ref ZoneComponent zoneComponent) =>
 				{
-					var unitComponent = entity.Get<UnitComponent>();
-					var zoneComponent = entity.Get<ZoneComponent>();
-
 					// 해당 엔티티가 속한 StageId가 이동하려는 곳과 같은 경우 불러와 준다.
 					if (zoneComponent.StageId == stageId)
 					{
@@ -119,7 +114,7 @@ namespace View.Service
 							loadedUnits.Add(entity.Id, unitTemplate);
 						}
 					}
-				}
+				});
 			}
 			else
 			{

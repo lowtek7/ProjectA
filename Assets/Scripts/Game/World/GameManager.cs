@@ -4,9 +4,12 @@ using System.Linq;
 using Core.Unity;
 using Core.Utility;
 using Game.Asset;
+using Game.Ecs.Component;
+using Game.Service;
 using Game.World.Stage;
 using Library.JSPool;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Game.World
 {
@@ -16,9 +19,6 @@ namespace Game.World
 	public class GameManager
 	{
 		private PoolManager poolManager;
-
-		private GameObject player;
-		private GameObject enemy;
 		private GameObject camera;
 
 		private Vector3 cameraDist = new Vector3(0, 0, -3);
@@ -81,57 +81,50 @@ namespace Game.World
 				Debug.Log($"Service[{service.GetType()}] Init Call");
 			}
 
-			// 1. Service 레이어 구축 (동준님)
-			// 유사하게 해야할듯. ECS
-			// 스포너든 뭐 기타 서비스는 나올 수 있는데 그런거 만들어서 통신 할 수 있게
-			// 뷰 영역이나 아래쪽 레이어에서
+			// 일단 캐릭터들 스폰하는거 하드 코딩으로 작성해둠
+			// 사용할 source guid : 9e6f16ba-3f5e-4d8a-8d42-16c8984134d4
+			var sourceGuid = Guid.Parse("9e6f16ba-3f5e-4d8a-8d42-16c8984134d4");
+			var spawnCommanders = new List<SpawnCommander>();
 
-			// 2. Spawn Manager or Spawner 필요... (혁인님)
-			// Service layer 위치해서 그런걸 호출해서 월드에 편하게 스폰하는게 필요하다
-			// Spawner를 구독하는 게임오브젝트가 있어야 해서 그걸 받아서 아래 작업해야 할듯
-
-			// 3. 엔티티와 게임 오브젝트의 연결 작업. (형우님)
-			// Spawner를 관찰하는 게임오브젝트가 있어야함.
-			// spawner는 순수한 엔티티를 생성해서 셋팅까지 하고 건내주는 할 듯.
-			// (관찰하고 있다가) 3번에서 월드에 entity가 생성됬네?
-			// 그럼 내가 게임 오브젝트 하나 생성해서 entity 바인딩 할게
-
-			// 4. 오브젝트 풀 구현 (지선, 프로파일러 등등)
-			// 프로파일링 기능은 있으면 좋다.
-			// 어떤어떤게 풀에 나가있고 풀에 들어가있는지 체크가 되야함 풀 사이즈가 얼마
-			// 수제 오브젝트 풀 해도 되고 C# 오브젝트 풀 해도 되고 라이브러리 땅겨와도되고
-
-			// 서비스 같은게 돌아가고있어서...
-			// 엔티티가 스폰되면 자기가 알아 게임오브젝트 만들어서 ... 추가작업을 진행해서 알아서 조립된다. Factory
-
-			var assetFactory = gameLoader.AssetFactory;
-			// 테스트 엔티티를 가져와서 스폰 시키기
-			if (assetFactory.TryGetAsset<EntityPresetAssetModule, GameObject>("TestEntity", out var gameObject))
-			{
-				if (gameObject.TryGetComponent<ComponentDesigner>(out var componentDesigner))
+			// player부터 작성하기
+			spawnCommanders.Add(Spawner.Spawn(world)
+				.Add(new UnitComponent
 				{
-					//엔티티를 서로 연결하는 방법에 대해 생각이 필요함.
-					var playerEntity = componentDesigner.ToEntity(world);
-					player = GameObject.Instantiate(gameObject, Vector3.zero, Quaternion.identity);
+					SourceGuid = sourceGuid
+				})
+				.Add<PlayerCameraComponent>()
+				.Add(new TransformComponent
+				{
+					Position = Vector3.zero
+				})
+				.Add(new ZoneComponent
+				{
+					StageId = 0
+				}));
 
-					// Spawner.Spawn("Player").GetComponent<Transform>().Position = Vector3.zero
-					// Spawner.Spawn("Player", SpawnInfo)
-					// Spawner.Spawn("Player", Position)
-					// spawn 내부에서 try get transform position 에다가 스폰하게 해도 될듯 ?
+			// 다른 캐릭터들 그려주기
+			for (int i = 0; i < 20; i++)
+			{
+				var stageId = Random.Range(0, 5);
+				var pos = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), 0);
+				spawnCommanders.Add(Spawner.Spawn(world)
+					.Add(new UnitComponent
+					{
+						SourceGuid = sourceGuid
+					})
+					.Add(new TransformComponent
+					{
+						Position = pos
+					})
+					.Add(new ZoneComponent
+					{
+						StageId = stageId
+					}));
+			}
 
-					// 컴포넌트 측에서 게임오브젝트에 의존적이면 안된다.
-					// Component에서 GameObject를 들고 있는다던가 그런걸 피해야함.
-					// GameObject에서 entity 들고 있고 이런건 ok
-					// 게임오브젝트의 update에서 계속 관찰 or
-					// 스타일의 차이지 컴포넌트를 런타임중에 삽입 / 삭제를 할지는
-					// 커스텀 update 돌리기 모든 gameobject
-					//
-
-					var enemyEntity = componentDesigner.ToEntity(world);
-					enemy = GameObject.Instantiate(gameObject, new Vector3(1, 1, 0), Quaternion.identity);
-				}
-
-				camera = gameLoader.Camera.gameObject;
+			foreach (var commander in spawnCommanders)
+			{
+				commander.Commit();
 			}
 
 			stage = new StageController();
@@ -146,25 +139,19 @@ namespace Game.World
 
 			if (Input.GetKeyDown(KeyCode.W))
 			{
-				player.transform.position += (new Vector3(0, moveSpeed, 0) * dt);
 			}
 
 			if (Input.GetKeyDown(KeyCode.S))
 			{
-				player.transform.position -= (new Vector3(0, moveSpeed, 0) * dt);
 			}
 
 			if (Input.GetKeyDown(KeyCode.A))
 			{
-				player.transform.position -= (new Vector3(moveSpeed, 0, 0) * dt);
 			}
 
 			if (Input.GetKeyDown(KeyCode.D))
 			{
-				player.transform.position += (new Vector3(moveSpeed, 0, 0) * dt);
 			}
-
-			camera.transform.position = player.transform.position + cameraDist;
 
 			foreach (var system in systems)
 			{

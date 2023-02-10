@@ -18,6 +18,12 @@ namespace Game.Service
 			return this;
 		}
 
+		public SpawnCommander Add<CT>(CT component) where CT : struct
+		{
+			entity.Add(component);
+			return this;
+		}
+
 		public void Commit()
 		{
 			Spawner.OnSpawnEvent?.Invoke(entity);

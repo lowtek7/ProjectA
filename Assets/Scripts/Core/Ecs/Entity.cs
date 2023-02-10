@@ -9,6 +9,10 @@ namespace BlitzEcs {
 
         public int Id => id;
 
+        public bool IsEmpty => id == -1;
+
+        public bool IsAlive => world != null && world.IsEntityAlive(this);
+
         public Entity(World world, int id) {
             this.id = id;
             this.world = world;
@@ -56,5 +60,7 @@ namespace BlitzEcs {
         }
 
         public static implicit operator int(Entity e) => e.id;
+
+        public static Entity Empty => new Entity(null, -1);
     }
 }

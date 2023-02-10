@@ -14,14 +14,14 @@ namespace Library.JSPool
 		class PoolItemSetting
 		{
 			[SerializeField]
-			private PoolItem item;
+			private GameObject prefab;
 
 			[SerializeField]
 			private int initialPoolSize = 10;
 
 			public int InitialPoolSize => initialPoolSize;
 
-			public PoolItem Item => item;
+			public PoolItem Item => prefab.GetComponent<PoolItem>();
 		}
 		
 		class PoolEntity
@@ -83,17 +83,21 @@ namespace Library.JSPool
 			}
 		}
 
-		public void Despawn(GameObject gameObject)
+		public void Despawn(GameObject targetGameObject)
 		{
-			if (gameObject.TryGetComponent<PoolItem>(out var poolItem) &&
-				gameObject.TryGetComponent<PoolController>(out var poolController))
+			if (targetGameObject.TryGetComponent<PoolItem>(out var poolItem))
 			{
-				poolController.DespawnEvent();
+				if (targetGameObject.TryGetComponent<PoolController>(out var poolController))
+				{
+					poolController.DespawnEvent();
+				}
+
 				var guid = poolItem.ItemGuid;
 				if (poolEntities.TryGetValue(guid, out var poolEntity))
 				{
 					poolEntity.pool.Enqueue(poolItem);
 					poolItem.transform.SetParent(poolEntity.Parent);
+					targetGameObject.SetActive(false);
 				}
 			}
 		}
@@ -111,20 +115,20 @@ namespace Library.JSPool
 						result.gameObject.SetActive(false);
 						poolEntity.pool.Enqueue(result);
 					}
-
-					var item = poolEntity.pool.Dequeue();
-					item.transform.SetParent(parent);
-					item.transform.position = position;
-					item.transform.rotation = rotation;
-					item.gameObject.SetActive(true);
-
-					if (item.gameObject.TryGetComponent<PoolController>(out var poolController))
-					{
-						poolController.SpawnEvent();
-					}
-
-					return item.gameObject;
 				}
+
+				var item = poolEntity.pool.Dequeue();
+				item.transform.SetParent(parent);
+				item.transform.position = position;
+				item.transform.rotation = rotation;
+				item.gameObject.SetActive(true);
+
+				if (item.gameObject.TryGetComponent<PoolController>(out var poolController))
+				{
+					poolController.SpawnEvent();
+				}
+
+				return item.gameObject;
 			}
 			
 			return null;
