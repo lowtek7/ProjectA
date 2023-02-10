@@ -14,6 +14,10 @@ namespace Game.Asset
 
 		private bool isLoading = false;
 
+		public void Init(AssetFactory assetFactory)
+		{
+		}
+
 		public IEnumerator LoadAll()
 		{
 			isLoading = true;

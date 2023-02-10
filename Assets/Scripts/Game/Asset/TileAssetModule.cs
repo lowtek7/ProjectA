@@ -16,6 +16,10 @@ namespace Game.Asset
 		private readonly Dictionary<string, List<TileBase>> pathToTiles = new ();
 
 		private bool isLoading = false;
+		public void Init(AssetFactory assetFactory)
+		{
+		}
+
 		public IEnumerator LoadAll()
 		{
 			isLoading = true;

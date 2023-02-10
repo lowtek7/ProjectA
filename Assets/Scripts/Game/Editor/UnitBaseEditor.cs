@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Game.Editor
 {
-	[CustomEditor(typeof(UnitBase))]
+	[CustomEditor(typeof(UnitTemplate))]
 	public class UnitBaseEditor : UnityEditor.Editor
 	{
-		private UnitBase current;
+		private UnitTemplate current;
 		
 		public void OnEnable()
 		{
-			current = target as UnitBase;
+			current = target as UnitTemplate;
 		}
 
 		public override void OnInspectorGUI()

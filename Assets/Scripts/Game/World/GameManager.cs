@@ -55,12 +55,9 @@ namespace Game.World
 						systems = new List<ISystem>();
 						systemOrders[system.Order] = systems;
 					}
-
-					system.Init(world);
 					systems.Add(system);
 				}
 			}
-
 
 			var systemLists = systemOrders.OrderBy(pair => pair.Key).Select(x => x.Value).ToArray();
 
@@ -68,6 +65,8 @@ namespace Game.World
 			{
 				foreach (var system in systemList)
 				{
+					// order에 기반한 스테이지 초기화 작업
+					system.Init(world);
 					systems.Add(system);
 				}
 			}

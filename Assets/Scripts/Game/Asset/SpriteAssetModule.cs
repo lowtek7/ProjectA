@@ -13,6 +13,10 @@ namespace Game.Asset
 		private readonly Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
 
 		private bool isLoading = false;
+		public void Init(AssetFactory assetFactory)
+		{
+		}
+
 		public IEnumerator LoadAll()
 		{
 			isLoading = true;

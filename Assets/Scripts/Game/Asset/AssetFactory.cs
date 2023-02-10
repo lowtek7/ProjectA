@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Core.Utility;
 using Game.Asset;
+using Library.JSPool;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -16,6 +17,7 @@ namespace Game
 
 	public interface IAssetModule : IAssetReader
 	{
+		void Init(AssetFactory assetFactory);
 		IEnumerator LoadAll();
 	}
 
@@ -33,9 +35,14 @@ namespace Game
 
 		private readonly Dictionary<Type, IAssetModule> modules = new Dictionary<Type, IAssetModule>();
 
-		public void Init()
+		private PoolManager _poolManager;
+
+		public PoolManager PoolManager => _poolManager;
+
+		public void Init(PoolManager poolManager)
 		{
 			instance = this;
+			_poolManager = poolManager;
 
 			modules.Clear();
 			var types = TypeUtility.GetTypesWithInterface(typeof(IAssetModule));
@@ -46,6 +53,11 @@ namespace Game
 				{
 					modules.Add(assetModule.GetType(), assetModule);
 				}
+			}
+
+			foreach (var keyValues in modules)
+			{
+				keyValues.Value.Init(this);
 			}
 		}
 
