@@ -22,7 +22,7 @@ namespace View.Service
 		}
 
 		[SerializeField]
-		private Camera camera;
+		private Camera playerCamera;
 
 		private float zDistance = 0;
 
@@ -32,7 +32,7 @@ namespace View.Service
 		/// <param name="position"></param>
 		public void SetCameraPosition(Vector2 position)
 		{
-			camera.transform.position = new Vector3(position.x, position.y, zDistance);
+			playerCamera.transform.position = new Vector3(position.x, position.y, zDistance);
 		}
 
 		public void Init(World world)
@@ -43,7 +43,7 @@ namespace View.Service
 		{
 			instance = this;
 			instanceFlag = true;
-			zDistance = camera.transform.position.z;
+			zDistance = playerCamera.transform.position.z;
 		}
 
 		private void OnDestroy()
