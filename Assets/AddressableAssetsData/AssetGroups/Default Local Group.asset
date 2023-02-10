@@ -41,6 +41,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - TileRenderer
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 80a1257f82a2a4c489cf9710910962e5
+    m_Address: Prefab/UnitPrefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitPrefab
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 71554528ed30bbe4098c32edfac362f1, type: 2}
   m_SchemaSet:

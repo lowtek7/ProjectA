@@ -6,6 +6,7 @@ using BlitzEcs;
 using Game;
 using Game.Asset;
 using Game.Ecs.Component;
+using Game.Service;
 using Game.Unit;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace View.Service
 	/// <summary>
 	/// 현재는 싱글톤으로 구현하였지만 차후에는 서비스 레이어에 해당 서비스를 넣도록 수정해야한다
 	/// </summary>
-	public class StageRenderService : MonoBehaviour
+	public class StageRenderService : MonoBehaviour, IGameService
 	{
 		private static bool instanceFlag = false;
 		private static StageRenderService instance;

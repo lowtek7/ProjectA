@@ -40,6 +40,9 @@ namespace Game.World
 		/// <param name="assetFactory"></param>
 		public void Init(GameLoader gameLoader)
 		{
+			poolManager = gameLoader.PoolManager;
+			poolManager.Init();
+
 			// ecs 월드를 생성하자.
 			world = new BlitzEcs.World();
 
@@ -71,8 +74,12 @@ namespace Game.World
 				}
 			}
 
-			poolManager = gameLoader.PoolManager;
-			poolManager.Init();
+			// 서비스들 초기화 해주기 (임시적)
+			foreach (var service in gameLoader.Services)
+			{
+				service.Init(world);
+				Debug.Log($"Service[{service.GetType()}] Init Call");
+			}
 
 			// 1. Service 레이어 구축 (동준님)
 			// 유사하게 해야할듯. ECS

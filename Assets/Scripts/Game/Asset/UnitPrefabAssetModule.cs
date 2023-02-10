@@ -66,7 +66,7 @@ namespace Game.Asset
 		{
 			isLoading = true;
 			unitPrefabs.Clear();
-			Addressables.LoadAssetsAsync<GameObject>("EntityPreset", null).Completed += OnLoadCompleted;
+			Addressables.LoadAssetsAsync<GameObject>("UnitPrefab", null).Completed += OnLoadCompleted;
 
 			while (isLoading)
 			{

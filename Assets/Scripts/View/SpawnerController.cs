@@ -13,10 +13,12 @@ namespace View
 {
 	/// <summary>
 	/// 얘가 책임지고 게임오브젝트를 생성해서 ECS 월드에 있는 엔티티와 결합 시킴
+	/// 이제는 사용하지 않는 컨트롤러
+	/// 스폰에 대한 개념이 모두 바뀌었기 때문에
 	/// </summary>
 	public class SpawnerController : MonoBehaviour
 	{
-		private List<(Type componentType, Type behaviourType)> componentPairList;
+		private readonly List<(Type componentType, Type behaviourType)> componentPairList = new List<(Type componentType, Type behaviourType)>();
 
 		// 추후 init 호출 시점 추가되면 Start 내용 init으로 옮기기
 		public void Init()
