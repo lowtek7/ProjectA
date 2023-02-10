@@ -2,7 +2,6 @@
 using Core.Unity;
 using Game.Ecs.Component;
 using Game.Unit;
-using UnityEngine;
 
 namespace View.Behaviours
 {

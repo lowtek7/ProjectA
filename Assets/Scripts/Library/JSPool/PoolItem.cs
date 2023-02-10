@@ -57,9 +57,33 @@ namespace Library.JSPool
 		{
 			if (string.IsNullOrEmpty(itemGuid))
 			{
-				itemGuid = Guid.NewGuid().ToString();
 				Undo.RecordObject(gameObject, "PoolItem Set Guid");
 				EditorUtility.SetDirty(gameObject);
+
+				itemGuid = Guid.NewGuid().ToString();
+			}
+			else
+			{
+				Event e = Event.current;
+
+				if (e != null)
+				{
+					if (Application.isEditor)
+					{
+						if (e.type == EventType.Used && (e.commandName == "Duplicate" || e.commandName == "Paste"))
+						{
+							if (Selection.activeObject is GameObject &&
+								PrefabUtility.GetPrefabAssetType(gameObject) == PrefabAssetType.Regular &&
+								PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.NotAPrefab)
+							{
+								Undo.RecordObject(this, "Create Item GUID");
+								EditorUtility.SetDirty(gameObject);
+
+								itemGuid = Guid.NewGuid().ToString();
+							}
+						}
+					}
+				}
 			}
 		}
 #endif

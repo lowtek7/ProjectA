@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using BlitzEcs;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace Game.Unit
@@ -61,5 +64,31 @@ namespace Game.Unit
 				unitBehaviour.Disconnect();
 			}
 		}
+
+#if UNITY_EDITOR
+		void OnValidate()
+		{
+			Event e = Event.current;
+
+			if (e != null)
+			{
+				if (Application.isEditor)
+				{
+					if (e.type == EventType.Used && (e.commandName == "Duplicate" || e.commandName == "Paste"))
+					{
+						if (Selection.activeObject is GameObject &&
+							PrefabUtility.GetPrefabAssetType(gameObject) == PrefabAssetType.Regular &&
+							PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.NotAPrefab)
+						{
+							Undo.RecordObject(this, "Create Source GUID");
+							EditorUtility.SetDirty(gameObject);
+							
+							sourceGuid = Guid.NewGuid().ToString();
+						}
+					}
+				}
+			}
+		}
+#endif
 	}
 }

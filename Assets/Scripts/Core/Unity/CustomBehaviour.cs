@@ -1,4 +1,5 @@
 ﻿using System;
+using BlitzEcs;
 using UnityEngine;
 
 namespace Core.Unity
