@@ -17,25 +17,34 @@ namespace Build.Editor.Stage
 
 		public override void OnInspectorGUI()
 		{
+			var stageGuid = Guid.Empty;
 			base.OnInspectorGUI();
 			serializedObject.Update();
 			using (new EditorGUILayout.HorizontalScope())
 			{
 				var guidProperty = serializedObject.FindProperty("stageGuid");
-				var guid = current.StageGuid;
+				stageGuid = current.StageGuid;
 
-				EditorGUILayout.LabelField("Stage GUID", guid.ToString());
+				EditorGUILayout.LabelField("Stage GUID", stageGuid.ToString());
 
-				if (guid == Guid.Empty && GUILayout.Button("Create"))
+				if (stageGuid == Guid.Empty && GUILayout.Button("Create"))
 				{
 					guidProperty.stringValue = Guid.NewGuid().ToString();
 					serializedObject.ApplyModifiedProperties();
 				}
-				else if (guid != Guid.Empty && GUILayout.Button("Copy"))
+				else if (stageGuid != Guid.Empty && GUILayout.Button("Copy"))
 				{
-					EditorGUIUtility.systemCopyBuffer = guid.ToString();
+					EditorGUIUtility.systemCopyBuffer = stageGuid.ToString();
 				}
 			}
+			
+			// if (stageGuid != Guid.Empty)
+			// {
+			// 	if (GUILayout.Button("Stage BUILD!"))
+			// 	{
+			// 		var result = StageBuilder.BuildToJson(current);
+			// 	}
+			// }
 		}
 	}
 }

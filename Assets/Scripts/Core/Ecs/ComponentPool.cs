@@ -72,6 +72,15 @@ namespace BlitzEcs {
 
         public void Add(int entityId, object component) => Add(entityId, (TComponent)component);
 
+        /// <summary>
+        /// 박싱이 일어나는 Get 함수
+        /// struct(ValueType) => object(RefType)으로 변환되면서 Boxing...
+        /// </summary>
+        /// <param name="entityId"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public object GetWithBoxing(int entityId) => Get(entityId);
+
         public void Add(int entityId, TComponent component) {
             bool isAlreadyContained = Contains(entityId);
 

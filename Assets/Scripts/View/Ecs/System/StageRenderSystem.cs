@@ -1,4 +1,5 @@
-﻿using BlitzEcs;
+﻿using System;
+using BlitzEcs;
 using Core.Unity;
 using Game.Ecs.Component;
 using Game.World;
@@ -24,7 +25,7 @@ namespace View.Ecs.System
 			renderQuery = new Query<StageRenderComponent>(world);
 			unitQuery = new Query<UnitComponent, ZoneComponent>(world);
 			var rendererEntity = world.Spawn();
-			rendererEntity.Add(new StageRenderComponent { StageId = 0 });
+			rendererEntity.Add(new StageRenderComponent { StageGuid = Guid.Empty });
 		}
 
 		public void Update(float deltaTime)
@@ -33,12 +34,12 @@ namespace View.Ecs.System
 			playerQuery.Fetch();
 			renderQuery.Fetch();
 
-			int currentStageId = Constants.UnknownStageId;
+			var currentStageGuid = Constants.UnknownStageGuid;
 			
 			playerQuery.ForEach((ref PlayerCameraComponent c1, ref ZoneComponent zoneComponent) =>
 			{
 				// 읽기전용으로 가져올 생각이기 때문에 ref를 사용하지 않는다.
-				currentStageId = zoneComponent.StageId;
+				currentStageGuid = zoneComponent.StageGuid;
 			});
 
 			if (StageRenderService.TryGetInstance(out var stageRenderService))
@@ -46,11 +47,11 @@ namespace View.Ecs.System
 				renderQuery.ForEach((ref StageRenderComponent stageRenderComponent) =>
 				{
 					// 현재 스테이지 Id와 스테이지 렌더 Component의 스테이지 Id가 다르므로 씬이동이 발생해야한다!
-					if (stageRenderComponent.StageId != currentStageId)
+					if (stageRenderComponent.StageGuid != currentStageGuid)
 					{
 						// 스테이지 렌더 컴포넌트의 스테이지 Id를 변경
-						stageRenderComponent.StageId = currentStageId;
-						stageRenderService.StageTransition(currentStageId);
+						stageRenderComponent.StageGuid = currentStageGuid;
+						stageRenderService.StageTransition(currentStageGuid);
 					}
 					else if (!stageRenderService.IsLoading)
 					{
@@ -59,7 +60,7 @@ namespace View.Ecs.System
 						unitQuery.ForEach((Entity unitEntity, ref UnitComponent unitComponent, ref ZoneComponent zoneComponent) =>
 						{
 							// 해당 엔티티가 현재 스테이지와 일치하는지에 대한 검사
-							if (zoneComponent.StageId == currentStageId)
+							if (zoneComponent.StageGuid == currentStageGuid)
 							{
 								// 만약 일치 한다면 render service에서 현재 그려주고 있는지에 대한 검사를 해야한다.
 								if (!stageRenderService.Contains(unitEntity.Id))

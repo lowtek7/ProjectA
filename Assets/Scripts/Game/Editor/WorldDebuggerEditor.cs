@@ -1,4 +1,5 @@
-﻿using Game.World;
+﻿using System;
+using Game.World;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Game.Editor
 	public class WorldDebuggerEditor : UnityEditor.Editor
 	{
 		private WorldDebugger current;
-		private int targetStageId = 0;
+		private string targetStageGuid = string.Empty;
 
 		public void OnEnable()
 		{
@@ -19,10 +20,10 @@ namespace Game.Editor
 		{
 			base.OnInspectorGUI();
 
-			targetStageId = EditorGUILayout.IntField("StageId", targetStageId);
-			if (GUILayout.Button("Transition"))
+			targetStageGuid = EditorGUILayout.TextField("StageGuid", targetStageGuid);
+			if (GUILayout.Button("Transition") && Guid.TryParse(targetStageGuid, out var stageGuid))
 			{
-				current.StageTransition(targetStageId);
+				current.StageTransition(stageGuid);
 			}
 		}
 	}

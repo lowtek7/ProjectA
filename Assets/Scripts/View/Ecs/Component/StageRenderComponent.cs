@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.Unity;
+using Core.Utility;
 using UnityEngine;
 
 namespace View.Ecs.Component
@@ -11,17 +12,17 @@ namespace View.Ecs.Component
 		/// 현재 렌더링 중인 스테이지의 ID
 		/// </summary>
 		[SerializeField]
-		private int stageId;
+		private SGuid stageGuid;
 
-		public int StageId
+		public Guid StageGuid
 		{
-			get => stageId;
-			set => stageId = value;
+			get => stageGuid.Guid;
+			set => stageGuid.Guid = value;
 		}
 
 		public IComponent Clone()
 		{
-			return new StageRenderComponent { stageId = stageId};
+			return new StageRenderComponent { stageGuid = stageGuid};
 		}
 	}
 }

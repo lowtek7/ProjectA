@@ -72,12 +72,12 @@ namespace View.Service
 		/// <summary>
 		/// 특정한 스테이지로 이동하는 함수
 		/// </summary>
-		public void StageTransition(int stageId)
+		public void StageTransition(Guid stageGuid)
 		{
 			// 여기서 로드 되어있는 스테이지는 언로드하고 새로운 스테이지는 로드
 			if (!isLoading)
 			{
-				StartCoroutine(StageTransitionProcess(stageId));
+				StartCoroutine(StageTransitionProcess(stageGuid));
 			}
 			else
 			{
@@ -85,7 +85,7 @@ namespace View.Service
 			}
 		}
 
-		private IEnumerator StageTransitionProcess(int stageId)
+		private IEnumerator StageTransitionProcess(Guid stageGuid)
 		{
 			isLoading = true;
 			var assetFactory = AssetFactory.Instance;
@@ -107,7 +107,7 @@ namespace View.Service
 				query.ForEach((Entity entity, ref UnitComponent unitComponent, ref ZoneComponent zoneComponent) =>
 				{
 					// 해당 엔티티가 속한 StageId가 이동하려는 곳과 같은 경우 불러와 준다.
-					if (zoneComponent.StageId == stageId)
+					if (zoneComponent.StageGuid == stageGuid)
 					{
 						if (StageEnterEventInternal(unitPrefabAssetModule, unitComponent.SourceGuid, entity, out var unitTemplate))
 						{
@@ -168,8 +168,9 @@ namespace View.Service
 			if (assetFactory.TryGetAssetReader<UnitPrefabAssetModule>(out var reader) &&
 				reader is UnitPrefabAssetModule unitPrefabAssetModule)
 			{
+				var unitComponent = entity.Get<UnitComponent>();
 				if (StageEnterEventInternal(unitPrefabAssetModule,
-						entity.Get<UnitComponent>().SourceGuid,
+						unitComponent.SourceGuid,
 						entity,
 						out var unitTemplate))
 				{

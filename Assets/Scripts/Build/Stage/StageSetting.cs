@@ -39,7 +39,8 @@ namespace Build.Stage
 				{
 					if (e.type == EventType.Used && (e.commandName == "Duplicate" || e.commandName == "Paste"))
 					{
-						if (Selection.activeObject is GameObject &&
+						if (Selection.activeObject is GameObject go &&
+							go.TryGetComponent(out StageSetting stageSetting) &&
 							PrefabUtility.GetPrefabAssetType(gameObject) == PrefabAssetType.Regular &&
 							PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.NotAPrefab)
 						{

@@ -7,6 +7,7 @@ using Core.Utility;
 using Game.Ecs.Component;
 using Game.Service;
 using Library.JSPool;
+using Service.SaveLoad;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -80,57 +81,8 @@ namespace Game.World
 				Debug.Log($"Service[{service.GetType()}] Init Call");
 			}
 
-			// 일단 캐릭터들 스폰하는거 하드 코딩으로 작성해둠
-			// 사용할 source guid : 9e6f16ba-3f5e-4d8a-8d42-16c8984134d4
-			var sourceGuid = Guid.Parse("9e6f16ba-3f5e-4d8a-8d42-16c8984134d4");
-			var spawnCommanders = new List<SpawnCommander>();
-
-			// player부터 작성하기
-			spawnCommanders.Add(Spawner.Spawn(world)
-				.Add(new UnitComponent
-				{
-					SourceGuid = sourceGuid
-				})
-				.Add(new PlayerCameraComponent())
-				.Add(new PlayerComponent())
-				.Add(new TransformComponent
-				{
-					Position = Vector3.zero
-				})
-				.Add(new ZoneComponent
-				{
-					StageId = 0
-				})
-				.Add(new MovementComponent
-				{
-					MoveDir = Vector3.zero,
-					MoveSpeed = 1
-				}));
-
-			// 다른 캐릭터들 그려주기
-			for (int i = 0; i < 20; i++)
-			{
-				var stageId = Random.Range(0, 5);
-				var pos = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), 0);
-				spawnCommanders.Add(Spawner.Spawn(world)
-					.Add(new UnitComponent
-					{
-						SourceGuid = sourceGuid
-					})
-					.Add(new TransformComponent
-					{
-						Position = pos
-					})
-					.Add(new ZoneComponent
-					{
-						StageId = stageId
-					}));
-			}
-
-			foreach (var commander in spawnCommanders)
-			{
-				commander.Commit();
-			}
+			var virtualWorld = SaveLoadService.LoadWorld(SaveLoadConstants.WorldDataPath);
+			virtualWorld.Realize(world);
 
 			playerQuery = new Query<PlayerComponent, MovementComponent>(world);
 		}
@@ -166,6 +118,17 @@ namespace Game.World
 			}
 
 			playerQuery.Fetch();
+
+			var test = playerQuery.MatchedEntityIds;
+			foreach (var entityId in test.entityIds)
+			{
+				var entity = new Entity(world, entityId);
+				if (entity.Has<MovementComponent>())
+				{
+					int a = 0;
+				}
+			}
+
 			playerQuery.ForEach((ref PlayerComponent playerComponent,
 				ref MovementComponent movementComponent) =>
 			{

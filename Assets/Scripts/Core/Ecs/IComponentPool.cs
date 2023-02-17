@@ -8,6 +8,7 @@ namespace BlitzEcs {
         bool Contains(int entityId);
         void Add(int entityId);
         void Add(int entityId, object component);
+        object GetWithBoxing(int entityId);
         void Remove(int entityId);
         void ExecuteBufferedRemoves();
 

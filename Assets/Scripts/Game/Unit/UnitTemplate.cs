@@ -76,7 +76,8 @@ namespace Game.Unit
 				{
 					if (e.type == EventType.Used && (e.commandName == "Duplicate" || e.commandName == "Paste"))
 					{
-						if (Selection.activeObject is GameObject &&
+						if (Selection.activeObject is GameObject go &&
+							go.TryGetComponent(out UnitTemplate unitTemplate) &&
 							PrefabUtility.GetPrefabAssetType(gameObject) == PrefabAssetType.Regular &&
 							PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.NotAPrefab)
 						{

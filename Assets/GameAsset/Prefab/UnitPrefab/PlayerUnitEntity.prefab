@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 7624615287391324703}
   - component: {fileID: 9089028694116063776}
   m_Layer: 0
-  m_Name: TestUnitEntity
+  m_Name: PlayerUnitEntity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 636f9c07a73f47fcb45971834f848448, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sourceGuid: 9e6f16ba-3f5e-4d8a-8d42-16c8984134d4
+  sourceGuid: e43acb59-4e52-48c7-8715-1025d20f345b
 --- !u!114 &-5123256311199164676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4144da266abf4ce987589c1738634c9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemGuid: bafb47c5-6a99-4d6e-90c3-5a4384016bc8
+  itemGuid: c0a5fb71-f015-4174-bd04-d79f0ac24871
 --- !u!114 &7624615287391324703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,6 +172,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   components:
   - rid: 8986602489903841287
+  - rid: 8986602489903841450
+  - rid: 8986602489903841451
   references:
     version: 2
     RefIds:
@@ -180,3 +182,7 @@ MonoBehaviour:
       data:
         moveSpeed: 1
         moveDir: {x: 0, y: 0, z: 0}
+    - rid: 8986602489903841450
+      type: {class: PlayerCameraComponent, ns: Game.Ecs.Component, asm: Game}
+    - rid: 8986602489903841451
+      type: {class: PlayerComponent, ns: Game.Ecs.Component, asm: Game}

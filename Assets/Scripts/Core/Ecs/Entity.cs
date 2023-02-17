@@ -13,6 +13,8 @@ namespace BlitzEcs {
 
         public bool IsAlive => world != null && world.IsEntityAlive(this);
 
+        public World World => world;
+
         public Entity(World world, int id) {
             this.id = id;
             this.world = world;

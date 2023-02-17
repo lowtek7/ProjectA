@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.Unity;
+using Core.Utility;
 using UnityEngine;
 
 namespace Game.Ecs.Component
@@ -12,19 +13,19 @@ namespace Game.Ecs.Component
 	public struct ZoneComponent : IComponent
 	{
 		[SerializeField]
-		private int stageId;
+		private SGuid stageGuid;
 
-		public int StageId
+		public Guid StageGuid
 		{
-			get => stageId;
-			set => stageId = value;
+			get => stageGuid.Guid;
+			set => stageGuid.Guid = value;
 		}
 
 		public IComponent Clone()
 		{
 			return new ZoneComponent()
 			{
-				stageId = stageId
+				stageGuid = stageGuid
 			};
 		}
 	}

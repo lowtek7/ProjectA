@@ -20,6 +20,7 @@ namespace BlitzEcs {
         // are still alive (if they are not, then the Contains() method will return false).
         private SparseSet<int> entityComponentCounts;
         public int EntityCount => entityComponentCounts.Count;
+        public int ComponentCount => allComponentPools.Count;
 
         private int activePoolLocks;
 
@@ -149,6 +150,29 @@ namespace BlitzEcs {
             componentPoolsByType[type] = newPool;
             allComponentPools.Add(newPool);
             return newPool;
+        }
+
+        public IComponentPool GetIComponentPool(Type type)
+        {
+	        if (componentPoolsByType.TryGetValue(type, out IComponentPool pool)) {
+		        return pool;
+	        }
+
+	        var componentPoolType = typeof(ComponentPool<>).MakeGenericType(type);
+	        var newPool = Activator.CreateInstance(componentPoolType, new object[] { this, allComponentPools.Count });
+
+	        if (newPool is IComponentPool componentPool)
+	        {
+		        componentPoolsByType[type] = componentPool;
+		        allComponentPools.Add(componentPool);
+	        }
+	        else
+	        {
+		        // ComponentPool Create Failed...
+		        throw new NullReferenceException();
+	        }
+
+	        return componentPool;
         }
 
         public bool TryGetIComponentPool(Type componentType, out IComponentPool pool) {
