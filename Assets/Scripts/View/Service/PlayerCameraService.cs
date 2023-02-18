@@ -35,6 +35,16 @@ namespace View.Service
 			playerCamera.transform.position = new Vector3(position.x, position.y, zDistance);
 		}
 
+		public Vector3 ScreenToWorld(Vector2 screenPos)
+		{
+			return playerCamera.ScreenToWorldPoint(screenPos);
+		}
+
+		public Vector2 WorldToScreen(Vector3 worldPos)
+		{
+			return playerCamera.WorldToScreenPoint(worldPos);
+		}
+
 		public void Init(World world)
 		{
 		}
