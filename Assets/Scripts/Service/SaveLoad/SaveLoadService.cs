@@ -28,7 +28,7 @@ namespace Service.SaveLoad
 		public static void SaveWorld(string worldPath, VirtualWorld virtualWorld)
 		{
 			var utf8WithoutBom = new UTF8Encoding(false);
-			var json = JsonUtility.ToJson(virtualWorld);
+			var json = JsonUtility.ToJson(virtualWorld, true);
 			File.WriteAllText(worldPath, json, utf8WithoutBom);
 		}
 	}
