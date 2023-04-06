@@ -88,37 +88,6 @@ namespace Game.World
 		{
 			var dt = Time.deltaTime;
 
-			float x = 0;
-			float y = 0;
-
-			if (Input.GetKey(KeyCode.W))
-			{
-				y += 1;
-			}
-
-			if (Input.GetKey(KeyCode.S))
-			{
-				y -= 1;
-			}
-
-			if (Input.GetKey(KeyCode.A))
-			{
-				x -= 1;
-			}
-
-			if (Input.GetKey(KeyCode.D))
-			{
-				x += 1;
-			}
-
-			playerQuery.Fetch();
-
-			playerQuery.ForEach((ref PlayerComponent playerComponent,
-				ref MovementComponent movementComponent) =>
-			{
-				movementComponent.MoveDir = new Vector3(x, y, 0);
-			});
-
 			foreach (var system in systems)
 			{
 				system.Update(dt);

@@ -2,7 +2,7 @@
 using Core.Unity;
 using Game.Ecs.Component;
 using Service;
-using View.Service;
+using Service.Camera;
 
 namespace View.Ecs.System
 {

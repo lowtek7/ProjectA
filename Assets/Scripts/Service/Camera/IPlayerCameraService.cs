@@ -1,7 +1,6 @@
-﻿using Service;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace View.Service
+namespace Service.Camera
 {
 	public interface IPlayerCameraService : IGameService
 	{

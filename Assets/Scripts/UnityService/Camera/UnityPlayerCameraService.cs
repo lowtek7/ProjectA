@@ -1,7 +1,7 @@
 ﻿using BlitzEcs;
 using Service;
+using Service.Camera;
 using UnityEngine;
-using View.Service;
 
 namespace UnityService.Camera
 {

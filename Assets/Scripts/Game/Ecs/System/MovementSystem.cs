@@ -9,7 +9,7 @@ namespace Game.Ecs.System
 	{
 		private Query<TransformComponent, MovementComponent> moveQuery;
 
-		public int Order => 1;
+		public int Order => 101;
 
 		public void Init(BlitzEcs.World world)
 		{
@@ -18,7 +18,6 @@ namespace Game.Ecs.System
 
 		public void Update(float deltaTime)
 		{
-			moveQuery.Fetch();
 			moveQuery.ForEach((Entity entity,
 				ref TransformComponent transformComponent,
 				ref MovementComponent movementComponent) =>
@@ -27,9 +26,9 @@ namespace Game.Ecs.System
 				if (movementComponent.MoveDir != Vector3.zero)
 				{
 					// 여기서 normalize하는것이 과연 올바른것일까?
-					var dir = movementComponent.MoveDir.normalized;
-					var speed = movementComponent.MoveSpeed * deltaTime;
-					transformComponent.Position += (dir * speed);
+					var dir = movementComponent.MoveDir;
+					var dist = movementComponent.MoveSpeed * deltaTime;
+					transformComponent.Position += (dir * dist);
 				}
 			});
 		}

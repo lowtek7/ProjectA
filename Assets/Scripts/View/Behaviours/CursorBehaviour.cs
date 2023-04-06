@@ -1,8 +1,8 @@
 ﻿using System;
 using Service;
+using Service.Camera;
 using UnityEngine;
 using View.Manager;
-using View.Service;
 
 namespace View.Behaviours
 {

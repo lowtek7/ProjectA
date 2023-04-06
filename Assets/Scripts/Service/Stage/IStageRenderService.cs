@@ -1,15 +1,14 @@
 ﻿using System;
 using BlitzEcs;
-using Service;
 
-namespace View.Service
+namespace Service.Stage
 {
 	public interface IStageRenderService : IGameService
 	{
 		bool IsLoading { get; }
-		
+
 		bool Contains(int entityId);
-		
+
 		void StageTransition(Guid stageGuid);
 
 		void StageEnterEvent(Entity entity);

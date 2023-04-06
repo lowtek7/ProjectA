@@ -4,8 +4,8 @@ using Core.Unity;
 using Game.Ecs.Component;
 using Game.World;
 using Service;
+using Service.Stage;
 using View.Ecs.Component;
-using View.Service;
 
 namespace View.Ecs.System
 {
