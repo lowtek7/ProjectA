@@ -3,6 +3,7 @@ using BlitzEcs;
 using Core.Unity;
 using Game.Ecs.Component;
 using Game.World;
+using Service;
 using View.Ecs.Component;
 using View.Service;
 
@@ -42,7 +43,7 @@ namespace View.Ecs.System
 				currentStageGuid = zoneComponent.StageGuid;
 			});
 
-			if (StageRenderService.TryGetInstance(out var stageRenderService))
+			if (ServiceManager.TryGetService<IStageRenderService>(out var stageRenderService))
 			{
 				renderQuery.ForEach((ref StageRenderComponent stageRenderComponent) =>
 				{

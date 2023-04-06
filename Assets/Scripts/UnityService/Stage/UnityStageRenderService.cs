@@ -1,37 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using BlitzEcs;
 using Game;
 using Game.Asset;
 using Game.Ecs.Component;
-using Game.Service;
 using Game.Unit;
+using Service;
 using UnityEngine;
+using View.Service;
 
-namespace View.Service
+namespace UnityService.Stage
 {
-	/// <summary>
-	/// 현재는 싱글톤으로 구현하였지만 차후에는 서비스 레이어에 해당 서비스를 넣도록 수정해야한다
-	/// </summary>
-	public class StageRenderService : MonoBehaviour, IGameService
+	public class UnityStageRenderService : MonoBehaviour, IStageRenderService
 	{
-		private static bool instanceFlag = false;
-		private static StageRenderService instance;
-
-		/// <summary>
-		/// 모노비헤이비어 널 체크는 퍼포먼스적으로 큰 작업이기 때문에 (라이더가 알려줌)
-		/// 인스턴스의 널체크를 instanceFlag를 이용해 대신 한다
-		/// </summary>
-		/// <param name="stageRenderService"></param>
-		/// <returns></returns>
-		public static bool TryGetInstance(out StageRenderService stageRenderService)
-		{
-			stageRenderService = instance;
-			return instanceFlag;
-		}
-
 		private World selfWorld = null;
 
 		private bool isLoading = false;
@@ -54,14 +36,20 @@ namespace View.Service
 
 		private void Awake()
 		{
-			instance = this;
-			instanceFlag = true;
+			// 일단 임시적으로 여기서 등록해주자...
+			if (Application.isPlaying)
+			{
+				ServiceManager.SetService(typeof(IStageRenderService), this);
+			}
 		}
 
 		private void OnDestroy()
 		{
-			instance = null;
-			instanceFlag = false;
+			// 임시적으로 여기서 제거한다.
+			if (Application.isPlaying)
+			{
+				ServiceManager.ClearService(typeof(IStageRenderService));
+			}
 		}
 
 		public void Init(World world)

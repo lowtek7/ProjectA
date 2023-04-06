@@ -119,16 +119,6 @@ namespace Game.World
 
 			playerQuery.Fetch();
 
-			var test = playerQuery.MatchedEntityIds;
-			foreach (var entityId in test.entityIds)
-			{
-				var entity = new Entity(world, entityId);
-				if (entity.Has<MovementComponent>())
-				{
-					int a = 0;
-				}
-			}
-
 			playerQuery.ForEach((ref PlayerComponent playerComponent,
 				ref MovementComponent movementComponent) =>
 			{

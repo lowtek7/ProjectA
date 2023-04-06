@@ -224,7 +224,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 296270256}
-  - component: {fileID: 296270255}
+  - component: {fileID: 296270257}
   m_Layer: 0
   m_Name: StageRenderer
   m_TagString: Untagged
@@ -232,18 +232,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &296270255
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 296270254}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 963ca5b4c3c04529bca05aeb9eb7d571, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &296270256
 Transform:
   m_ObjectHideFlags: 0
@@ -259,6 +247,18 @@ Transform:
   m_Father: {fileID: 1456230613}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &296270257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296270254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5639fc050c24a669cf1f8567a6ead86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1394339866
 PrefabInstance:
   m_ObjectHideFlags: 0
