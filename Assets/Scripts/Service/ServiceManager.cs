@@ -4,9 +4,19 @@ using Game.Service;
 
 namespace Service
 {
+	public interface IServiceManagerCallback
+	{
+		void OnActivateService(IGameService service);
+		void OnDeactivateService(IGameService service);
+	}
+	
 	public static class ServiceManager
 	{
 		private static Dictionary<Type, IGameService> serviceMap = new Dictionary<Type, IGameService>();
+
+		private static List<IServiceManagerCallback> callbacks = new List<IServiceManagerCallback>();
+
+		public static IEnumerable<IGameService> Services => serviceMap.Values;
 
 		public static bool TryGetService<CT>(out CT service) where CT : IGameService
 		{
@@ -41,9 +51,16 @@ namespace Service
 			{
 				if (serviceMap.TryGetValue(serviceInterfaceType, out var original))
 				{
-					if (original is IGameServiceCallback callback)
 					{
-						callback.OnDeactivate();
+						if (original is IGameServiceCallback callback)
+						{
+							callback.OnDeactivate();
+						}
+					}
+
+					foreach (var callback in callbacks)
+					{
+						callback.OnDeactivateService(service);
 					}
 				}
 			}
@@ -56,6 +73,11 @@ namespace Service
 					callback.OnActivate();
 				}
 			}
+			
+			foreach (var callback in callbacks)
+			{
+				callback.OnActivateService(service);
+			}
 		}
 
 		/// <summary>
@@ -67,12 +89,34 @@ namespace Service
 		{
 			if (serviceMap.TryGetValue(serviceInterfaceType, out var service))
 			{
-				if (service is IGameServiceCallback callback)
 				{
-					callback.OnDeactivate();
+					if (service is IGameServiceCallback callback)
+					{
+						callback.OnDeactivate();
+					}
 				}
 
 				serviceMap.Remove(serviceInterfaceType);
+				
+				foreach (var callback in callbacks)
+				{
+					callback.OnDeactivateService(service);
+				}
+			}
+		}
+
+		public static void AddCallback(IServiceManagerCallback callback)
+		{
+			callbacks.Add(callback);
+		}
+
+		public static void RemoveCallback(IServiceManagerCallback callback)
+		{
+			var index = callbacks.FindIndex(x => x == callback);
+
+			if (index >= 0)
+			{
+				callbacks.RemoveAt(index);
 			}
 		}
 
@@ -80,9 +124,16 @@ namespace Service
 		{
 			foreach (var service in serviceMap.Values)
 			{
-				if (service is IGameServiceCallback callback)
 				{
-					callback.OnDeactivate();
+					if (service is IGameServiceCallback callback)
+					{
+						callback.OnDeactivate();
+					}
+				}
+
+				foreach (var callback in callbacks)
+				{
+					callback.OnDeactivateService(service);
 				}
 			}
 			

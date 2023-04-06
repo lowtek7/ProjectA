@@ -21,9 +21,6 @@ namespace Game
 		[SerializeField]
 		private PoolManager poolManager;
 
-		[SerializeField]
-		private List<GameObject> services;
-
 		private bool canPlay = false;
 
 		private GameManager _gameManager;
@@ -35,21 +32,6 @@ namespace Game
 		public Camera Camera => gameCamera;
 
 		public AssetFactory AssetFactory => assetFactory;
-
-		public IEnumerable<IGameService> Services
-		{
-			get
-			{
-				foreach (var go in services)
-				{
-					var innerServices = go.GetComponents<IGameService>();
-					foreach (var service in innerServices)
-					{
-						yield return service;
-					}
-				}
-			}
-		}
 
 		// Component
 		// ViewComponent

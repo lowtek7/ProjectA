@@ -7,16 +7,16 @@ using Core.Utility;
 using Game.Ecs.Component;
 using Game.Service;
 using Library.JSPool;
+using Service;
 using Service.SaveLoad;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Game.World
 {
 	/// <summary>
 	/// 임시용 게임 월드
 	/// </summary>
-	public class GameManager
+	public class GameManager : IServiceManagerCallback, IDisposable
 	{
 		private PoolManager poolManager;
 		private GameObject camera;
@@ -74,17 +74,16 @@ namespace Game.World
 				}
 			}
 
-			// 서비스들 초기화 해주기 (임시적)
-			foreach (var service in gameLoader.Services)
+			foreach (var service in ServiceManager.Services)
 			{
 				service.Init(world);
-				Debug.Log($"Service[{service.GetType()}] Init Call");
 			}
 
 			var virtualWorld = SaveLoadService.LoadWorld(SaveLoadConstants.WorldDataPath);
 			virtualWorld.Realize(world);
 
 			playerQuery = new Query<PlayerComponent, MovementComponent>(world);
+			ServiceManager.AddCallback(this);
 		}
 
 		/// <summary>
@@ -129,6 +128,24 @@ namespace Game.World
 			{
 				system.Update(dt);
 			}
+		}
+
+		public void OnActivateService(IGameService service)
+		{
+			if (world != null)
+			{
+				service.Init(world);
+			}
+		}
+
+		public void OnDeactivateService(IGameService service)
+		{
+		}
+
+		public void Dispose()
+		{
+			world = null;
+			ServiceManager.RemoveCallback(this);
 		}
 	}
 }
