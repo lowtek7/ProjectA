@@ -2,7 +2,6 @@
 using Core.Unity;
 using Game.Ecs.Component;
 using UnityEngine;
-using NotImplementedException = System.NotImplementedException;
 
 namespace Game.Ecs.System
 {

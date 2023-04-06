@@ -12,6 +12,7 @@ using View.Service;
 
 namespace UnityService.Stage
 {
+	[UnityService(typeof(IStageRenderService))]
 	public class UnityStageRenderService : MonoBehaviour, IStageRenderService
 	{
 		private World selfWorld = null;
@@ -33,24 +34,6 @@ namespace UnityService.Stage
 		/// <param name="entityId"></param>
 		/// <returns></returns>
 		public bool Contains(int entityId) => loadedUnits.ContainsKey(entityId);
-
-		private void Awake()
-		{
-			// 일단 임시적으로 여기서 등록해주자...
-			if (Application.isPlaying)
-			{
-				ServiceManager.SetService(typeof(IStageRenderService), this);
-			}
-		}
-
-		private void OnDestroy()
-		{
-			// 임시적으로 여기서 제거한다.
-			if (Application.isPlaying)
-			{
-				ServiceManager.ClearService(typeof(IStageRenderService));
-			}
-		}
 
 		public void Init(World world)
 		{

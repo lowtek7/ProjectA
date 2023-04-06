@@ -5,6 +5,7 @@ using View.Service;
 
 namespace UnityService.Camera
 {
+	[UnityService(typeof(IPlayerCameraService))]
 	public class UnityPlayerCameraService : MonoBehaviour, IPlayerCameraService
 	{
 		[SerializeField]
@@ -38,21 +39,6 @@ namespace UnityService.Camera
 		private void Awake()
 		{
 			zDistance = playerCamera.transform.position.z;
-			
-			// 일단 임시적으로 여기서 등록해주자...
-			if (Application.isPlaying)
-			{
-				ServiceManager.SetService(typeof(IPlayerCameraService), this);
-			}
-		}
-
-		private void OnDestroy()
-		{
-			// 임시적으로 여기서 제거한다.
-			if (Application.isPlaying)
-			{
-				ServiceManager.ClearService(typeof(IPlayerCameraService));
-			}
 		}
 	}
 }
