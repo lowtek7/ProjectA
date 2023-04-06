@@ -11,7 +11,7 @@ namespace Game.Ecs.System
 		public int Order => 99;
 
 		private Query<InputComponent> inputQuery;
-		private Query<MovementComponent> movementQuery;
+		private Query<MovementComponent, PlayerComponent> movementQuery;
 
 		public void Init(BlitzEcs.World world)
 		{
@@ -30,7 +30,7 @@ namespace Game.Ecs.System
 			{
 				var moveDirection = inputComponent.MoveDirection;
 
-				movementQuery.ForEach((ref MovementComponent movementComponent) =>
+				movementQuery.ForEach((ref MovementComponent movementComponent, ref PlayerComponent _) =>
 				{
 					movementComponent.MoveDir = moveDirection;
 				});

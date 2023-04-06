@@ -23,7 +23,7 @@ namespace UnityService.Input
 
 			// 인풋 관리는 한 곳에서만 진행할 것이므로,
 			inputEntity = world.Spawn();
-			inputEntity.Add(new InputComponent());
+			inputEntity.Add(new InputComponent{ MoveDirection = Vector3.zero });
 		}
 
 		void IGameInputService.Fetch()
