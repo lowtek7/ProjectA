@@ -76,8 +76,16 @@ namespace Service
 			}
 		}
 
-		public static void Clear()
+		public static void Dispose()
 		{
+			foreach (var service in serviceMap.Values)
+			{
+				if (service is IGameServiceCallback callback)
+				{
+					callback.OnDeactivate();
+				}
+			}
+			
 			serviceMap.Clear();
 		}
 	}

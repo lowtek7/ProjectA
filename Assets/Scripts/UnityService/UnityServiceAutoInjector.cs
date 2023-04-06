@@ -49,7 +49,7 @@ namespace UnityService
 
 		private void OnDestroy()
 		{
-			ServiceManager.Clear();
+			ServiceManager.Dispose();
 		}
 	}
 }
