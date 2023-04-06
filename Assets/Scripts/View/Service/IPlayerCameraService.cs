@@ -1,4 +1,4 @@
-﻿using Game.Service;
+﻿using Service;
 using UnityEngine;
 
 namespace View.Service

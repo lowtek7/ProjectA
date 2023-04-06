@@ -1,6 +1,6 @@
 ﻿using System;
 using BlitzEcs;
-using Game.Service;
+using Service;
 
 namespace View.Service
 {

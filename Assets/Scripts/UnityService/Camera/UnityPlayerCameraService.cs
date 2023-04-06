@@ -1,5 +1,4 @@
 ﻿using BlitzEcs;
-using Game.Service;
 using Service;
 using UnityEngine;
 using View.Service;

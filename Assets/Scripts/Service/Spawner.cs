@@ -1,7 +1,7 @@
 using System;
 using BlitzEcs;
 
-namespace Game.Service
+namespace Service
 {
 	public class SpawnCommander
 	{

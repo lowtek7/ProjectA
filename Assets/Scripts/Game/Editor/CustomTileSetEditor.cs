@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Core.Utility;
-using Game.Service;
+using Service;
 using UnityEditor;
 using UnityEngine;
 

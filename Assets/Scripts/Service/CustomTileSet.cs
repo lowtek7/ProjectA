@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using Core.Utility;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
-namespace Game.Service
+namespace Service
 {
 	[Serializable]
 	public struct TileInfo

@@ -5,7 +5,6 @@ using BlitzEcs;
 using Core.Unity;
 using Core.Utility;
 using Game.Ecs.Component;
-using Game.Service;
 using Library.JSPool;
 using Service;
 using Service.SaveLoad;
@@ -20,10 +19,6 @@ namespace Game.World
 	{
 		private PoolManager poolManager;
 		private GameObject camera;
-
-		private Vector3 cameraDist = new Vector3(0, 0, -3);
-
-		private float moveSpeed = 10;
 
 		private BlitzEcs.World world;
 
@@ -53,12 +48,12 @@ namespace Game.World
 			{
 				if (Activator.CreateInstance(systemType) is ISystem system)
 				{
-					if (!systemOrders.TryGetValue(system.Order, out var systems))
+					if (!systemOrders.TryGetValue(system.Order, out var innerSystems))
 					{
-						systems = new List<ISystem>();
-						systemOrders[system.Order] = systems;
+						innerSystems = new List<ISystem>();
+						systemOrders[system.Order] = innerSystems;
 					}
-					systems.Add(system);
+					innerSystems.Add(system);
 				}
 			}
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using BlitzEcs;
 using Game.Ecs.Component;
-using Game.Service;
+using Service;
 using UnityEngine;
 
 namespace Game.World
