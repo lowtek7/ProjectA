@@ -1,4 +1,5 @@
 ﻿using BlitzEcs;
+using Game.Service;
 using Service;
 using UnityEngine;
 using View.Service;
@@ -6,7 +7,7 @@ using View.Service;
 namespace UnityService.Camera
 {
 	[UnityService(typeof(IPlayerCameraService))]
-	public class UnityPlayerCameraService : MonoBehaviour, IPlayerCameraService
+	public class UnityPlayerCameraService : MonoBehaviour, IPlayerCameraService, IGameServiceCallback
 	{
 		[SerializeField]
 		private UnityEngine.Camera playerCamera;
@@ -39,6 +40,16 @@ namespace UnityService.Camera
 		private void Awake()
 		{
 			zDistance = playerCamera.transform.position.z;
+		}
+
+		public void OnActivate()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void OnDeactivate()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

@@ -33,7 +33,29 @@ namespace Service
 		/// <typeparam name="CT"></typeparam>
 		public static void SetService<CT>(Type serviceInterfaceType, CT service) where CT : class, IGameService
 		{
+			if (service == null)
+			{
+				return;
+			}
+			
+			{
+				if (serviceMap.TryGetValue(serviceInterfaceType, out var original))
+				{
+					if (original is IGameServiceCallback callback)
+					{
+						callback.OnDeactivate();
+					}
+				}
+			}
+
 			serviceMap[serviceInterfaceType] = service;
+
+			{
+				if (service is IGameServiceCallback callback)
+				{
+					callback.OnActivate();
+				}
+			}
 		}
 
 		/// <summary>
@@ -43,7 +65,15 @@ namespace Service
 		/// <typeparam name="CT"></typeparam>
 		public static void ClearService(Type serviceInterfaceType)
 		{
-			serviceMap.Remove(serviceInterfaceType);
+			if (serviceMap.TryGetValue(serviceInterfaceType, out var service))
+			{
+				if (service is IGameServiceCallback callback)
+				{
+					callback.OnDeactivate();
+				}
+
+				serviceMap.Remove(serviceInterfaceType);
+			}
 		}
 
 		public static void Clear()

@@ -7,4 +7,11 @@
 	{
 		void Init(BlitzEcs.World world);
 	}
+
+	public interface IGameServiceCallback
+	{
+		void OnActivate();
+		
+		void OnDeactivate();
+	}
 }
