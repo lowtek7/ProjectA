@@ -1,28 +1,14 @@
 ﻿using BlitzEcs;
-using Game.Service;
+using Service;
 using UnityEngine;
+using View.Service;
 
-namespace View.Service
+namespace UnityService.Camera
 {
-	public class PlayerCameraService : MonoBehaviour, IGameService
+	public class UnityPlayerCameraService : MonoBehaviour, IPlayerCameraService
 	{
-		private static bool instanceFlag = false;
-		private static PlayerCameraService instance;
-
-		/// <summary>
-		/// 모노비헤이비어 널 체크는 퍼포먼스적으로 큰 작업이기 때문에 (라이더가 알려줌)
-		/// 인스턴스의 널체크를 instanceFlag를 이용해 대신 한다
-		/// </summary>
-		/// <param name="playerCameraService"></param>
-		/// <returns></returns>
-		public static bool TryGetInstance(out PlayerCameraService playerCameraService)
-		{
-			playerCameraService = instance;
-			return instanceFlag;
-		}
-
 		[SerializeField]
-		private Camera playerCamera;
+		private UnityEngine.Camera playerCamera;
 
 		private float zDistance = 0;
 
@@ -51,15 +37,22 @@ namespace View.Service
 
 		private void Awake()
 		{
-			instance = this;
-			instanceFlag = true;
 			zDistance = playerCamera.transform.position.z;
+			
+			// 일단 임시적으로 여기서 등록해주자...
+			if (Application.isPlaying)
+			{
+				ServiceManager.SetService(typeof(IPlayerCameraService), this);
+			}
 		}
 
 		private void OnDestroy()
 		{
-			instance = null;
-			instanceFlag = false;
+			// 임시적으로 여기서 제거한다.
+			if (Application.isPlaying)
+			{
+				ServiceManager.ClearService(typeof(IPlayerCameraService));
+			}
 		}
 	}
 }

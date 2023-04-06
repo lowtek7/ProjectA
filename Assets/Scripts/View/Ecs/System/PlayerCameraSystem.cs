@@ -1,6 +1,7 @@
 ﻿using BlitzEcs;
 using Core.Unity;
 using Game.Ecs.Component;
+using Service;
 using View.Service;
 
 namespace View.Ecs.System
@@ -18,7 +19,7 @@ namespace View.Ecs.System
 
 		public void Update(float deltaTime)
 		{
-			if (PlayerCameraService.TryGetInstance(out var instance))
+			if (ServiceManager.TryGetService(out IPlayerCameraService instance))
 			{
 				query.Fetch();
 				query.ForEach((ref PlayerCameraComponent playerCameraComponent,

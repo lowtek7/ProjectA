@@ -1,4 +1,5 @@
 ﻿using System;
+using Service;
 using UnityEngine;
 using View.Manager;
 using View.Service;
@@ -32,7 +33,7 @@ namespace View.Behaviours
 			screenPos = Input.mousePosition;
 			worldPos = Vector3.zero;
 
-			if (PlayerCameraService.TryGetInstance(out var cameraService))
+			if (ServiceManager.TryGetService(out IPlayerCameraService cameraService))
 			{
 				worldPos = cameraService.ScreenToWorld(screenPos);
 				worldPos.z = 0;
