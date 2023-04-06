@@ -11,7 +11,7 @@ namespace Core
 	/// </summary>
 	class CoreMachine : MonoBehaviour
 	{
-		private static bool instanceFlag = false;
+		private static bool isValidInstance = false;
 		private static CoreMachine instance;
 
 		/// <summary>
@@ -23,7 +23,7 @@ namespace Core
 		public static bool TryGetInstance(out CoreMachine coreMachine)
 		{
 			coreMachine = instance;
-			return instanceFlag;
+			return isValidInstance;
 		}
 
 		private readonly HashSet<IUpdate> updaters = new HashSet<IUpdate>();
@@ -52,7 +52,7 @@ namespace Core
 		private void Awake()
 		{
 			instance = this;
-			instanceFlag = true;
+			isValidInstance = true;
 			updaters.Clear();
 		}
 
@@ -60,7 +60,7 @@ namespace Core
 		{
 			updaters.Clear();
 			instance = null;
-			instanceFlag = false;
+			isValidInstance = false;
 		}
 	}
 }
