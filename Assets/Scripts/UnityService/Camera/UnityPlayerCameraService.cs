@@ -44,12 +44,10 @@ namespace UnityService.Camera
 
 		public void OnActivate()
 		{
-			throw new System.NotImplementedException();
 		}
 
 		public void OnDeactivate()
 		{
-			throw new System.NotImplementedException();
 		}
 	}
 }
