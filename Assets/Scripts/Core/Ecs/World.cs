@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System;
 
 using BlitzEcs.Util;
+using Core.Ecs;
 
 namespace BlitzEcs {
-    public class World : IEntityManager {
+    public class World : IEntityManager, IWorld {
         private Dictionary<Type, IComponentPool> componentPoolsByType;
         private List<IComponentPool> allComponentPools;
 

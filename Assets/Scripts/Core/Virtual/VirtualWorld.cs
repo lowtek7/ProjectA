@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BlitzEcs;
+using Core.Ecs;
 using UnityEngine;
 
 namespace Core.Virtual
@@ -9,7 +10,7 @@ namespace Core.Virtual
 	/// Virtual Entity들이 담겨진 World
 	/// </summary>
 	[Serializable]
-	public class VirtualWorld
+	public class VirtualWorld : IWorld
 	{
 		[SerializeField]
 		private List<VirtualEntity> entities = new List<VirtualEntity>();
