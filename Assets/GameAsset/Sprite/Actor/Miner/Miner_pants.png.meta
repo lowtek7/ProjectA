@@ -6,7 +6,7 @@ TextureImporter:
   serializedVersion: 12
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -1252,7 +1252,7 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       Miner_pants_5: 813645067
-      Miner_pants_2: -1776365050
+      Miner_pants_17: -2062567423
       Miner_pants_4: -480509126
       Miner_pants_8: 724527043
       Miner_pants_33: -53450599
@@ -1303,8 +1303,8 @@ TextureImporter:
       Miner_pants_38: 1334282467
       Miner_pants_40: -72116220
       Miner_pants_30: 177849594
+      Miner_pants_2: -1776365050
       Miner_pants_48: -827510598
-      Miner_pants_17: -2062567423
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

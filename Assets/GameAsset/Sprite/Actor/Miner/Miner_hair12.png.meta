@@ -6,7 +6,7 @@ TextureImporter:
   serializedVersion: 12
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -1251,7 +1251,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Miner_hair12_52: 1833241660
+      Miner_hair12_18: 1224810399
       Miner_hair12_3: -788290523
       Miner_hair12_42: -2068984801
       Miner_hair12_7: -676471676
@@ -1275,8 +1275,8 @@ TextureImporter:
       Miner_hair12_24: 1401932248
       Miner_hair12_53: -1072257870
       Miner_hair12_25: 1438681771
-      Miner_hair12_41: 1245265742
       Miner_hair12_22: -2009764261
+      Miner_hair12_41: 1245265742
       Miner_hair12_19: 619705355
       Miner_hair12_5: -1936853612
       Miner_hair12_6: -544253988
@@ -1304,7 +1304,7 @@ TextureImporter:
       Miner_hair12_37: 308264503
       Miner_hair12_43: 1088345101
       Miner_hair12_35: 995212963
-      Miner_hair12_18: 1224810399
+      Miner_hair12_52: 1833241660
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
