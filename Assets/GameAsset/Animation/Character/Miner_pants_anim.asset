@@ -15,13 +15,17 @@ MonoBehaviour:
   animations:
   - animationName: idle_down
     sprites:
-    - {fileID: -1483949234, guid: 355f6f7d9ed5e2848845e3636ad4b2cf, type: 3}
+    - sprite: {fileID: -1483949234, guid: 355f6f7d9ed5e2848845e3636ad4b2cf, type: 3}
+      frameDuration: 0
   - animationName: idle_right
     sprites:
-    - {fileID: -248502713, guid: 355f6f7d9ed5e2848845e3636ad4b2cf, type: 3}
+    - sprite: {fileID: -248502713, guid: 355f6f7d9ed5e2848845e3636ad4b2cf, type: 3}
+      frameDuration: 0
   - animationName: idle_left
     sprites:
-    - {fileID: -248502713, guid: 355f6f7d9ed5e2848845e3636ad4b2cf, type: 3}
+    - sprite: {fileID: -248502713, guid: 355f6f7d9ed5e2848845e3636ad4b2cf, type: 3}
+      frameDuration: 0
   - animationName: idle_up
     sprites:
-    - {fileID: -1776365050, guid: 355f6f7d9ed5e2848845e3636ad4b2cf, type: 3}
+    - sprite: {fileID: -1776365050, guid: 355f6f7d9ed5e2848845e3636ad4b2cf, type: 3}
+      frameDuration: 0
