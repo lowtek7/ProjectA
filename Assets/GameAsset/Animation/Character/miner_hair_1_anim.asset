@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b43e980e258c407bbbb34190c49a0002, type: 3}
-  m_Name: miner_hair_1_anim
+  m_Name: Miner_hair_1_anim
   m_EditorClassIdentifier: 
   animations:
   - animationName: idle_down
