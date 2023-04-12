@@ -1,0 +1,19 @@
+{
+    "name": "JSAnim2D.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2c573e6b271651846a79655161004c5b",
+        "GUID:2d5b0897668e3eb40b611389aaf2a41d"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
