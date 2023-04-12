@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e980e258c407bbbb34190c49a0002, type: 3}
+  m_Name: miner_hair_1_anim
+  m_EditorClassIdentifier: 
+  animations:
+  - animationName: idle_down
+    sprites:
+    - {fileID: -1010370058, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+  - animationName: idle_right
+    sprites:
+    - {fileID: -722763653, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+  - animationName: idle_left
+    sprites:
+    - {fileID: -722763653, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+  - animationName: idle_up
+    sprites:
+    - {fileID: 1584304202, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+  targetSprites: []
