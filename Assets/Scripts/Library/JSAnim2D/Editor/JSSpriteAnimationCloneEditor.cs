@@ -17,6 +17,7 @@ namespace Library.JSAnim2D.Editor
 		private Texture2D[] targetDataList = Array.Empty<Texture2D>();
 
 		private string outputPrefix = string.Empty;
+
 		private string outputPostfix = string.Empty;
 
 		private string outputPath = "Assets";
@@ -82,13 +83,17 @@ namespace Library.JSAnim2D.Editor
 
 						for (int i = 0; i < animationInfo.Sprites.Length; i++)
 						{
-							var splits = animationInfo.Sprites[i].name.Split('_');
+							var spriteInfo = animationInfo.Sprites[i];
+							var splits = spriteInfo.Sprite.name.Split('_');
 
 							if (splits.Length > 0)
 							{
 								var spriteNum = Convert.ToInt32(splits[^1]);
 								var targetSprite = targetSprites[spriteNum];
-								targetAnimationInfo.Sprites[i] = targetSprite;
+								var info = new SpriteInfo();
+								info.Sprite = targetSprite;
+								info.FrameDuration = spriteInfo.FrameDuration;
+								targetAnimationInfo.Sprites[i] = info;
 							}
 						}
 

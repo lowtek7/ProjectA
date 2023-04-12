@@ -5,21 +5,43 @@ using UnityEngine;
 namespace Library.JSAnim2D
 {
 	[Serializable]
+	public struct SpriteInfo
+	{
+		[SerializeField]
+		private Sprite sprite;
+
+		[SerializeField]
+		private float frameDuration;
+
+		public float FrameDuration
+		{
+			get => frameDuration;
+			set => frameDuration = value;
+		}
+
+		public Sprite Sprite
+		{
+			get => sprite;
+			set => sprite = value;
+		}
+	}
+	
+	[Serializable]
 	public struct AnimationInfo
 	{
 		[SerializeField]
 		private string animationName;
 		
 		[SerializeField]
-		private Sprite[] sprites;
+		private SpriteInfo[] sprites;
 
-		public Sprite[] Sprites => sprites;
+		public SpriteInfo[] Sprites => sprites;
 
 		public string AnimationName => animationName;
 
 		public static AnimationInfo Create(string name, int spriteCount)
 		{
-			return new AnimationInfo { animationName = name, sprites = new Sprite[spriteCount] };
+			return new AnimationInfo { animationName = name, sprites = new SpriteInfo[spriteCount] };
 		}
 	}
 	
