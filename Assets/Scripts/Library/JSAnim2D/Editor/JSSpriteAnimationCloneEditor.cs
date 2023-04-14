@@ -90,9 +90,11 @@ namespace Library.JSAnim2D.Editor
 							{
 								var spriteNum = Convert.ToInt32(splits[^1]);
 								var targetSprite = targetSprites[spriteNum];
-								var info = new SpriteInfo();
-								info.Sprite = targetSprite;
-								info.FrameDuration = spriteInfo.FrameDuration;
+								var info = new SpriteInfo
+								{
+									Sprite = targetSprite,
+									FrameDuration = spriteInfo.FrameDuration
+								};
 								targetAnimationInfo.Sprites[i] = info;
 							}
 						}

@@ -4,6 +4,16 @@ using UnityEngine;
 
 namespace Library.JSAnim2D
 {
+	public enum AnimationLoopType
+	{
+		Repeat = 0,
+		/// <summary>
+		/// 애니메이션이 총 3개 있다면
+		/// 1 -> 2 -> 3 -> 2 -> 1 -> 2 -> 3 같은 방식으로 루프함
+		/// </summary>
+		YoYo
+	}
+	
 	[Serializable]
 	public struct SpriteInfo
 	{
@@ -12,6 +22,9 @@ namespace Library.JSAnim2D
 
 		[SerializeField]
 		private float frameDuration;
+
+		// 추후에 특정 애니메이션이 이벤트 발동하기 위해 사용 할 키
+		//private string eventKey;
 
 		public float FrameDuration
 		{
@@ -35,7 +48,12 @@ namespace Library.JSAnim2D
 		[SerializeField]
 		private SpriteInfo[] sprites;
 
+		[SerializeField]
+		private AnimationLoopType loopType;
+
 		public SpriteInfo[] Sprites => sprites;
+
+		public AnimationLoopType LoopType => loopType;
 
 		public string AnimationName => animationName;
 
