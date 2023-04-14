@@ -21,12 +21,12 @@ namespace Library.JSAnim2D
 		private Sprite sprite;
 
 		[SerializeField]
-		private float frameDuration;
+		private int frameDuration;
 
 		// 추후에 특정 애니메이션이 이벤트 발동하기 위해 사용 할 키
 		//private string eventKey;
 
-		public float FrameDuration
+		public int FrameDuration
 		{
 			get => frameDuration;
 			set => frameDuration = value;
@@ -68,6 +68,11 @@ namespace Library.JSAnim2D
 	{
 		[SerializeField]
 		private List<AnimationInfo> animations = new ();
+
+		[SerializeField]
+		private float fps = 60.0f;
+
+		public float FPS => fps;
 
 		public List<AnimationInfo> Animations => animations;
 	}

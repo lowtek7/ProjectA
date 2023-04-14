@@ -28,7 +28,13 @@ namespace Library.JSAnim2D
 
 		private float _timePassed = 0f;
 
+		private float _currentFrameRate = DefaultFrameRate;
+
+		private float _timePerFrame = 0f;
+
 		private static int InvalidIndex => -1;
+
+		private static float DefaultFrameRate => 60.0f;
 
 		/// <summary>
 		/// 내부 애니메이션을 리셋하는 함수
@@ -39,6 +45,8 @@ namespace Library.JSAnim2D
 			_currentAnimIndex = InvalidIndex;
 			_yoyoIncreaseMode = true;
 			_timePassed = 0;
+			_currentFrameRate = DefaultFrameRate;
+			_timePerFrame = 1 / _currentFrameRate;
 		}
 
 		public void SetAnimationData(JSSpriteAnimationData data)
@@ -53,10 +61,12 @@ namespace Library.JSAnim2D
 
 			_currentAnimIndex = animationData.Animations.FindIndex(x => x.AnimationName == animationName);
 
-			var currentAnim = animationData.Animations[_currentAnimIndex];
-			
-			if (_currentAnimIndex != InvalidIndex && currentAnim.Sprites.Length > 0)
+			if (_currentAnimIndex != InvalidIndex)
 			{
+				var currentAnim = animationData.Animations[_currentAnimIndex];
+
+				_currentFrameRate = animationData.FPS;
+				_timePerFrame = 1 / _currentFrameRate;
 				_currentSpriteIndex = 0;
 				SetSprite(currentAnim.Sprites[_currentSpriteIndex].Sprite);
 			}
@@ -86,11 +96,10 @@ namespace Library.JSAnim2D
 
 			var currentAnim = animationData.Animations[_currentAnimIndex];
 			var currentSprite = currentAnim.Sprites[_currentSpriteIndex];
-			
-			// 애니메이션 프레임 지속시간 관련 코드 수정 예정
+
 			_timePassed += deltaTime;
 
-			if (currentSprite.FrameDuration <= _timePassed)
+			if (Convert.ToSingle(currentSprite.FrameDuration) * _timePerFrame <= _timePassed)
 			{
 				switch (currentAnim.LoopType)
 				{
