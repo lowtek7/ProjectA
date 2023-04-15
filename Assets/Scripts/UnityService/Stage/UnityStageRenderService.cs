@@ -59,6 +59,7 @@ namespace UnityService.Stage
 		{
 			isLoading = true;
 			var assetFactory = AssetFactory.Instance;
+
 			if (assetFactory.TryGetAssetReader<UnitPrefabAssetModule>(out var reader) &&
 				reader is UnitPrefabAssetModule unitPrefabAssetModule)
 			{
@@ -73,7 +74,7 @@ namespace UnityService.Stage
 
 				// ZoneComponent를 지닌 엔티티들을 가져와야한다.
 				var query = new Query<UnitComponent, ZoneComponent>(selfWorld);
-				query.Fetch();
+
 				query.ForEach((Entity entity, ref UnitComponent unitComponent, ref ZoneComponent zoneComponent) =>
 				{
 					// 해당 엔티티가 속한 StageId가 이동하려는 곳과 같은 경우 불러와 준다.

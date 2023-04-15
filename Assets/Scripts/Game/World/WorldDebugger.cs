@@ -18,7 +18,7 @@ namespace Game.World
 		public void StageTransition(Guid targetStageGuid)
 		{
 			var query = new Query<PlayerCameraComponent, ZoneComponent>(selfWorld);
-			query.Fetch();
+
 			query.ForEach((ref PlayerCameraComponent c1, ref ZoneComponent zoneComponent) =>
 			{
 				zoneComponent.StageGuid = targetStageGuid;

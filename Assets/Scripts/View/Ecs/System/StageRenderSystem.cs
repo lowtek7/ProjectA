@@ -31,10 +31,6 @@ namespace View.Ecs.System
 
 		public void Update(float deltaTime)
 		{
-			// 쿼리 사용전에는 무조건 Fetch 할 것.
-			playerQuery.Fetch();
-			renderQuery.Fetch();
-
 			var currentStageGuid = Constants.UnknownStageGuid;
 			
 			playerQuery.ForEach((ref PlayerCameraComponent c1, ref ZoneComponent zoneComponent) =>
@@ -57,7 +53,6 @@ namespace View.Ecs.System
 					else if (!stageRenderService.IsLoading)
 					{
 						// 씬이동이 발생하지 않으면 모든 엔티티의 ZoneComponent를 조회하여 그려주거나 지워주면 된다.
-						unitQuery.Fetch();
 						unitQuery.ForEach((Entity unitEntity, ref UnitComponent unitComponent, ref ZoneComponent zoneComponent) =>
 						{
 							// 해당 엔티티가 현재 스테이지와 일치하는지에 대한 검사

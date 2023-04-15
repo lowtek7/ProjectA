@@ -21,7 +21,6 @@ namespace View.Ecs.System
 		{
 			if (ServiceManager.TryGetService(out IPlayerCameraService instance))
 			{
-				query.Fetch();
 				query.ForEach((ref PlayerCameraComponent playerCameraComponent,
 					ref TransformComponent transformComponent) =>
 				{
