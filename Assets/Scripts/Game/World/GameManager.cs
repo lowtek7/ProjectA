@@ -48,10 +48,11 @@ namespace Game.World
 			{
 				if (Activator.CreateInstance(systemType) is ISystem system)
 				{
-					if (!systemOrders.TryGetValue(system.Order, out var innerSystems))
+					var order = (int)system.Order;
+					if (!systemOrders.TryGetValue(order, out var innerSystems))
 					{
 						innerSystems = new List<ISystem>();
-						systemOrders[system.Order] = innerSystems;
+						systemOrders[order] = innerSystems;
 					}
 					innerSystems.Add(system);
 				}

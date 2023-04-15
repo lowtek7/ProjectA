@@ -9,7 +9,7 @@ namespace Game.Ecs.System
 {
 	public class InputSystem : ISystem
 	{
-		public int Order => 99;
+		public Order Order => Order.Highest;
 
 		private Query<InputComponent> inputQuery;
 

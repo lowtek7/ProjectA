@@ -9,7 +9,7 @@ namespace Game.Ecs.System
 	{
 		private Query<TransformComponent, MovementComponent> moveQuery;
 
-		public int Order => 101;
+		public Order Order => Order.Normal;
 
 		public void Init(BlitzEcs.World world)
 		{
