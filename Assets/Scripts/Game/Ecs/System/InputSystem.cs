@@ -3,6 +3,7 @@ using Core.Unity;
 using Game.Ecs.Component;
 using Service;
 using Service.Input;
+using UnityEngine;
 
 namespace Game.Ecs.System
 {
@@ -11,7 +12,8 @@ namespace Game.Ecs.System
 		public int Order => 99;
 
 		private Query<InputComponent> inputQuery;
-		private Query<MovementComponent, PlayerComponent> movementQuery;
+
+		private Query<MovementComponent, TransformComponent, PlayerComponent> movementQuery;
 
 		public void Init(BlitzEcs.World world)
 		{
@@ -30,8 +32,14 @@ namespace Game.Ecs.System
 			{
 				var moveDirection = inputComponent.MoveDirection;
 
-				movementQuery.ForEach((ref MovementComponent movementComponent, ref PlayerComponent _) =>
+				movementQuery.ForEach((ref MovementComponent movementComponent, ref TransformComponent transformComponent, ref PlayerComponent _) =>
 				{
+					// 임시적으로 디렉션을 무브 디렉션을 사용하게 하자.
+					if (moveDirection != Vector3.zero)
+					{
+						transformComponent.Direction = moveDirection;
+					}
+
 					movementComponent.MoveDir = moveDirection;
 				});
 			});
