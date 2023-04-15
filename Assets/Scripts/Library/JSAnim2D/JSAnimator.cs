@@ -157,12 +157,7 @@ namespace Library.JSAnim2D
 		/// <returns></returns>
 		public bool ContainsAnimation(int animationIndex)
 		{
-			if (animationData != null)
-			{
-				return animationData.Animations.Count > animationIndex;
-			}
-
-			return false;
+			return animationData.Animations.Count > animationIndex;
 		}
 
 		private void SetSprite(Sprite sprite)
