@@ -5,17 +5,14 @@ namespace Library.JSAnim2D
 {
 	public class JSAnimator : MonoBehaviour
 	{
-		[SerializeField]
-		private SpriteRenderer spriteRenderer;
+		[SerializeField] private SpriteRenderer spriteRenderer;
 
-		[SerializeField]
-		private JSSpriteAnimationData animationData;
-		
+		[SerializeField] private JSSpriteAnimationData animationData;
+
 		/// <summary>
 		/// 현재 값만 미리 준비해둔 상태. 미구현
 		/// </summary>
-		[SerializeField]
-		private int fallbackAnimationIndex = InvalidIndex;
+		[SerializeField] private int fallbackAnimationIndex = InvalidIndex;
 
 		private int _currentAnimIndex = InvalidIndex;
 
@@ -57,9 +54,16 @@ namespace Library.JSAnim2D
 
 		public void Play(string animationName)
 		{
+			var targetAnimIndex = animationData.Animations.FindIndex(x => x.AnimationName == animationName);
+
+			if (targetAnimIndex == _currentAnimIndex)
+			{
+				return;
+			}
+
 			ResetAnimation();
 
-			_currentAnimIndex = animationData.Animations.FindIndex(x => x.AnimationName == animationName);
+			_currentAnimIndex = targetAnimIndex;
 
 			if (_currentAnimIndex != InvalidIndex)
 			{
@@ -78,7 +82,8 @@ namespace Library.JSAnim2D
 		/// <param name="deltaTime"></param>
 		public void AnimationUpdate(float deltaTime)
 		{
-			if (!enabled || animationData == null || _currentAnimIndex == InvalidIndex || !ContainsAnimation(_currentAnimIndex))
+			if (!enabled || animationData == null || _currentAnimIndex == InvalidIndex ||
+			    !ContainsAnimation(_currentAnimIndex))
 			{
 				if (enabled)
 				{
@@ -90,7 +95,7 @@ namespace Library.JSAnim2D
 
 					ResetAnimation();
 				}
-				
+
 				return;
 			}
 
@@ -125,6 +130,7 @@ namespace Library.JSAnim2D
 								_yoyoIncreaseMode = true;
 							}
 						}
+
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
@@ -134,10 +140,10 @@ namespace Library.JSAnim2D
 				{
 					_currentSpriteIndex = 0;
 				}
-				
+
 				currentSprite = currentAnim.Sprites[_currentSpriteIndex];
 				SetSprite(currentSprite.Sprite);
-				
+
 				_timePassed = 0;
 			}
 		}
@@ -154,7 +160,7 @@ namespace Library.JSAnim2D
 			{
 				return animationData.Animations.Count > animationIndex;
 			}
-			
+
 			return false;
 		}
 
