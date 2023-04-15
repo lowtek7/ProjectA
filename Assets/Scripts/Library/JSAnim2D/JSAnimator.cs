@@ -82,16 +82,17 @@ namespace Library.JSAnim2D
 		/// <param name="deltaTime"></param>
 		public void AnimationUpdate(float deltaTime)
 		{
-			if (!enabled || animationData == null || _currentAnimIndex == InvalidIndex ||
-			    !ContainsAnimation(_currentAnimIndex))
+			if (!enabled || _currentAnimIndex == InvalidIndex ||
+				!ContainsAnimation(_currentAnimIndex))
 			{
 				if (enabled)
 				{
-					if (animationData == null)
-					{
-						// error
-						Debug.LogError($"Error! Animation Data is Null. {gameObject.name}");
-					}
+					// 성능 이슈 때문에 업데이트에서 체크하지 않기로.
+					// if (animationData == null)
+					// {
+					// 	// error
+					// 	Debug.LogError($"Error! Animation Data is Null. {gameObject.name}");
+					// }
 
 					ResetAnimation();
 				}
