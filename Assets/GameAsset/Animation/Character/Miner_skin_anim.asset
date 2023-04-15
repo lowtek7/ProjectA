@@ -17,15 +17,80 @@ MonoBehaviour:
     sprites:
     - sprite: {fileID: 742797741, guid: 10fd8decff84288478017f207ed9039c, type: 3}
       frameDuration: 0
+    loopType: 0
   - animationName: idle_right
     sprites:
     - sprite: {fileID: 1415846208, guid: 10fd8decff84288478017f207ed9039c, type: 3}
       frameDuration: 0
+    loopType: 0
   - animationName: idle_left
     sprites:
     - sprite: {fileID: 1415846208, guid: 10fd8decff84288478017f207ed9039c, type: 3}
       frameDuration: 0
+    loopType: 0
   - animationName: idle_up
     sprites:
     - sprite: {fileID: 289100430, guid: 10fd8decff84288478017f207ed9039c, type: 3}
       frameDuration: 0
+    loopType: 0
+  - animationName: walk_down
+    sprites:
+    - sprite: {fileID: -615626597, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1597914021, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -940253329, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -854501595, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1667886052, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -2059404314, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    loopType: 0
+  - animationName: walk_right
+    sprites:
+    - sprite: {fileID: -1642853404, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1574461027, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1909859657, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 216114941, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 512748325, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1014385920, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    loopType: 0
+  - animationName: walk_left
+    sprites:
+    - sprite: {fileID: -1642853404, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1574461027, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1909859657, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 216114941, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 512748325, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1014385920, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    loopType: 0
+  - animationName: walk_up
+    sprites:
+    - sprite: {fileID: 1951415724, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -969307782, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1411649798, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1684392163, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1749218889, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -838179417, guid: 10fd8decff84288478017f207ed9039c, type: 3}
+      frameDuration: 5
+    loopType: 0
+  fps: 60

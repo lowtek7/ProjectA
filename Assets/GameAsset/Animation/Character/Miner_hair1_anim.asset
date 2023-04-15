@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e980e258c407bbbb34190c49a0002, type: 3}
+  m_Name: Miner_hair1_anim
+  m_EditorClassIdentifier: 
+  animations:
+  - animationName: idle_down
+    sprites:
+    - sprite: {fileID: -1010370058, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 0
+    loopType: 0
+  - animationName: idle_right
+    sprites:
+    - sprite: {fileID: -722763653, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 0
+    loopType: 0
+  - animationName: idle_left
+    sprites:
+    - sprite: {fileID: -722763653, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 0
+    loopType: 0
+  - animationName: idle_up
+    sprites:
+    - sprite: {fileID: 1584304202, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 0
+    loopType: 0
+  - animationName: walk_down
+    sprites:
+    - sprite: {fileID: 1766068707, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1665803032, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -326057941, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1089920682, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 65563206, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -515385794, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    loopType: 0
+  - animationName: walk_right
+    sprites:
+    - sprite: {fileID: 1216979681, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -2012835071, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1504718596, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1216368425, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1799403058, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1806378209, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    loopType: 0
+  - animationName: walk_left
+    sprites:
+    - sprite: {fileID: 1216979681, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -2012835071, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1504718596, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1216368425, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1799403058, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1806378209, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    loopType: 0
+  - animationName: walk_up
+    sprites:
+    - sprite: {fileID: -755186438, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 2057021008, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 344987398, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: 1942603512, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -1451283855, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    - sprite: {fileID: -257359312, guid: 9a78aa701b151ad4898d84318c9b030b, type: 3}
+      frameDuration: 5
+    loopType: 0
+  fps: 60

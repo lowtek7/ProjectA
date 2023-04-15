@@ -98,7 +98,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 5390753746104707020}
-  animationData: {fileID: 11400000, guid: b06b31165d22b324e82b05e82a6af091, type: 2}
+  animationData: {fileID: 11400000, guid: 69d5633eef63bb04a912e044f62230cf, type: 2}
+  fallbackAnimationIndex: -1
 --- !u!1 &1289573977011545473
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,6 +199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 541109125067405398}
   animationData: {fileID: 11400000, guid: bc748f9ce89842f439024eafba8de420, type: 2}
+  fallbackAnimationIndex: -1
 --- !u!1 &1880022451993328380
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,6 +299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 6073607297006688234}
   animationData: {fileID: 11400000, guid: 1fdd4a9533b219344a57147cc155d669, type: 2}
+  fallbackAnimationIndex: -1
 --- !u!1 &5600906739806393615
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,6 +399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 6333201327026360431}
   animationData: {fileID: 11400000, guid: 66d3dc9699b60e04daa7654e3604e342, type: 2}
+  fallbackAnimationIndex: -1
 --- !u!1 &7598619034954192568
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,9 +446,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3188337526194031561}
   - component: {fileID: 1976940564437619655}
+  - component: {fileID: 9089028694116063776}
   - component: {fileID: -5123256311199164676}
   - component: {fileID: 7624615287391324703}
-  - component: {fileID: 9089028694116063776}
+  - component: {fileID: 5662409576565578790}
   m_Layer: 0
   m_Name: PlayerUnitEntity
   m_TagString: Untagged
@@ -481,31 +486,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sourceGuid: e43acb59-4e52-48c7-8715-1025d20f345b
---- !u!114 &-5123256311199164676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8437570332950855499}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4144da266abf4ce987589c1738634c9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemGuid: c0a5fb71-f015-4174-bd04-d79f0ac24871
---- !u!114 &7624615287391324703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8437570332950855499}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfdb9c88a7fe49cfb826b5f6e07ce3e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &9089028694116063776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -534,6 +514,43 @@ MonoBehaviour:
       type: {class: PlayerCameraComponent, ns: Game.Ecs.Component, asm: Game}
     - rid: 8986602489903841451
       type: {class: PlayerComponent, ns: Game.Ecs.Component, asm: Game}
+--- !u!114 &-5123256311199164676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437570332950855499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4144da266abf4ce987589c1738634c9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemGuid: c0a5fb71-f015-4174-bd04-d79f0ac24871
+--- !u!114 &7624615287391324703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437570332950855499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfdb9c88a7fe49cfb826b5f6e07ce3e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5662409576565578790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437570332950855499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8176803f72504d70a5a0b9873ad5f428, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8823382809680354181
 GameObject:
   m_ObjectHideFlags: 0
@@ -633,3 +650,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 5075229952021998432}
   animationData: {fileID: 11400000, guid: 4df224f191c4ca444b1976d8093a3fc0, type: 2}
+  fallbackAnimationIndex: -1
