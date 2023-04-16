@@ -78,5 +78,9 @@ namespace View.Ecs.System
 				});
 			}
 		}
+
+		public void LateUpdate(float deltaTime)
+		{
+		}
 	}
 }

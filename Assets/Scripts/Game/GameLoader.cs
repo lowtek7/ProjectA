@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Game.World;
 using Library.JSPool;
@@ -57,6 +58,14 @@ namespace Game
 			if (canPlay)
 			{
 				_gameManager.Update();
+			}
+		}
+
+		private void LateUpdate()
+		{
+			if (canPlay)
+			{
+				_gameManager.LateUpdate();
 			}
 		}
 

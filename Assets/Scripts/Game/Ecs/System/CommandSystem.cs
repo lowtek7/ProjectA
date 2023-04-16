@@ -33,5 +33,9 @@ namespace Game.Ecs.System
 				});
 			}
 		}
+
+		public void LateUpdate(float deltaTime)
+		{
+		}
 	}
 }

@@ -28,5 +28,11 @@ namespace Core.Unity
 		/// </summary>
 		/// <param name="deltaTime"></param>
 		void Update(float deltaTime);
+
+		/// <summary>
+		/// 모든 업데이트가 호출 된 후에 호출되는 업데이트 함수
+		/// </summary>
+		/// <param name="deltaTime"></param>
+		void LateUpdate(float deltaTime);
 	}
 }

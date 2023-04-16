@@ -95,6 +95,16 @@ namespace Game.World
 			}
 		}
 
+		public void LateUpdate()
+		{
+			var dt = Time.deltaTime;
+
+			foreach (var system in systems)
+			{
+				system.Update(dt);
+			}
+		}
+
 		public void OnActivateService(IGameService service)
 		{
 			if (world != null)
