@@ -2,6 +2,6 @@
 {
 	public interface IGameCommandService : IGameService
 	{
-		bool TryGet(int type, out IGameCommand gameCommand);
+		bool TryGet(int typeId, out IGameCommand gameCommand);
 	}
 }

@@ -8,26 +8,27 @@ namespace Game.Ecs.System
 {
 	public class CommandSystem : ISystem
 	{
-		private Query<CommandComponent> query;
+		private Query<CommandComponent> _query;
 
 		public Order Order => Order.Highest;
 		
 		public void Init(BlitzEcs.World world)
 		{
-			query = new Query<CommandComponent>(world);
+			_query = new Query<CommandComponent>(world);
 		}
 
 		public void Update(float deltaTime)
 		{
 			if (ServiceManager.TryGetService<IGameCommandService>(out var gameCommandService))
 			{
-				query.ForEach((Entity entity, ref CommandComponent commandComponent) =>
+				_query.ForEach((Entity entity, ref CommandComponent commandComponent) =>
 				{
-					var commandType = commandComponent.Type;
+					var commandType = commandComponent.TypeId;
 					var magnitude = commandComponent.Magnitude;
 
 					if (gameCommandService.TryGet(commandType, out var gameCommand))
 					{
+						gameCommand.Execute(entity);
 					}
 				});
 			}

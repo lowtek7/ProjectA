@@ -1,6 +1,7 @@
 ﻿using System;
 using Core.Unity;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Game.Ecs.Component
 {
@@ -13,7 +14,7 @@ namespace Game.Ecs.Component
 	public struct CommandComponent : IComponent
 	{
 		[SerializeField]
-		private int type;
+		private int typeId;
 
 		[SerializeField]
 		private float magnitude;
@@ -24,17 +25,17 @@ namespace Game.Ecs.Component
 			set => magnitude = value;
 		}
 
-		public int Type
+		public int TypeId
 		{
-			get => type;
-			set => type = value;
+			get => typeId;
+			set => typeId = value;
 		}
 
 		public IComponent Clone()
 		{
 			return new CommandComponent
 			{
-				type = type,
+				typeId = typeId,
 				magnitude = magnitude
 			};
 		}
