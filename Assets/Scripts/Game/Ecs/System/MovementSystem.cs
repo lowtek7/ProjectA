@@ -7,18 +7,18 @@ namespace Game.Ecs.System
 {
 	public class MovementSystem : ISystem
 	{
-		private Query<TransformComponent, MovementComponent> moveQuery;
+		private Query<TransformComponent, MovementComponent> _moveQuery;
 
 		public Order Order => Order.Normal;
 
 		public void Init(BlitzEcs.World world)
 		{
-			moveQuery = new Query<TransformComponent, MovementComponent>(world);
+			_moveQuery = new Query<TransformComponent, MovementComponent>(world);
 		}
 
 		public void Update(float deltaTime)
 		{
-			moveQuery.ForEach((Entity entity,
+			_moveQuery.ForEach((Entity entity,
 				ref TransformComponent transformComponent,
 				ref MovementComponent movementComponent) =>
 			{

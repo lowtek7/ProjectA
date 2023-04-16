@@ -11,14 +11,14 @@ namespace Game.Ecs.System
 	{
 		public Order Order => Order.Highest;
 
-		private Query<InputComponent> inputQuery;
+		private Query<InputComponent> _inputQuery;
 
-		private Query<MovementComponent, TransformComponent, PlayerComponent> movementQuery;
+		private Query<MovementComponent, TransformComponent, PlayerComponent> _movementQuery;
 
 		public void Init(BlitzEcs.World world)
 		{
-			inputQuery = new (world);
-			movementQuery = new (world);
+			_inputQuery = new (world);
+			_movementQuery = new (world);
 		}
 
 		public void Update(float deltaTime)
@@ -28,11 +28,11 @@ namespace Game.Ecs.System
 				inputService.Fetch();
 			}
 
-			inputQuery.ForEach((ref InputComponent inputComponent) =>
+			_inputQuery.ForEach((ref InputComponent inputComponent) =>
 			{
 				var moveDirection = inputComponent.MoveDirection;
 
-				movementQuery.ForEach((ref MovementComponent movementComponent, ref TransformComponent transformComponent, ref PlayerComponent _) =>
+				_movementQuery.ForEach((ref MovementComponent movementComponent, ref TransformComponent transformComponent, ref PlayerComponent _) =>
 				{
 					// 임시적으로 디렉션을 무브 디렉션을 사용하게 하자.
 					if (moveDirection != Vector3.zero)

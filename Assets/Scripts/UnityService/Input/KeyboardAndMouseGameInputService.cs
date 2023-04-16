@@ -12,7 +12,8 @@ namespace UnityService.Input
 
 		private Query<InputComponent> inputQuery;
 
-		private bool activated = false;
+		// 사용하지 않고 있으며 경고가 나와서 주석처리
+		//private bool activated = false;
 
 		private Entity inputEntity;
 

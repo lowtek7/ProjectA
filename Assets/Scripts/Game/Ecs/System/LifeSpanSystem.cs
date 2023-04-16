@@ -20,6 +20,7 @@ namespace Game.Ecs.System
 		{
 			_world = world;
 			_query = new Query<LifeSpanComponent>(world);
+
 			_destroyedEntities.Clear();
 		}
 
