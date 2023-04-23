@@ -105,7 +105,7 @@ namespace UnityService.Stage
 				result.Connect(entity);
 				return true;
 			}
-			
+
 			return false;
 		}
 
