@@ -2,6 +2,8 @@
 using Core.Unity;
 using Game.Ecs.Component;
 using Game.Unit;
+using Service;
+using Service.Audio;
 using UnityEngine;
 
 namespace View.Behaviours
@@ -16,6 +18,16 @@ namespace View.Behaviours
 
 		private Entity _selfEntity;
 
+		/// <summary>
+		/// sfx 테스트용 쿨다운 타임
+		/// </summary>
+		private readonly float _sfxCooldownTime = 5;
+
+		/// <summary>
+		/// sfx 테스트용 현재 쿨다운 시간
+		/// </summary>
+		private float _currentCooldownTime;
+
 		public void Connect(Entity entity)
 		{
 			_selfEntity = entity;
@@ -28,6 +40,11 @@ namespace View.Behaviours
 
 		public void UpdateProcess(float deltaTime)
 		{
+			if (_currentCooldownTime > 0)
+			{
+				_currentCooldownTime -= deltaTime;
+			}
+			
 			if (_selfEntity.IsAlive)
 			{
 				if (_selfEntity.Has<TransformComponent>())
@@ -37,6 +54,16 @@ namespace View.Behaviours
 					var prevScale = spriteTransform.localScale;
 					var scaleX = Mathf.Abs(prevScale.x);
 
+					if (_currentCooldownTime <= 0 && transform.position != transformComponent.Position)
+					{
+						_currentCooldownTime = _sfxCooldownTime;
+
+						if (ServiceManager.TryGetService(out IAudioService audioService))
+						{
+							audioService.TestPlayOneShotSFX("get_item", transformComponent.Position);
+						}
+					}
+					
 					transform.position = transformComponent.Position;
 
 					if ((direction2d & Direction2D.Left) != 0)
