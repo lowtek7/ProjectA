@@ -34,7 +34,7 @@ namespace Build.Editor.Stage
 				componentBuffer.Add(new UnitComponent { SourceGuid = sourceGuid });
 				componentBuffer.Add(new UnitInstanceComponent { InstanceGuid = instanceGuid });
 				componentBuffer.Add(new TransformComponent { Position = gameObject.transform.position });
-				componentBuffer.Add(new ZoneComponent { StageGuid = stageGuid });
+				componentBuffer.Add(new StageSpecComponent { StageGuid = stageGuid });
 
 				// 컴포넌트 스펙 비헤이비어가 있다면 가져와서 사용해준다.
 				if (gameObject.TryGetComponent<ComponentSpecBehaviour>(out var componentSpecBehaviour))

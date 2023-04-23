@@ -17,11 +17,11 @@ namespace Game.World
 
 		public void StageTransition(Guid targetStageGuid)
 		{
-			var query = new Query<PlayerCameraComponent, ZoneComponent>(selfWorld);
+			var query = new Query<PlayerCameraComponent, StageSpecComponent>(selfWorld);
 
-			query.ForEach((ref PlayerCameraComponent c1, ref ZoneComponent zoneComponent) =>
+			query.ForEach((ref PlayerCameraComponent c1, ref StageSpecComponent stageSpecComponent) =>
 			{
-				zoneComponent.StageGuid = targetStageGuid;
+				stageSpecComponent.StageGuid = targetStageGuid;
 			});
 		}
 	}

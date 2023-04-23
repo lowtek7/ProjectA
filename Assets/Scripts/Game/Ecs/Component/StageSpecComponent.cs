@@ -6,11 +6,12 @@ using UnityEngine;
 namespace Game.Ecs.Component
 {
 	/// <summary>
+	/// 기존에 ZoneComponent이었으나 이름이 적절하지 않다고 판단하여 StageSpecComponent로 이름 변경.
 	/// 스테이지 Id를 가지고 있는 컴포넌트
 	/// 해당 엔티티가 월드 내의 어떤 스테이지에 있는지에 대한 정보를 기록한 컴포넌트다
 	/// </summary>
 	[Serializable]
-	public struct ZoneComponent : IComponent
+	public struct StageSpecComponent : IComponent
 	{
 		[SerializeField]
 		private SGuid stageGuid;
@@ -23,7 +24,7 @@ namespace Game.Ecs.Component
 
 		public IComponent Clone()
 		{
-			return new ZoneComponent()
+			return new StageSpecComponent()
 			{
 				stageGuid = stageGuid
 			};
