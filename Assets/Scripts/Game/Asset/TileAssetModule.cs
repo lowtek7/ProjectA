@@ -74,7 +74,7 @@ namespace Game.Asset
 				//
 				// GC.Collect();
 				//
-				// isLoading = false;
+				isLoading = false;
 			}
 		}
 
