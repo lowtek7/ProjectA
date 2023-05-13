@@ -17,18 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 3d391f36d8715774da3054bae24d556a
   m_SerializeEntries:
-  - m_GUID: 45a0f57d3739ea74fb83b712d6c85c53
-    m_Address: Assets/GameAsset/Tile
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Tile
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bcdffd2ad953a504ca28bb6cd33ce427
-    m_Address: Assets/GameAsset/Prefab/Tilemap
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - TileRenderer
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 80a1257f82a2a4c489cf9710910962e5
     m_Address: Prefab/UnitPrefab
     m_ReadOnly: 0
