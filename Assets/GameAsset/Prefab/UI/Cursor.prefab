@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5310038551581098390}
   - component: {fileID: 8514082165361001085}
+  - component: {fileID: 6509641542266074458}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -45,6 +46,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab520eebe701409ba88a5733a1a25737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6509641542266074458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545080927551570552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e6cc4e591234e85bc966c79ee572406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7504775086734943947
 GameObject:
   m_ObjectHideFlags: 0
@@ -55,7 +68,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7501857561491606891}
   - component: {fileID: 8755624255514543690}
-  - component: {fileID: 3325942127739195178}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -130,15 +142,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3325942127739195178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7504775086734943947}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e6cc4e591234e85bc966c79ee572406, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
