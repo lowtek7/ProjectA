@@ -5,7 +5,8 @@
         "Core",
         "Game",
         "Service",
-        "View"
+        "View",
+        "KdTree"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

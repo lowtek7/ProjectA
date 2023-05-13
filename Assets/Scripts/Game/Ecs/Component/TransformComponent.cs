@@ -123,7 +123,11 @@ namespace Game.Ecs.Component
 
 		public IComponent Clone()
 		{
-			return new TransformComponent { position = position };
+			return new TransformComponent
+			{
+				position = position,
+				direction = direction
+			};
 		}
 	}
 }
