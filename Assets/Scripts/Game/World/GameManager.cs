@@ -41,33 +41,35 @@ namespace Game.World
 			// ecs 월드를 생성하자.
 			world = new BlitzEcs.World();
 
-			Dictionary<int, List<ISystem>> systemOrders = new Dictionary<int, List<ISystem>>();
+			var systemTypeList = gameLoader.SystemOrderSettingData.SystemOrders;
 
+			foreach (var systemType in systemTypeList)
+			{
+				// order에 기반한 스테이지 초기화 작업
+				var systemObject = Activator.CreateInstance(systemType);
+				if (systemObject is ISystem system)
+				{
+					systems.Add(system);
+				}
+			}
+			
 			// 리플렉션을 이용해서 ISystem의 구현체들을 모은다.
 			foreach (var systemType in TypeUtility.GetTypesWithInterface(typeof(ISystem)))
 			{
-				if (Activator.CreateInstance(systemType) is ISystem system)
+				// order 목록에 없으면 최하단에 추가해준다.
+				if (!systemTypeList.Contains(systemType))
 				{
-					var order = (int)system.Order;
-					if (!systemOrders.TryGetValue(order, out var innerSystems))
+					var systemObject = Activator.CreateInstance(systemType);
+					if (systemObject is ISystem system)
 					{
-						innerSystems = new List<ISystem>();
-						systemOrders[order] = innerSystems;
+						systems.Add(system);
 					}
-					innerSystems.Add(system);
 				}
 			}
 
-			var systemLists = systemOrders.OrderBy(pair => pair.Key).Select(x => x.Value).ToArray();
-
-			foreach (var systemList in systemLists)
+			foreach (var system in systems)
 			{
-				foreach (var system in systemList)
-				{
-					// order에 기반한 스테이지 초기화 작업
-					system.Init(world);
-					systems.Add(system);
-				}
+				system.Init(world);
 			}
 
 			foreach (var service in ServiceManager.Services)

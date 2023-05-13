@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Game.Asset;
 using Game.World;
 using Library.JSPool;
 using UnityEngine;
@@ -21,6 +22,9 @@ namespace Game
 		[SerializeField]
 		private PoolManager poolManager;
 
+		[SerializeField]
+		private SystemOrderSettingData systemOrderSettingData;
+
 		private bool canPlay = false;
 
 		private GameManager _gameManager;
@@ -32,6 +36,8 @@ namespace Game
 		public Camera Camera => gameCamera;
 
 		public AssetFactory AssetFactory => assetFactory;
+
+		public SystemOrderSettingData SystemOrderSettingData => systemOrderSettingData;
 
 		// Component
 		// ViewComponent

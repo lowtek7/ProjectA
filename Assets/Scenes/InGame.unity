@@ -495,6 +495,7 @@ MonoBehaviour:
   assetFactory: {fileID: 1935476811}
   gameCamera: {fileID: 247149165}
   poolManager: {fileID: 1498554580712856601}
+  systemOrderSettingData: {fileID: 11400000, guid: 1fa9a997952030640a43df6edae0be87, type: 2}
 --- !u!4 &1550368726
 Transform:
   m_ObjectHideFlags: 0

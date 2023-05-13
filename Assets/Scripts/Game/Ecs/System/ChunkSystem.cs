@@ -46,11 +46,6 @@ namespace Game.Ecs.System
 		private readonly Dictionary<int, int> _virtualizeReqCounts =
 			new(Constants.UpdatableChunkExtents * Constants.UpdatableChunkExtents);
 
-		/// <summary>
-		/// FIXME : 이거 뭐로 설정해야 함...?
-		/// </summary>
-		Order ISystem.Order => Order.Highest;
-
 		public void Init(BlitzEcs.World world)
 		{
 			_world = world;
