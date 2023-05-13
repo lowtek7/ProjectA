@@ -48,33 +48,33 @@ namespace Game.Asset
 		{
 			if (tileList.Result != null)
 			{
-				foreach (var tile in tileList.Result)
-				{
-					var fullPath = AssetDatabase.GetAssetPath(tile);
-
-					var key = fullPath.Replace(".asset", string.Empty)
-						.Replace("Assets/GameAsset/Tile/", string.Empty);
-
-					Debug.Log($"Loading tile [{key}]");
-
-					var path = key.Split('/')[0];
-
-					tiles.Add(key, tile);
-
-					// 추후 여러 챕터가 생길 때를 위해 Path별로 타일을 나누도록 함.
-					if (!pathToTiles.TryGetValue(path, out var tilesByPath))
-					{
-						tilesByPath = new List<TileBase>();
-
-						pathToTiles.Add(path, tilesByPath);
-					}
-
-					tilesByPath.Add(tile);
-				}
-
-				GC.Collect();
-
-				isLoading = false;
+				// foreach (var tile in tileList.Result)
+				// {
+				// 	var fullPath = AssetDatabase.GetAssetPath(tile);
+				//
+				// 	var key = fullPath.Replace(".asset", string.Empty)
+				// 		.Replace("Assets/GameAsset/Tile/", string.Empty);
+				//
+				// 	Debug.Log($"Loading tile [{key}]");
+				//
+				// 	var path = key.Split('/')[0];
+				//
+				// 	tiles.Add(key, tile);
+				//
+				// 	// 추후 여러 챕터가 생길 때를 위해 Path별로 타일을 나누도록 함.
+				// 	if (!pathToTiles.TryGetValue(path, out var tilesByPath))
+				// 	{
+				// 		tilesByPath = new List<TileBase>();
+				//
+				// 		pathToTiles.Add(path, tilesByPath);
+				// 	}
+				//
+				// 	tilesByPath.Add(tile);
+				// }
+				//
+				// GC.Collect();
+				//
+				// isLoading = false;
 			}
 		}
 

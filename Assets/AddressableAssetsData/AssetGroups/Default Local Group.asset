@@ -17,12 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 3d391f36d8715774da3054bae24d556a
   m_SerializeEntries:
-  - m_GUID: 3092eea109e01da43b82756914fedbca
-    m_Address: Sprite/Actor
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Sprite
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 45a0f57d3739ea74fb83b712d6c85c53
     m_Address: Assets/GameAsset/Tile
     m_ReadOnly: 0
@@ -46,6 +40,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - ScriptableObject
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 667526b6e7957084bb6a984891bc4061
+    m_Address: Sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sprite
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 71554528ed30bbe4098c32edfac362f1, type: 2}
