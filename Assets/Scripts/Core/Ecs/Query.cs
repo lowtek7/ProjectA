@@ -13,6 +13,11 @@ namespace BlitzEcs {
             public Enumerator(Query query) {
                 this.query = query;
                 idx = 0;
+
+                if (!query.hot)
+                {
+                    query.Fetch();
+                }
             }
 
             public Entity Current => new Entity(query.world, query.matchedEntities.DirectKeys[idx]);
