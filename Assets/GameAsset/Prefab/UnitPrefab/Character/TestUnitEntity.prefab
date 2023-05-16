@@ -173,9 +173,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   components:
   - rid: 8986602489903841287
+  - rid: 1820560736419053571
   references:
     version: 2
     RefIds:
+    - rid: 1820560736419053571
+      type: {class: BoundsComponent, ns: Game.Ecs.Component, asm: Game}
+      data:
+        boundsSize: {x: 1, y: 1, z: 1}
     - rid: 8986602489903841287
       type: {class: MovementComponent, ns: Game.Ecs.Component, asm: Game}
       data:

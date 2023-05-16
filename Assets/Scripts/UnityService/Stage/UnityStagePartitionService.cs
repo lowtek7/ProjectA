@@ -11,7 +11,7 @@ using KdTree.Math;
 
 namespace UnityService.Stage
 {
-	[UnityService(typeof(IStageRenderService))]
+	[UnityService(typeof(IStagePartitionService))]
 	public class UnityStagePartitionService : MonoBehaviour, IStagePartitionService
 	{
 		private readonly Dictionary<Guid, KdTree<float, HashSet<int>>> _treeMap = new Dictionary<Guid, KdTree<float, HashSet<int>>>();
@@ -159,6 +159,8 @@ namespace UnityService.Stage
 				}
 			}
 
+			// 자기자신은 결과에서 제외해주자.
+			idSet.Remove(entity);
 			overlappedEntities.AddRange(idSet);
 		}
 	}

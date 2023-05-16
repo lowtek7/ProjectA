@@ -16,14 +16,14 @@
                 },
                 {
                     "rid": 1004
+                },
+                {
+                    "rid": 1005
                 }
             ]
         },
         {
             "components": [
-                {
-                    "rid": 1005
-                },
                 {
                     "rid": 1006
                 },
@@ -35,17 +35,17 @@
                 },
                 {
                     "rid": 1009
-                }
-            ]
-        },
-        {
-            "components": [
+                },
                 {
                     "rid": 1010
                 },
                 {
                     "rid": 1011
-                },
+                }
+            ]
+        },
+        {
+            "components": [
                 {
                     "rid": 1012
                 },
@@ -54,11 +54,7 @@
                 },
                 {
                     "rid": 1014
-                }
-            ]
-        },
-        {
-            "components": [
+                },
                 {
                     "rid": 1015
                 },
@@ -67,17 +63,17 @@
                 },
                 {
                     "rid": 1017
-                },
-                {
-                    "rid": 1018
-                },
-                {
-                    "rid": 1019
                 }
             ]
         },
         {
             "components": [
+                {
+                    "rid": 1018
+                },
+                {
+                    "rid": 1019
+                },
                 {
                     "rid": 1020
                 },
@@ -89,14 +85,14 @@
                 },
                 {
                     "rid": 1023
-                },
-                {
-                    "rid": 1024
                 }
             ]
         },
         {
             "components": [
+                {
+                    "rid": 1024
+                },
                 {
                     "rid": 1025
                 },
@@ -130,14 +126,14 @@
                 },
                 {
                     "rid": 1034
+                },
+                {
+                    "rid": 1035
                 }
             ]
         },
         {
             "components": [
-                {
-                    "rid": 1035
-                },
                 {
                     "rid": 1036
                 },
@@ -155,6 +151,34 @@
                 },
                 {
                     "rid": 1041
+                }
+            ]
+        },
+        {
+            "components": [
+                {
+                    "rid": 1042
+                },
+                {
+                    "rid": 1043
+                },
+                {
+                    "rid": 1044
+                },
+                {
+                    "rid": 1045
+                },
+                {
+                    "rid": 1046
+                },
+                {
+                    "rid": 1047
+                },
+                {
+                    "rid": 1048
+                },
+                {
+                    "rid": 1049
                 }
             ]
         }
@@ -202,22 +226,22 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            180,
-                            156,
-                            220,
-                            29,
-                            147,
-                            76,
-                            141,
-                            74,
-                            154,
-                            150,
+                            138,
+                            160,
+                            25,
+                            206,
+                            105,
+                            110,
+                            20,
+                            75,
+                            140,
+                            23,
+                            209,
+                            10,
+                            13,
                             124,
-                            127,
-                            48,
-                            100,
-                            133,
-                            215
+                            116,
+                            63
                         ]
                     }
                 }
@@ -290,6 +314,21 @@
             {
                 "rid": 1005,
                 "type": {
+                    "class": "BoundsComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "boundsSize": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                }
+            },
+            {
+                "rid": 1006,
+                "type": {
                     "class": "UnitComponent",
                     "ns": "Game.Ecs.Component",
                     "asm": "Game"
@@ -318,7 +357,7 @@
                 }
             },
             {
-                "rid": 1006,
+                "rid": 1007,
                 "type": {
                     "class": "UnitInstanceComponent",
                     "ns": "Game.Ecs.Component",
@@ -327,28 +366,28 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            200,
-                            227,
+                            41,
                             86,
-                            107,
-                            249,
-                            21,
-                            126,
+                            70,
+                            116,
+                            30,
+                            85,
+                            99,
+                            77,
+                            161,
                             67,
-                            181,
-                            113,
-                            166,
-                            91,
-                            123,
-                            171,
-                            124,
-                            76
+                            135,
+                            185,
+                            127,
+                            71,
+                            54,
+                            24
                         ]
                     }
                 }
             },
             {
-                "rid": 1007,
+                "rid": 1008,
                 "type": {
                     "class": "TransformComponent",
                     "ns": "Game.Ecs.Component",
@@ -367,7 +406,7 @@
                 }
             },
             {
-                "rid": 1008,
+                "rid": 1009,
                 "type": {
                     "class": "StageSpecComponent",
                     "ns": "Game.Ecs.Component",
@@ -397,7 +436,7 @@
                 }
             },
             {
-                "rid": 1009,
+                "rid": 1010,
                 "type": {
                     "class": "MovementComponent",
                     "ns": "Game.Ecs.Component",
@@ -413,7 +452,22 @@
                 }
             },
             {
-                "rid": 1010,
+                "rid": 1011,
+                "type": {
+                    "class": "BoundsComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "boundsSize": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                }
+            },
+            {
+                "rid": 1012,
                 "type": {
                     "class": "UnitComponent",
                     "ns": "Game.Ecs.Component",
@@ -443,7 +497,7 @@
                 }
             },
             {
-                "rid": 1011,
+                "rid": 1013,
                 "type": {
                     "class": "UnitInstanceComponent",
                     "ns": "Game.Ecs.Component",
@@ -452,28 +506,28 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            250,
-                            115,
-                            131,
-                            248,
-                            33,
-                            99,
-                            14,
-                            76,
-                            176,
-                            234,
-                            200,
-                            159,
-                            171,
-                            242,
-                            43,
-                            179
+                            160,
+                            133,
+                            15,
+                            47,
+                            85,
+                            22,
+                            78,
+                            75,
+                            172,
+                            7,
+                            206,
+                            142,
+                            32,
+                            5,
+                            125,
+                            8
                         ]
                     }
                 }
             },
             {
-                "rid": 1012,
+                "rid": 1014,
                 "type": {
                     "class": "TransformComponent",
                     "ns": "Game.Ecs.Component",
@@ -492,7 +546,7 @@
                 }
             },
             {
-                "rid": 1013,
+                "rid": 1015,
                 "type": {
                     "class": "StageSpecComponent",
                     "ns": "Game.Ecs.Component",
@@ -522,7 +576,7 @@
                 }
             },
             {
-                "rid": 1014,
+                "rid": 1016,
                 "type": {
                     "class": "MovementComponent",
                     "ns": "Game.Ecs.Component",
@@ -538,7 +592,22 @@
                 }
             },
             {
-                "rid": 1015,
+                "rid": 1017,
+                "type": {
+                    "class": "BoundsComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "boundsSize": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                }
+            },
+            {
+                "rid": 1018,
                 "type": {
                     "class": "UnitComponent",
                     "ns": "Game.Ecs.Component",
@@ -568,7 +637,7 @@
                 }
             },
             {
-                "rid": 1016,
+                "rid": 1019,
                 "type": {
                     "class": "UnitInstanceComponent",
                     "ns": "Game.Ecs.Component",
@@ -577,28 +646,28 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            186,
                             85,
-                            9,
-                            53,
-                            88,
-                            49,
-                            209,
-                            70,
-                            176,
-                            4,
-                            90,
-                            194,
-                            52,
-                            141,
-                            225,
-                            235
+                            36,
+                            195,
+                            42,
+                            37,
+                            122,
+                            82,
+                            66,
+                            150,
+                            233,
+                            199,
+                            97,
+                            130,
+                            18,
+                            211,
+                            3
                         ]
                     }
                 }
             },
             {
-                "rid": 1017,
+                "rid": 1020,
                 "type": {
                     "class": "TransformComponent",
                     "ns": "Game.Ecs.Component",
@@ -617,7 +686,7 @@
                 }
             },
             {
-                "rid": 1018,
+                "rid": 1021,
                 "type": {
                     "class": "StageSpecComponent",
                     "ns": "Game.Ecs.Component",
@@ -647,7 +716,7 @@
                 }
             },
             {
-                "rid": 1019,
+                "rid": 1022,
                 "type": {
                     "class": "MovementComponent",
                     "ns": "Game.Ecs.Component",
@@ -663,7 +732,22 @@
                 }
             },
             {
-                "rid": 1020,
+                "rid": 1023,
+                "type": {
+                    "class": "BoundsComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "boundsSize": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                }
+            },
+            {
+                "rid": 1024,
                 "type": {
                     "class": "UnitComponent",
                     "ns": "Game.Ecs.Component",
@@ -693,7 +777,7 @@
                 }
             },
             {
-                "rid": 1021,
+                "rid": 1025,
                 "type": {
                     "class": "UnitInstanceComponent",
                     "ns": "Game.Ecs.Component",
@@ -702,28 +786,28 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            149,
-                            242,
+                            145,
+                            41,
+                            32,
+                            214,
+                            79,
+                            22,
+                            77,
                             73,
-                            58,
-                            2,
-                            94,
-                            189,
-                            75,
-                            156,
-                            128,
-                            81,
-                            252,
-                            211,
-                            109,
-                            146,
-                            183
+                            157,
+                            74,
+                            187,
+                            135,
+                            226,
+                            235,
+                            45,
+                            60
                         ]
                     }
                 }
             },
             {
-                "rid": 1022,
+                "rid": 1026,
                 "type": {
                     "class": "TransformComponent",
                     "ns": "Game.Ecs.Component",
@@ -742,7 +826,7 @@
                 }
             },
             {
-                "rid": 1023,
+                "rid": 1027,
                 "type": {
                     "class": "StageSpecComponent",
                     "ns": "Game.Ecs.Component",
@@ -768,137 +852,12 @@
                             128,
                             51
                         ]
-                    }
-                }
-            },
-            {
-                "rid": 1024,
-                "type": {
-                    "class": "MovementComponent",
-                    "ns": "Game.Ecs.Component",
-                    "asm": "Game"
-                },
-                "data": {
-                    "moveSpeed": 1.0,
-                    "moveDir": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    }
-                }
-            },
-            {
-                "rid": 1025,
-                "type": {
-                    "class": "UnitComponent",
-                    "ns": "Game.Ecs.Component",
-                    "asm": "Game"
-                },
-                "data": {
-                    "sourceGuid": {
-                        "guidBytes": [
-                            186,
-                            22,
-                            111,
-                            158,
-                            94,
-                            63,
-                            138,
-                            77,
-                            141,
-                            66,
-                            22,
-                            200,
-                            152,
-                            65,
-                            52,
-                            212
-                        ]
-                    }
-                }
-            },
-            {
-                "rid": 1026,
-                "type": {
-                    "class": "UnitInstanceComponent",
-                    "ns": "Game.Ecs.Component",
-                    "asm": "Game"
-                },
-                "data": {
-                    "instanceGuid": {
-                        "guidBytes": [
-                            178,
-                            172,
-                            217,
-                            172,
-                            208,
-                            87,
-                            187,
-                            73,
-                            155,
-                            202,
-                            214,
-                            102,
-                            246,
-                            232,
-                            90,
-                            33
-                        ]
-                    }
-                }
-            },
-            {
-                "rid": 1027,
-                "type": {
-                    "class": "TransformComponent",
-                    "ns": "Game.Ecs.Component",
-                    "asm": "Game"
-                },
-                "data": {
-                    "position": {
-                        "x": -0.34700000286102297,
-                        "y": 0.6819999814033508,
-                        "z": 0.0
-                    },
-                    "direction": {
-                        "x": 0.0,
-                        "y": 0.0
                     }
                 }
             },
             {
                 "rid": 1028,
                 "type": {
-                    "class": "StageSpecComponent",
-                    "ns": "Game.Ecs.Component",
-                    "asm": "Game"
-                },
-                "data": {
-                    "stageGuid": {
-                        "guidBytes": [
-                            221,
-                            178,
-                            6,
-                            137,
-                            94,
-                            250,
-                            145,
-                            70,
-                            149,
-                            33,
-                            184,
-                            222,
-                            246,
-                            147,
-                            128,
-                            51
-                        ]
-                    }
-                }
-            },
-            {
-                "rid": 1029,
-                "type": {
                     "class": "MovementComponent",
                     "ns": "Game.Ecs.Component",
                     "asm": "Game"
@@ -909,6 +868,21 @@
                         "x": 0.0,
                         "y": 0.0,
                         "z": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1029,
+                "type": {
+                    "class": "BoundsComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "boundsSize": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
                     }
                 }
             },
@@ -952,22 +926,22 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            21,
-                            36,
-                            96,
-                            190,
-                            97,
-                            15,
-                            178,
-                            73,
-                            190,
-                            195,
-                            250,
-                            22,
-                            164,
-                            92,
+                            204,
+                            229,
+                            172,
+                            145,
+                            224,
+                            33,
+                            48,
+                            78,
+                            172,
+                            71,
+                            75,
                             144,
-                            105
+                            205,
+                            193,
+                            187,
+                            234
                         ]
                     }
                 }
@@ -981,8 +955,8 @@
                 },
                 "data": {
                     "position": {
-                        "x": 0.07500000298023224,
-                        "y": -0.008999999612569809,
+                        "x": -0.34700000286102297,
+                        "y": 0.6819999814033508,
                         "z": 0.0
                     },
                     "direction": {
@@ -1040,6 +1014,21 @@
             {
                 "rid": 1035,
                 "type": {
+                    "class": "BoundsComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "boundsSize": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                }
+            },
+            {
+                "rid": 1036,
+                "type": {
                     "class": "UnitComponent",
                     "ns": "Game.Ecs.Component",
                     "asm": "Game"
@@ -1047,28 +1036,28 @@
                 "data": {
                     "sourceGuid": {
                         "guidBytes": [
-                            89,
-                            203,
-                            58,
-                            228,
-                            82,
-                            78,
-                            199,
-                            72,
-                            135,
-                            21,
-                            16,
-                            37,
-                            210,
-                            15,
+                            186,
+                            22,
+                            111,
+                            158,
+                            94,
+                            63,
+                            138,
+                            77,
+                            141,
+                            66,
+                            22,
+                            200,
+                            152,
+                            65,
                             52,
-                            91
+                            212
                         ]
                     }
                 }
             },
             {
-                "rid": 1036,
+                "rid": 1037,
                 "type": {
                     "class": "UnitInstanceComponent",
                     "ns": "Game.Ecs.Component",
@@ -1077,28 +1066,28 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            162,
-                            253,
-                            176,
-                            218,
-                            191,
-                            242,
-                            26,
-                            77,
-                            144,
-                            167,
-                            76,
-                            6,
-                            168,
-                            234,
-                            182,
-                            178
+                            136,
+                            181,
+                            164,
+                            34,
+                            107,
+                            1,
+                            237,
+                            64,
+                            153,
+                            55,
+                            155,
+                            157,
+                            109,
+                            120,
+                            255,
+                            61
                         ]
                     }
                 }
             },
             {
-                "rid": 1037,
+                "rid": 1038,
                 "type": {
                     "class": "TransformComponent",
                     "ns": "Game.Ecs.Component",
@@ -1106,8 +1095,8 @@
                 },
                 "data": {
                     "position": {
-                        "x": -1.2050000429153443,
-                        "y": 0.15299999713897706,
+                        "x": 0.07500000298023224,
+                        "y": -0.008999999612569809,
                         "z": 0.0
                     },
                     "direction": {
@@ -1117,7 +1106,7 @@
                 }
             },
             {
-                "rid": 1038,
+                "rid": 1039,
                 "type": {
                     "class": "StageSpecComponent",
                     "ns": "Game.Ecs.Component",
@@ -1147,7 +1136,7 @@
                 }
             },
             {
-                "rid": 1039,
+                "rid": 1040,
                 "type": {
                     "class": "MovementComponent",
                     "ns": "Game.Ecs.Component",
@@ -1163,7 +1152,147 @@
                 }
             },
             {
-                "rid": 1040,
+                "rid": 1041,
+                "type": {
+                    "class": "BoundsComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "boundsSize": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    }
+                }
+            },
+            {
+                "rid": 1042,
+                "type": {
+                    "class": "UnitComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "sourceGuid": {
+                        "guidBytes": [
+                            89,
+                            203,
+                            58,
+                            228,
+                            82,
+                            78,
+                            199,
+                            72,
+                            135,
+                            21,
+                            16,
+                            37,
+                            210,
+                            15,
+                            52,
+                            91
+                        ]
+                    }
+                }
+            },
+            {
+                "rid": 1043,
+                "type": {
+                    "class": "UnitInstanceComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "instanceGuid": {
+                        "guidBytes": [
+                            213,
+                            197,
+                            22,
+                            110,
+                            244,
+                            119,
+                            118,
+                            76,
+                            130,
+                            170,
+                            64,
+                            186,
+                            112,
+                            220,
+                            86,
+                            185
+                        ]
+                    }
+                }
+            },
+            {
+                "rid": 1044,
+                "type": {
+                    "class": "TransformComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "position": {
+                        "x": -1.2050000429153443,
+                        "y": 0.15299999713897706,
+                        "z": 0.0
+                    },
+                    "direction": {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1045,
+                "type": {
+                    "class": "StageSpecComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "stageGuid": {
+                        "guidBytes": [
+                            221,
+                            178,
+                            6,
+                            137,
+                            94,
+                            250,
+                            145,
+                            70,
+                            149,
+                            33,
+                            184,
+                            222,
+                            246,
+                            147,
+                            128,
+                            51
+                        ]
+                    }
+                }
+            },
+            {
+                "rid": 1046,
+                "type": {
+                    "class": "MovementComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "moveSpeed": 1.0,
+                    "moveDir": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1047,
                 "type": {
                     "class": "PlayerCameraComponent",
                     "ns": "Game.Ecs.Component",
@@ -1172,13 +1301,28 @@
                 "data": {}
             },
             {
-                "rid": 1041,
+                "rid": 1048,
                 "type": {
                     "class": "PlayerComponent",
                     "ns": "Game.Ecs.Component",
                     "asm": "Game"
                 },
                 "data": {}
+            },
+            {
+                "rid": 1049,
+                "type": {
+                    "class": "BoundsComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "boundsSize": {
+                        "x": 3.0,
+                        "y": 3.0,
+                        "z": 3.0
+                    }
+                }
             }
         ]
     }
