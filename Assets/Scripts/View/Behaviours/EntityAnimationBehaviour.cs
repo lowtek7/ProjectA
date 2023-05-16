@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace View.Behaviours
 {
-	public class EntityAnimationBehaviour : CustomBehaviour, IUnitBehaviour, IUpdate
+	public class EntityAnimationBehaviour : MonoBehaviour, IUnitBehaviour
 	{
 		private Entity _selfEntity;
 
@@ -27,8 +27,10 @@ namespace View.Behaviours
 			_selfEntity = new Entity();
 		}
 
-		public void UpdateProcess(float deltaTime)
+		public void Update()
 		{
+			var deltaTime = Time.deltaTime;
+
 			if (_selfEntity.IsAlive)
 			{
 				if (_selfEntity.Has<TransformComponent>() && _selfEntity.Has<MovementComponent>())
