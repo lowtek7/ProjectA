@@ -12,7 +12,7 @@ namespace Game.Ecs.System
 		
 		private Query<LifeSpanComponent> _query;
 
-		private readonly List<Entity> _destroyedEntities = new List<Entity>(200);
+		private readonly List<int> _destroyedEntities = new List<int>(200);
 
 		public Order Order => Order.Lowest;
 
@@ -26,8 +26,10 @@ namespace Game.Ecs.System
 
 		public void Update(float deltaTime)
 		{
-			_query.ForEach((Entity entity, ref LifeSpanComponent lifeSpanComponent) =>
+			foreach (var entity in _query)
 			{
+				ref var lifeSpanComponent = ref entity.Get<LifeSpanComponent>();
+
 				switch (lifeSpanComponent.LifeType)
 				{
 					case LifeType.Infinite:
@@ -55,7 +57,7 @@ namespace Game.Ecs.System
 					default:
 						throw new ArgumentOutOfRangeException();
 				}
-			});
+			}
 		}
 
 		public void LateUpdate(float deltaTime)

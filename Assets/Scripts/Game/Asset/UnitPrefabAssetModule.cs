@@ -121,18 +121,24 @@ namespace Game.Asset
 				if (unitPrefabData.TryGetPoolItem(out var poolItem))
 				{
 					var result = _assetFactory.PoolManager.Spawn(poolItem.ItemGuid, parent);
-					unitTemplate = result.GetComponent<UnitTemplate>();
+
+					if (result.TryGetComponent(out unitTemplate))
+					{
+					}
 				}
 				else
 				{
 					var result = GameObject.Instantiate(unitPrefabData.GameObject, Vector3.zero, Quaternion.identity, parent);
-					unitTemplate = result.GetComponent<UnitTemplate>();
+
+					if (result.TryGetComponent(out unitTemplate))
+					{
+					}
 				}
 
 				return true;
 			}
 
-			Debug.LogError($"Spawn Failed. {sourceGuid} is not a Unit Prefab!");
+			//Debug.LogError($"Spawn Failed. {sourceGuid} is not a Unit Prefab!");
 			return false;
 		}
 

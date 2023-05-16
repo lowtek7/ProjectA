@@ -103,7 +103,7 @@ namespace Game.World
 
 			foreach (var system in systems)
 			{
-				system.Update(dt);
+				system.LateUpdate(dt);
 			}
 		}
 

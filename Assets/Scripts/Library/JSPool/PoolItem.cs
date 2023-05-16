@@ -26,14 +26,19 @@ namespace Library.JSPool
 			}
 		}
 
+		private IPoolEvent[] _poolEvents = null;
+
+		private void Awake()
+		{
+			_poolEvents = gameObject.GetComponents<IPoolEvent>();
+		}
+
 		/// <summary>
 		/// 풀 매니저를 제외하고 다른데서 호출하는 행위 절대 금지.
 		/// </summary>
 		public void SpawnEvent()
 		{
-			var components = gameObject.GetComponents<IPoolEvent>();
-
-			foreach (var poolEvent in components)
+			foreach (var poolEvent in _poolEvents)
 			{
 				poolEvent.OnSpawned();
 			}
@@ -44,9 +49,7 @@ namespace Library.JSPool
 		/// </summary>
 		public void DespawnEvent()
 		{
-			var components = gameObject.GetComponents<IPoolEvent>();
-
-			foreach (var poolEvent in components)
+			foreach (var poolEvent in _poolEvents)
 			{
 				poolEvent.OnDespawned();
 			}
