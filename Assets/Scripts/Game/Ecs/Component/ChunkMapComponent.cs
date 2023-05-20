@@ -17,13 +17,13 @@ namespace Game.Ecs.Component
 	}
 
 	// FIXME : 컴포넌트가 아니라 서비스 데이터로 빼야 하나...?
-	public struct ChunkComponent : IComponent
+	public struct ChunkMapComponent : IComponent
 	{
 		public Chunk[,] totalChunks;
 
 		public IComponent Clone()
 		{
-			return new ChunkComponent
+			return new ChunkMapComponent
 			{
 				totalChunks = totalChunks
 			};

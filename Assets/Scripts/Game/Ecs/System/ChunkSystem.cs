@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BlitzEcs;
 using Core.Unity;
 using Game.Ecs.Component;
 using Game.World;
-using NUnit.Framework.Internal.Builders;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -36,7 +34,7 @@ namespace Game.Ecs.System
 
 		private BlitzEcs.World _world;
 
-		private Query<ChunkComponent> _chunkQuery;
+		private Query<ChunkMapComponent> _chunkQuery;
 		private Query<PlayerComponent, TransformComponent> _playerTransformQuery;
 
 		private readonly List<RealizedArea> _realizedArea = new();
@@ -60,12 +58,12 @@ namespace Game.Ecs.System
 
 		public void LateUpdate(float deltaTime)
 		{
-			UpdateChunks();
+			// UpdateChunks();
 		}
 
 		private void UpdateChunks()
 		{
-			_chunkQuery.ForEach(((ref ChunkComponent chunkComponent) =>
+			_chunkQuery.ForEach(((ref ChunkMapComponent chunkComponent) =>
 			{
 				// 이전 프레임에 저장해둔 Entity화된 영역들 업데이트 필요한 것으로 저장
 				foreach (var area in _realizedArea)

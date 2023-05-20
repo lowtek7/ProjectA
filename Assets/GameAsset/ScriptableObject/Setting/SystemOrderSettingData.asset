@@ -16,6 +16,5 @@ MonoBehaviour:
   - Game.Ecs.System.InputSystem
   - Game.Ecs.System.CommandSystem
   - Game.Ecs.System.MovementSystem
-  - Game.Ecs.System.ChunkSystem
   - Game.Ecs.System.LifeSpanSystem
   - View.Ecs.System.PlayerCameraSystem
