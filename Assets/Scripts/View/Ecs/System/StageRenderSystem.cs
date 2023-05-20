@@ -32,7 +32,7 @@ namespace View.Ecs.System
 		public void Update(float deltaTime)
 		{
 			var currentStageGuid = Constants.UnknownStageGuid;
-			
+
 			playerQuery.ForEach((ref PlayerCameraComponent c1, ref StageSpecComponent stageSpecComponent) =>
 			{
 				// 읽기전용으로 가져올 생각이기 때문에 ref를 사용하지 않는다.

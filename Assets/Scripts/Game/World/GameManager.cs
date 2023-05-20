@@ -52,7 +52,7 @@ namespace Game.World
 					systems.Add(system);
 				}
 			}
-			
+
 			// 리플렉션을 이용해서 ISystem의 구현체들을 모은다.
 			foreach (var systemType in TypeUtility.GetTypesWithInterface(typeof(ISystem)))
 			{

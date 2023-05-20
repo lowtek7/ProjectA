@@ -83,7 +83,7 @@ namespace Game.Unit
 						{
 							Undo.RecordObject(this, "Create Source GUID");
 							EditorUtility.SetDirty(gameObject);
-							
+
 							sourceGuid = Guid.NewGuid().ToString();
 						}
 					}

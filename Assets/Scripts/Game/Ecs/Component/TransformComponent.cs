@@ -13,7 +13,7 @@ namespace Game.Ecs.Component
 		Down = 4,
 		Right = 8,
 	}
-	
+
 	/// <summary>
 	/// 위치와 연관된 데이터를 기록하는 컴포넌트
 	/// </summary>
@@ -54,7 +54,7 @@ namespace Game.Ecs.Component
 						result |= Direction2D.Left;
 						break;
 				}
-				
+
 				switch (direction.y)
 				{
 					case > 0:
@@ -79,7 +79,7 @@ namespace Game.Ecs.Component
 				{
 					direction.y = -1;
 				}
-				
+
 				if ((value & Direction2D.Left) != 0)
 				{
 					direction.x = -1;
@@ -88,7 +88,7 @@ namespace Game.Ecs.Component
 				{
 					direction.x = 1;
 				}
-				
+
 				direction.Normalize();
 			}
 		}
