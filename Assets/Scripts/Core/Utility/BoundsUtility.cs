@@ -21,5 +21,11 @@ namespace Core.Utility
 				new Vector3(max.x, max.y, min.z)
 			};
 		}
+
+		public static bool IntersectXY(this Bounds bounds, Bounds other)
+		{
+			return bounds.max.x > other.min.x && bounds.min.x < other.max.x &&
+			       bounds.max.y > other.min.y && bounds.min.y < other.max.y;
+		}
 	}
 }
