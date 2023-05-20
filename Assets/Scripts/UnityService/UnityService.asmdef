@@ -6,7 +6,8 @@
         "Game",
         "Service",
         "View",
-        "KdTree"
+        "KdTree",
+        "JSPool"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
