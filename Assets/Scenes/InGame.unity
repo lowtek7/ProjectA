@@ -353,13 +353,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ce82e406b1a4f958a011ec0bccfee86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellGuids:
-  - type: 0
-    sourceGuidName: 9db7e44c-cac9-4f8f-b8bf-5b6b975e1c2f
-  - type: 2
-    sourceGuidName: 46bad3e3-6654-463a-b331-666134a2a3ce
-  - type: 1
-    sourceGuidName: a6da6ac5-7108-498c-95b2-c1e003f1bbcb
 --- !u!114 &374328884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -834,6 +827,34 @@ PrefabInstance:
     - target: {fileID: 2221155129776041532, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: m_Name
       value: JSPool
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[2].prefab
+      value: 
+      objectReference: {fileID: 34536163113152759, guid: c049755bbaf098c42974fedcb96e52f6, type: 3}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[3].prefab
+      value: 
+      objectReference: {fileID: 34536163113152759, guid: fe21c7effac81b146bafe405cae43cce, type: 3}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[4].prefab
+      value: 
+      objectReference: {fileID: 34536163113152759, guid: f6d61bef78174414299ed4b8c1dec971, type: 3}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[2].initialPoolSize
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[3].initialPoolSize
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[4].initialPoolSize
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7163955339153160614, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: m_RootOrder
