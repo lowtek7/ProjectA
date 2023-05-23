@@ -3,6 +3,7 @@ using Core.Unity;
 using Core.Utility;
 using Game.Ecs.Component;
 using Service;
+using Service.Camera;
 using Service.Field;
 using UnityEngine;
 using View.Ecs.Component;
@@ -27,17 +28,19 @@ namespace View.Ecs.System
 
 		public void LateUpdate(float deltaTime)
 		{
+			if (!ServiceManager.TryGetService<IPlayerCameraService>(out var playerCameraService))
+			{
+				return;
+			}
+
+			if (!ServiceManager.TryGetService<IFieldRenderService>(out var fieldRenderService))
+			{
+				return;
+			}
+
 			_playerCameraQuery.ForEach(((ref PlayerCameraComponent playerCamera, ref TransformComponent cameraTransform) =>
 			{
-				// TODO : CameraService를 만들어서 PlayerCameraComponent의 데이터 갱신에 따라 카메라 유니티 컴포넌트의 수치를 조정해주어야 함
-				// 일단 사이즈가 4로 고정되어있다고 생각하고 작업하자.
-				float cameraSize = 4f;
-				float aspect = 16f / 9f;
-				float screenHeight = cameraSize * 2f;
-				float screenWidth = screenHeight * aspect;
-
-				var screenSize = new Vector3(screenWidth, screenHeight, 0);
-				var screenBounds = new Bounds(cameraTransform.Position, screenSize);
+				var screenBounds = new Bounds(cameraTransform.Position, playerCameraService.WorldSize);
 
 				_fieldCellQuery.ForEach(((Entity entity, ref FieldCellComponent fieldCell, ref TransformComponent cellTransform) =>
 				{
@@ -52,11 +55,14 @@ namespace View.Ecs.System
 						bounds = entity.Get<FieldRenderBoundsComponent>().GetBounds(cellTransform.Position);
 					}
 
+					// 바운드나 렌더링용 바운드가 존재할 때에만 실행
 					if (bounds.HasValue)
 					{
 						var renderBounds = bounds.Value;
+						var isRendering = fieldRenderService.IsRendering(entity);
+						var intersects = renderBounds.IntersectXY(screenBounds);
 
-						if (renderBounds.IntersectXY(screenBounds))
+						if (!isRendering && intersects)
 						{
 							// 화면과 겹치는 경우, 활성화 요청을 붙여준다.
 							if (!entity.Has<FieldCellRequestRealizeComponent>())
@@ -69,7 +75,7 @@ namespace View.Ecs.System
 								entity.Remove<FieldCellRequestVirtualizeComponent>();
 							}
 						}
-						else
+						else if (isRendering && !intersects)
 						{
 							// 화면과 겹치지 않으면, 비활성화 요청을 붙여준다.
 							if (!entity.Has<FieldCellRequestVirtualizeComponent>())
@@ -86,10 +92,7 @@ namespace View.Ecs.System
 				}));
 			}));
 
-			if (ServiceManager.TryGetService<IFieldRenderService>(out var fieldRenderService))
-			{
-				fieldRenderService.Fetch();
-			}
+			fieldRenderService.Fetch();
 		}
 	}
 }
