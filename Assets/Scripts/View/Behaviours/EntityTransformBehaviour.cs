@@ -44,7 +44,7 @@ namespace View.Behaviours
 			{
 				_currentCooldownTime -= deltaTime;
 			}
-			
+
 			if (_selfEntity.IsAlive)
 			{
 				if (_selfEntity.Has<TransformComponent>())
@@ -63,7 +63,7 @@ namespace View.Behaviours
 							audioService.TestPlayOneShotSFX("get_item", transformComponent.Position);
 						}
 					}
-					
+
 					transform.position = transformComponent.Position;
 
 					if ((direction2d & Direction2D.Left) != 0)
