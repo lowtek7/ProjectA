@@ -18,3 +18,4 @@ MonoBehaviour:
   - Game.Ecs.System.MovementSystem
   - Game.Ecs.System.LifeSpanSystem
   - View.Ecs.System.PlayerCameraSystem
+  - View.Ecs.System.FieldRenderSystem
