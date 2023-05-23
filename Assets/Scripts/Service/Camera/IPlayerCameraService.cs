@@ -9,5 +9,7 @@ namespace Service.Camera
 		Vector3 ScreenToWorld(Vector2 screenPos);
 
 		Vector2 WorldToScreen(Vector3 worldPos);
+
+		Vector2 WorldSize { get; }
 	}
 }

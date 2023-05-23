@@ -13,6 +13,18 @@ namespace UnityService.Camera
 
 		private float zDistance = 0;
 
+		public Vector2 WorldSize
+		{
+			get
+			{
+				var cameraSize = playerCamera.orthographicSize;
+				var aspect = playerCamera.aspect;
+				var height = cameraSize * 2;
+
+				return new Vector2(height * aspect, height);
+			}
+		}
+
 		/// <summary>
 		/// z distance는 이미 정해져 있기 때문에 x, y만 받도록 한다
 		/// </summary>
