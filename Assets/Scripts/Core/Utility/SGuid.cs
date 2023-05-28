@@ -39,5 +39,10 @@ namespace Core.Utility
 		}
 
 		public static SGuid Empty => new SGuid(Guid.Empty);
+
+		public override string ToString()
+		{
+			return Guid.ToString();
+		}
 	}
 }

@@ -504,6 +504,7 @@ MonoBehaviour:
   - rid: 8986602489903841450
   - rid: 8986602489903841451
   - rid: 1820560736419053572
+  - rid: 7904022502624198873
   references:
     version: 2
     RefIds:
@@ -511,6 +512,10 @@ MonoBehaviour:
       type: {class: BoundsComponent, ns: Game.Ecs.Component, asm: Game}
       data:
         boundsSize: {x: 3, y: 3, z: 3}
+    - rid: 7904022502624198873
+      type: {class: NameComponent, ns: Game.Ecs.Component, asm: Game}
+      data:
+        name: Player
     - rid: 8986602489903841287
       type: {class: MovementComponent, ns: Game.Ecs.Component, asm: Game}
       data:

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using BlitzEcs;
+using Game.Ecs.Component;
 using Service;
 using Service.World;
 using UnityEditor;
@@ -11,7 +13,7 @@ namespace RuntimeDebugger
 	{
 		private Vector2 scrollPos;
 
-		private Dictionary<int, Dictionary<int, bool>> foldMap = new Dictionary<int, Dictionary<int, bool>>();
+		private readonly Dictionary<int, Dictionary<int, bool>> foldMap = new Dictionary<int, Dictionary<int, bool>>();
 
 		private void OnGUI()
 		{
@@ -32,9 +34,24 @@ namespace RuntimeDebugger
 							break;
 						}
 
+						if (!foldMap.TryGetValue(entityId, out var componentFoldMap))
+						{
+							componentFoldMap = new Dictionary<int, bool>();
+							foldMap[entityId] = componentFoldMap;
+						}
+
 						var entity = new Entity(world, entityId);
 
-						EditorGUILayout.LabelField($"Entity [{entityId}]");
+						if (entity.Has<NameComponent>())
+						{
+							var entityName = entity.Get<NameComponent>().Name;
+
+							EditorGUILayout.LabelField($"{entityName} - Entity [{entityId}]");
+						}
+						else
+						{
+							EditorGUILayout.LabelField($"Entity [{entityId}]");
+						}
 
 						EditorGUI.indentLevel++;
 
@@ -46,7 +63,26 @@ namespace RuntimeDebugger
 
 								if (pool.Contains(entityId))
 								{
-									EditorGUILayout.LabelField($"{componentType.Name}");
+									componentFoldMap[i] = EditorGUILayout.Foldout(componentFoldMap.ContainsKey(i) && componentFoldMap[i], $"{componentType.Name}");
+
+									if (componentFoldMap[i])
+									{
+										EditorGUI.indentLevel++;
+
+										foreach (var fieldInfo in componentType.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+										{
+											using (new EditorGUILayout.HorizontalScope())
+											{
+												var value = pool.GetWithBoxing(entityId);
+
+												EditorGUILayout.LabelField($"{fieldInfo.Name}");
+
+												EditorGUILayout.LabelField($"{fieldInfo.GetValue(value)}");
+											}
+										}
+
+										EditorGUI.indentLevel--;
+									}
 								}
 							}
 						}
@@ -58,6 +94,10 @@ namespace RuntimeDebugger
 
 					scrollPos = scope.scrollPosition;
 				}
+			}
+			else
+			{
+				foldMap.Clear();
 			}
 		}
 
