@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core.Unity;
 
 namespace Service
 {
@@ -116,6 +117,17 @@ namespace Service
 			if (index >= 0)
 			{
 				callbacks.RemoveAt(index);
+			}
+		}
+
+		public static void Update(float deltaTime)
+		{
+			foreach (var keyValuePair in serviceMap)
+			{
+				if (keyValuePair.Value is IUpdate update)
+				{
+					update.UpdateProcess(deltaTime);
+				}
 			}
 		}
 

@@ -21,8 +21,9 @@ namespace Game.Ecs.System
 		{
 			if (ServiceManager.TryGetService<IGameCommandService>(out var gameCommandService))
 			{
-				_query.ForEach((Entity entity, ref CommandComponent commandComponent) =>
+				foreach (var entity in _query)
 				{
+					ref var commandComponent = ref entity.Get<CommandComponent>();
 					var commandType = commandComponent.TypeId;
 					var magnitude = commandComponent.Magnitude;
 
@@ -30,7 +31,7 @@ namespace Game.Ecs.System
 					{
 						gameCommand.Execute(entity);
 					}
-				});
+				}
 			}
 		}
 

@@ -11,7 +11,7 @@
 	public interface IGameServiceCallback
 	{
 		void OnActivate();
-		
+
 		void OnDeactivate();
 	}
 }

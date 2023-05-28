@@ -23,7 +23,7 @@ namespace Library.JSPool
 
 			public PoolItem Item => prefab.GetComponent<PoolItem>();
 		}
-		
+
 		class PoolEntity
 		{
 			private PoolItem original;

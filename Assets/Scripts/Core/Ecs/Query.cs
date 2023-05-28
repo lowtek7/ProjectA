@@ -12,7 +12,7 @@ namespace BlitzEcs {
 
             public Enumerator(Query query) {
                 this.query = query;
-                idx = 0;
+                idx = -1;
 
                 if (!query.hot)
                 {

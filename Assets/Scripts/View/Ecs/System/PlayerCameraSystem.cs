@@ -21,11 +21,12 @@ namespace View.Ecs.System
 		{
 			if (ServiceManager.TryGetService(out IPlayerCameraService instance))
 			{
-				query.ForEach((ref PlayerCameraComponent playerCameraComponent,
-					ref TransformComponent transformComponent) =>
+				foreach (var entity in query)
 				{
+					ref var transformComponent = ref entity.Get<TransformComponent>();
+
 					instance.SetCameraPosition(transformComponent.Position);
-				});
+				}
 			}
 		}
 

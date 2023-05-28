@@ -54,9 +54,18 @@ namespace Library.JSAnim2D
 
 		public void Play(string animationName)
 		{
-			var targetAnimIndex = animationData.Animations.FindIndex(x => x.AnimationName == animationName);
+			var targetAnimIndex = -1;
 
-			if (targetAnimIndex == _currentAnimIndex)
+			for (var i = 0; i < animationData.Animations.Count; ++i)
+			{
+				if (animationData.Animations[i].AnimationName == animationName)
+				{
+					targetAnimIndex = i;
+					break;
+				}
+			}
+
+			if (targetAnimIndex == _currentAnimIndex || targetAnimIndex < 0)
 			{
 				return;
 			}

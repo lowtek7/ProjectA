@@ -28,6 +28,8 @@ namespace Core
 
 		private readonly HashSet<IUpdate> updaters = new HashSet<IUpdate>();
 
+		private readonly List<IUpdate> updateBuffer = new List<IUpdate>();
+
 		public void RegisterUpdater(IUpdate updater)
 		{
 			updaters.Add(updater);
@@ -40,10 +42,12 @@ namespace Core
 
 		public void Update()
 		{
+			updateBuffer.Clear();
+			updateBuffer.AddRange(updaters);
+			
 			var deltaTime = Time.deltaTime;
-			var updateArray = updaters.ToArray();
 
-			foreach (var update in updateArray)
+			foreach (var update in updateBuffer)
 			{
 				update.UpdateProcess(deltaTime);
 			}

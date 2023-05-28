@@ -28,12 +28,16 @@ namespace Game.Ecs.System
 				inputService.Fetch();
 			}
 
-			_inputQuery.ForEach((ref InputComponent inputComponent) =>
+			foreach (var entity in _inputQuery)
 			{
+				ref var inputComponent = ref entity.Get<InputComponent>();
 				var moveDirection = inputComponent.MoveDirection;
 
-				_movementQuery.ForEach((ref MovementComponent movementComponent, ref TransformComponent transformComponent, ref PlayerComponent _) =>
+				foreach (var moveEntity in _movementQuery)
 				{
+					ref var movementComponent = ref moveEntity.Get<MovementComponent>();
+					ref var transformComponent = ref moveEntity.Get<TransformComponent>();
+
 					// 임시적으로 디렉션을 무브 디렉션을 사용하게 하자.
 					if (moveDirection != Vector3.zero)
 					{
@@ -41,8 +45,8 @@ namespace Game.Ecs.System
 					}
 
 					movementComponent.MoveDir = moveDirection;
-				});
-			});
+				}
+			}
 		}
 
 		public void LateUpdate(float deltaTime)

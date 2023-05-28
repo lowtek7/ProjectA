@@ -54,10 +54,12 @@ namespace UnityService.Input
 
 			var moveDirection = new Vector3(xMove, yMove, 0).normalized;
 
-			inputQuery.ForEach(((ref InputComponent moveInputComponent) =>
+			foreach (var entity in inputQuery)
 			{
+				ref var moveInputComponent = ref entity.Get<InputComponent>();
+
 				moveInputComponent.MoveDirection = moveDirection;
-			}));
+			}
 		}
 	}
 }

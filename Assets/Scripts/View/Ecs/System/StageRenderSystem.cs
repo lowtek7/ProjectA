@@ -33,16 +33,19 @@ namespace View.Ecs.System
 		{
 			var currentStageGuid = Constants.UnknownStageGuid;
 
-			playerQuery.ForEach((ref PlayerCameraComponent c1, ref StageSpecComponent stageSpecComponent) =>
+			foreach (var entity in playerQuery)
 			{
-				// 읽기전용으로 가져올 생각이기 때문에 ref를 사용하지 않는다.
+				var stageSpecComponent = entity.Get<StageSpecComponent>();
+
 				currentStageGuid = stageSpecComponent.StageGuid;
-			});
+			}
 
 			if (ServiceManager.TryGetService<IStageRenderService>(out var stageRenderService))
 			{
-				renderQuery.ForEach((ref StageRenderComponent stageRenderComponent) =>
+				foreach (var entity in renderQuery)
 				{
+					ref var stageRenderComponent = ref entity.Get<StageRenderComponent>();
+
 					// 현재 스테이지 Id와 스테이지 렌더 Component의 스테이지 Id가 다르므로 씬이동이 발생해야한다!
 					if (stageRenderComponent.StageGuid != currentStageGuid)
 					{
@@ -53,8 +56,10 @@ namespace View.Ecs.System
 					else if (!stageRenderService.IsLoading)
 					{
 						// 씬이동이 발생하지 않으면 모든 엔티티의 ZoneComponent를 조회하여 그려주거나 지워주면 된다.
-						unitQuery.ForEach((Entity unitEntity, ref UnitComponent unitComponent, ref StageSpecComponent stageSpecComponent) =>
+						foreach (var unitEntity in unitQuery)
 						{
+							ref var stageSpecComponent = ref unitEntity.Get<StageSpecComponent>();
+
 							// 해당 엔티티가 현재 스테이지와 일치하는지에 대한 검사
 							if (stageSpecComponent.StageGuid == currentStageGuid)
 							{
@@ -73,9 +78,9 @@ namespace View.Ecs.System
 									stageRenderService.StageExitEvent(unitEntity);
 								}
 							}
-						});
+						}
 					}
-				});
+				}
 			}
 		}
 

@@ -95,6 +95,8 @@ namespace Game.World
 			{
 				system.Update(dt);
 			}
+
+			ServiceManager.Update(dt);
 		}
 
 		public void LateUpdate()
