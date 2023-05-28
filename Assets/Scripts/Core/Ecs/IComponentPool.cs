@@ -1,5 +1,6 @@
 namespace BlitzEcs {
     public interface IComponentPool {
+	    System.Type ComponentType { get; }
         int Count { get; }
         int PoolId { get; }
 

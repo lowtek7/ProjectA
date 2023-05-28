@@ -26,6 +26,8 @@ namespace Game.World
 
 		private Query<PlayerComponent, MovementComponent> playerQuery;
 
+		public BlitzEcs.World World => world;
+
 		/// <summary>
 		/// 원래는 에셋 팩토리에 직접 접근하는 일이 없어야 함
 		/// 현재 엔티티 스폰을 위해서 임시적으로 이렇게 구성했음

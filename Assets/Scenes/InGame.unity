@@ -525,6 +525,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1456230613}
   - component: {fileID: 1456230614}
+  - component: {fileID: 1456230615}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -564,6 +565,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5047ddd25ec24a55baea30afba0e4714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1456230615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1456230612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3193ae43ac44464b944169ca2c46f703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1550368723

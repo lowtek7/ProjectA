@@ -20,6 +20,7 @@ namespace BlitzEcs {
         private TComponent[] components;
 
         private int count;
+        public Type ComponentType => typeof(TComponent);
         public int Count => count;
 
         private SparseSet<bool> entitiesToRemove;

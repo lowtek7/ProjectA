@@ -23,6 +23,8 @@ namespace BlitzEcs {
         public int EntityCount => entityComponentCounts.Count;
         public int ComponentCount => allComponentPools.Count;
 
+        public IEnumerable<int> EntityIds => entityComponentCounts.DirectKeys;
+
         private int activePoolLocks;
 
         public World() {
