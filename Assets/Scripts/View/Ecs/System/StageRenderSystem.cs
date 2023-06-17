@@ -11,8 +11,6 @@ namespace View.Ecs.System
 {
 	public class StageRenderSystem : ISystem
 	{
-		public Order Order => Order.Low;
-
 		private Query<PlayerCameraComponent, StageSpecComponent> playerQuery;
 
 		private Query<StageRenderComponent> renderQuery;

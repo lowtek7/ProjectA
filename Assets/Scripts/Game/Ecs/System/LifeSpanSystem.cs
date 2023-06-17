@@ -14,8 +14,6 @@ namespace Game.Ecs.System
 
 		private readonly List<int> _destroyedEntities = new List<int>(200);
 
-		public Order Order => Order.Lowest;
-
 		public void Init(BlitzEcs.World world)
 		{
 			_world = world;

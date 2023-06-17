@@ -11,8 +11,6 @@ namespace Game.Ecs.System
 
 		private BlitzEcs.World _world;
 
-		public Order Order => Order.Normal;
-
 		public void Init(BlitzEcs.World world)
 		{
 			_moveQuery = new Query<TransformComponent, MovementComponent>(world);

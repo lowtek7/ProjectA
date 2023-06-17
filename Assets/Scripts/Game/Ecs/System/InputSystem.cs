@@ -9,8 +9,6 @@ namespace Game.Ecs.System
 {
 	public class InputSystem : ISystem
 	{
-		public Order Order => Order.Highest;
-
 		private Query<InputComponent> _inputQuery;
 
 		private Query<MovementComponent, TransformComponent, PlayerComponent> _movementQuery;

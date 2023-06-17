@@ -10,8 +10,6 @@ namespace View.Ecs.System
 	{
 		private Query<PlayerCameraComponent, TransformComponent> query;
 
-		public Order Order => Order.Highest;
-		
 		public void Init(World world)
 		{
 			query = new Query<PlayerCameraComponent, TransformComponent>(world);

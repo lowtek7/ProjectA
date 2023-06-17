@@ -2,16 +2,6 @@
 
 namespace Core.Unity
 {
-	public enum Order
-	{
-		First = 0,
-		Highest = 100,
-		High = 200,
-		Normal = 300,
-		Low = 400,
-		Lowest = 500
-	}
-	
 	public interface ISystem
 	{
 		/// <summary>
