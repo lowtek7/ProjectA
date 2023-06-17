@@ -6,6 +6,6 @@ namespace UnityService.Command.Script
 {
 	public abstract class GameCommandScriptBase : ScriptableObject, IGameCommand
 	{
-		public abstract void Execute(Entity entity);
+		public abstract void Execute(Entity entity, float magnitude);
 	}
 }

@@ -10,8 +10,6 @@ namespace Game.Ecs.System
 	{
 		private Query<CommandComponent> _query;
 
-		public Order Order => Order.Highest;
-		
 		public void Init(BlitzEcs.World world)
 		{
 			_query = new Query<CommandComponent>(world);
@@ -29,7 +27,7 @@ namespace Game.Ecs.System
 
 					if (gameCommandService.TryGet(commandType, out var gameCommand))
 					{
-						gameCommand.Execute(entity);
+						gameCommand.Execute(entity, magnitude);
 					}
 				}
 			}

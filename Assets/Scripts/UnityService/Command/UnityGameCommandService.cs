@@ -33,24 +33,24 @@ namespace UnityService.Command
 		/// <summary>
 		/// 여기서 실제로 데이터를 Map 컨테이너에 담아져서 사용되는 역할을 하게 된다.
 		/// </summary>
-		private readonly Dictionary<int, IGameCommand> _commandMap = new Dictionary<int, IGameCommand>();
+		private readonly Dictionary<int, IGameCommand> commandMap = new Dictionary<int, IGameCommand>();
 
 		public void Init(World world)
 		{
-			_commandMap.Clear();
+			commandMap.Clear();
 
 			foreach (var data in dataList)
 			{
-				if (!_commandMap.TryAdd(data.TypeId, data.Script))
+				if (!commandMap.TryAdd(data.TypeId, data.Script))
 				{
-					Debug.LogError($"UnityGameCommandService Init Error. _commandMap Try Add Failed. [{data.TypeId}, {data.Script.name}]");
+					Debug.LogError($"UnityGameCommandService Init Error. commandMap TryAdd Failed. [{data.TypeId}, {data.Script.name}]");
 				}
 			}
 		}
 
 		public bool TryGet(int typeId, out IGameCommand gameCommand)
 		{
-			return _commandMap.TryGetValue(typeId, out gameCommand);
+			return commandMap.TryGetValue(typeId, out gameCommand);
 		}
 	}
 }
