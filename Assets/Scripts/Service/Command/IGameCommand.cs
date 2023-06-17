@@ -10,6 +10,6 @@ namespace Service.Command
 	/// </summary>
 	public interface IGameCommand
 	{
-		void Execute(Entity entity);
+		void Execute(Entity entity, float magnitude);
 	}
 }
