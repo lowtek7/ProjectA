@@ -88,7 +88,7 @@ namespace Game.Asset
 
 			return false;
 		}
-		
+
 		private void OnLoadCompleted(AsyncOperationHandle<IList<GameObject>> archetypeList)
 		{
 			if (archetypeList.Result != null)
@@ -104,7 +104,7 @@ namespace Game.Asset
 					{
 						Debug.LogError($"Load Failed! UnitPrefab [{go.name}] is not a UnitTemplate!");
 					}
-					
+
 				}
 
 				GC.Collect();
