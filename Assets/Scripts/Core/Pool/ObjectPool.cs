@@ -44,8 +44,6 @@ namespace Core.Pool
 
 		public T Create()
 		{
-			var result = pool.Dequeue();
-
 			if (pool.Count == 0)
 			{
 				for (int i = 0; i < AllocSize; i++)
@@ -53,6 +51,8 @@ namespace Core.Pool
 					pool.Enqueue(new T());
 				}
 			}
+
+			var result = pool.Dequeue();
 
 			if (result is IPoolItem poolItem)
 			{
