@@ -15,6 +15,12 @@ namespace Build.Stage
 		[SerializeField, HideInInspector]
 		private string stageGuid = string.Empty;
 
+		/// <summary>
+		/// 절차적 생성 기능 사용 여부
+		/// </summary>
+		[SerializeField]
+		private bool useProceduralGen = false;
+
 		public Guid StageGuid
 		{
 			get
@@ -27,7 +33,9 @@ namespace Build.Stage
 				return Guid.Empty;
 			}
 		}
-		
+
+		public bool UseProceduralGen => useProceduralGen;
+
 #if UNITY_EDITOR
 		void OnValidate()
 		{
