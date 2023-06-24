@@ -24,6 +24,14 @@ namespace Build.Editor.Stage
 			var componentBuffer = new List<IComponent>();
 			var unitTemplates = stageSetting.GetComponentsInChildren<UnitTemplate>().ToArray();
 
+			// stage entity 생성하기.
+			// stage entity란 스테이지가 엔티티화 된 것을 의미 한다.
+			// 스테이지에 대한 정보들이 스테이지 엔티티에 포함 된다.
+			componentBuffer.Add(new StagePropertyComponent { StageGuid = stageGuid, CanGenerate = stageSetting.UseProceduralGen });
+			var stageEntity = new VirtualEntity(componentBuffer);
+			virtualWorld.AddEntity(stageEntity);
+			componentBuffer.Clear();
+
 			foreach (var unitTemplate in unitTemplates)
 			{
 				var gameObject = unitTemplate.gameObject;

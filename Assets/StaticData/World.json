@@ -4,7 +4,11 @@
             "components": [
                 {
                     "rid": 1000
-                },
+                }
+            ]
+        },
+        {
+            "components": [
                 {
                     "rid": 1001
                 },
@@ -28,6 +32,9 @@
                 },
                 {
                     "rid": 1008
+                },
+                {
+                    "rid": 1009
                 }
             ]
         }
@@ -37,6 +44,37 @@
         "RefIds": [
             {
                 "rid": 1000,
+                "type": {
+                    "class": "StagePropertyComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {
+                    "stageGuid": {
+                        "guidBytes": [
+                            182,
+                            225,
+                            197,
+                            141,
+                            46,
+                            81,
+                            7,
+                            69,
+                            160,
+                            40,
+                            204,
+                            153,
+                            113,
+                            191,
+                            18,
+                            153
+                        ]
+                    },
+                    "canGenerate": true
+                }
+            },
+            {
+                "rid": 1001,
                 "type": {
                     "class": "UnitComponent",
                     "ns": "Game.Ecs.Component",
@@ -66,7 +104,7 @@
                 }
             },
             {
-                "rid": 1001,
+                "rid": 1002,
                 "type": {
                     "class": "UnitInstanceComponent",
                     "ns": "Game.Ecs.Component",
@@ -75,28 +113,28 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            31,
-                            76,
-                            146,
-                            172,
+                            96,
+                            48,
                             91,
-                            180,
-                            195,
-                            73,
-                            165,
-                            4,
-                            108,
-                            1,
-                            219,
-                            141,
-                            76,
-                            145
+                            118,
+                            236,
+                            252,
+                            157,
+                            78,
+                            161,
+                            133,
+                            170,
+                            147,
+                            25,
+                            45,
+                            75,
+                            99
                         ]
                     }
                 }
             },
             {
-                "rid": 1002,
+                "rid": 1003,
                 "type": {
                     "class": "TransformComponent",
                     "ns": "Game.Ecs.Component",
@@ -115,7 +153,7 @@
                 }
             },
             {
-                "rid": 1003,
+                "rid": 1004,
                 "type": {
                     "class": "StageSpecComponent",
                     "ns": "Game.Ecs.Component",
@@ -145,7 +183,7 @@
                 }
             },
             {
-                "rid": 1004,
+                "rid": 1005,
                 "type": {
                     "class": "MovementComponent",
                     "ns": "Game.Ecs.Component",
@@ -161,7 +199,7 @@
                 }
             },
             {
-                "rid": 1005,
+                "rid": 1006,
                 "type": {
                     "class": "PlayerCameraComponent",
                     "ns": "Game.Ecs.Component",
@@ -170,7 +208,7 @@
                 "data": {}
             },
             {
-                "rid": 1006,
+                "rid": 1007,
                 "type": {
                     "class": "PlayerComponent",
                     "ns": "Game.Ecs.Component",
@@ -179,7 +217,7 @@
                 "data": {}
             },
             {
-                "rid": 1007,
+                "rid": 1008,
                 "type": {
                     "class": "BoundsComponent",
                     "ns": "Game.Ecs.Component",
@@ -199,7 +237,7 @@
                 }
             },
             {
-                "rid": 1008,
+                "rid": 1009,
                 "type": {
                     "class": "NameComponent",
                     "ns": "Game.Ecs.Component",
