@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Game.Ecs.Component
 {
+	/// <summary>
+	/// Stage Partition 영향을 받는 Bounds Component
+	/// </summary>
 	[Serializable]
 	public struct BoundsComponent : IComponent
 	{
@@ -27,12 +30,16 @@ namespace Game.Ecs.Component
 
 		public Bounds GetBounds(Vector3 pos)
 		{
-			return new Bounds(pos + Offset, boundsSize);
+			return new Bounds(pos + offset, boundsSize);
 		}
 
 		public IComponent Clone()
 		{
-			return new BoundsComponent();
+			return new BoundsComponent
+			{
+				boundsSize = boundsSize,
+				offset = offset
+			};
 		}
 	}
 }

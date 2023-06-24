@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Unity;
 using UnityEngine;
+using Vim.Math3d;
 
 namespace Core
 {
@@ -42,9 +43,11 @@ namespace Core
 
 		public void Update()
 		{
+			// Vim.Math3d.Vector3 v = Vim.Math3d.Vector3.Create(1, 1, 1);
+			// v.Magnitude()
 			updateBuffer.Clear();
 			updateBuffer.AddRange(updaters);
-			
+
 			var deltaTime = Time.deltaTime;
 
 			foreach (var update in updateBuffer)

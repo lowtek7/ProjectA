@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BlitzEcs;
+using Core.Interface;
 using Core.Unity;
 using UnityEngine;
 
@@ -35,6 +36,11 @@ namespace Core.Virtual
 			{
 				var pool = world.GetIComponentPool(component.GetType());
 				pool.Add(entity.Id, component);
+
+				if (component is IDeserializeEventCallback deserializeEvent)
+				{
+					deserializeEvent.OnAfterDeserialize();
+				}
 			}
 		}
 
@@ -60,6 +66,11 @@ namespace Core.Virtual
 						// boxing 발생.
 						if (pool.GetWithBoxing(entity.Id) is IComponent component)
 						{
+							if (component is ISerializeEventCallback serializeEventCallback)
+							{
+								serializeEventCallback.OnBeforeSerialize();
+							}
+
 							ComponentBuffer.Add(component);
 						}
 					}
@@ -68,6 +79,15 @@ namespace Core.Virtual
 
 			// buffer의 데이터를 복사시키기
 			virtualEntity.components = ComponentBuffer.ToArray();
+
+			foreach (var component in ComponentBuffer)
+			{
+				if (component is ISerializeEventCallback serializeEventCallback)
+				{
+					serializeEventCallback.OnAfterSerialize();
+				}
+			}
+
 			ComponentBuffer.Clear();
 			return virtualEntity;
 		}
