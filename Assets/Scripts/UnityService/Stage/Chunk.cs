@@ -34,8 +34,9 @@ namespace UnityService.Stage
 				{
 					for (int z = 0; z < voxelMap.GetLength(2); z++)
 					{
-						voxelMap[x, y, z] = (y % VoxelConstants.ChunkWidth < x || y % VoxelConstants.ChunkWidth < z) ?
-							BlockId.Dirt : BlockId.Empty;
+						// voxelMap[x, y, z] = (y % VoxelConstants.ChunkWidth < x || y % VoxelConstants.ChunkWidth < z) ?
+						// 	BlockId.Dirt : BlockId.Empty;
+						voxelMap[x, y, z] = BlockId.Dirt;
 					}
 				}
 			}
