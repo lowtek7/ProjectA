@@ -50,6 +50,8 @@ namespace Game.Editor.Texture
 					drawPos = new Vector2Int(0, drawPos.y + height);
 				}
 
+				// TODO : 여기서 UV 정보도 같이 저장
+
 				for (int x = 0; x < width; x++)
 				{
 					for (int y = 0; y < height; y++)
@@ -115,6 +117,8 @@ namespace Game.Editor.Texture
 					newImporter.SaveAndReimport();
 				}
 			}
+
+			// TODO : UV 정보 Export
 		}
 	}
 }

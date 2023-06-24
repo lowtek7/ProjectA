@@ -34,9 +34,8 @@ namespace UnityService.Stage
 				{
 					for (int z = 0; z < voxelMap.GetLength(2); z++)
 					{
-						// voxelMap[x, y, z] = (y % VoxelConstants.ChunkWidth < x || y % VoxelConstants.ChunkWidth < z) ?
-						// 	BlockId.Dirt : BlockId.Empty;
-						voxelMap[x, y, z] = BlockId.Dirt;
+						voxelMap[x, y, z] = (y % VoxelConstants.ChunkWidth < x || y % VoxelConstants.ChunkWidth < z) ?
+							BlockId.Dirt : BlockId.Empty;
 					}
 				}
 			}
@@ -46,7 +45,7 @@ namespace UnityService.Stage
 
 		public void RebuildMesh()
 		{
-			int vertexIndex = 0;
+			var vertexIndex = 0;
 
 			for (int y = 0; y < voxelMap.GetLength(1); y++)
 			{
@@ -96,7 +95,27 @@ namespace UnityService.Stage
 				for (int i = 0; i < vertexInRectCount; i++)
 				{
 					vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[p, i]] + pos);
-					uvs.Add(VoxelConstants.VoxelUvs[i]);
+
+					var uv = VoxelConstants.VoxelUvs[i];
+
+					// FIXME : 데이터를 Scriptable에서 가져와야 함
+					var x = 0;
+					var y = 0;
+					var textureSize = 16;
+					var atlasSize = 256;
+
+					if (p < 4 && !IsSolidAt(pos + VoxelConstants.NearVoxels[5]))
+					{
+						x = 2;
+					}
+					else if (p == 5)
+					{
+						x = 1;
+					}
+
+					var pixelUv = new Vector2(x + uv.x, y + uv.y) * textureSize;
+
+					uvs.Add(pixelUv / atlasSize);
 				}
 
 				// 시계방향으로 그려준다.
