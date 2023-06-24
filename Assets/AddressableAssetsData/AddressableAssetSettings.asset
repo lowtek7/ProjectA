@@ -64,9 +64,9 @@ MonoBehaviour:
       - m_Id: 33db59531b22d644b83b2c8bb1a6f3a5
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: 1485a17b585d8f84695c5a06d3c296c9
-        m_Value: ServerData/[BuildTarget]
+        m_Value: 'ServerData/[BuildTarget]'
       - m_Id: 218982226173fef43be99b0962922d8e
-        m_Value: http://[PrivateIpAddress]:[HostingServicePort]
+        m_Value: 'http://[PrivateIpAddress]:[HostingServicePort]'
     m_ProfileEntryNames:
     - m_Id: 2ed772b75a6eb9e4cb3b3f2727679185
       m_Name: BuildTarget
@@ -93,6 +93,7 @@ MonoBehaviour:
     - TileRenderer
     - UnitPrefab
     - ScriptableObject
+    - Textures
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 5f2a0a12926881a46bc382e144bc9044, type: 2}
