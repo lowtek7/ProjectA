@@ -11,9 +11,11 @@ namespace UnityService.Camera
 		[SerializeField]
 		private UnityEngine.Camera playerCamera;
 
+		private float yDistance = 0;
+		
 		private float zDistance = 0;
 
-		public Vector2 WorldSize
+		public Vector3 WorldSize
 		{
 			get
 			{
@@ -21,17 +23,22 @@ namespace UnityService.Camera
 				var aspect = playerCamera.aspect;
 				var height = cameraSize * 2;
 
-				return new Vector2(height * aspect, height);
+				return new Vector3(height * aspect, height, height * aspect);
 			}
 		}
 
 		/// <summary>
-		/// z distance는 이미 정해져 있기 때문에 x, y만 받도록 한다
+		/// 3차원에서 z와 y에 오프셋 거리만 큼 떨어뜨린 후, 바라보게 한다
 		/// </summary>
-		/// <param name="position"></param>
-		public void SetCameraPosition(Vector2 position)
+		/// <param name="targetPosition"></param>
+		public void SetCameraPosition(Vector3 targetPosition)
 		{
-			playerCamera.transform.position = new Vector3(position.x, position.y, zDistance);
+			playerCamera.transform.position = new Vector3(
+				targetPosition.x,
+				targetPosition.y + yDistance,
+				targetPosition.z + zDistance
+				);
+			playerCamera.transform.LookAt(targetPosition);
 		}
 
 		public Vector3 ScreenToWorld(Vector2 screenPos)
@@ -50,6 +57,7 @@ namespace UnityService.Camera
 
 		private void Awake()
 		{
+			yDistance = playerCamera.transform.position.y;
 			zDistance = playerCamera.transform.position.z;
 		}
 
