@@ -31,15 +31,16 @@ namespace UnityService.Input
 		{
 			int xMove = 0;
 			int yMove = 0;
+			int zMove = 0;
 
 			if (UnityEngine.Input.GetKey(KeyCode.W))
 			{
-				yMove += 1;
+				zMove += 1;
 			}
 
 			if (UnityEngine.Input.GetKey(KeyCode.S))
 			{
-				yMove -= 1;
+				zMove -= 1;
 			}
 
 			if (UnityEngine.Input.GetKey(KeyCode.D))
@@ -51,8 +52,19 @@ namespace UnityService.Input
 			{
 				xMove -= 1;
 			}
+			
+			if (UnityEngine.Input.GetKey(KeyCode.Space))
+			{
+				yMove += 1;
+			}
+			
+			if (UnityEngine.Input.GetKey(KeyCode.C))
+			{
+				yMove -= 1;
+			}
+			
 
-			var moveDirection = new Vector3(xMove, yMove, 0).normalized;
+			var moveDirection = new Vector3(xMove, yMove, zMove).normalized;
 
 			foreach (var entity in inputQuery)
 			{
