@@ -15,6 +15,8 @@ namespace UnityService.Camera
 		
 		private float zDistance = 0;
 
+		private bool isMouseClick = false;
+
 		public Vector3 WorldSize
 		{
 			get
@@ -34,11 +36,26 @@ namespace UnityService.Camera
 		public void SetCameraPosition(Vector3 targetPosition)
 		{
 			playerCamera.transform.position = new Vector3(
-				targetPosition.x,
-				targetPosition.y + yDistance,
-				targetPosition.z + zDistance
-				);
-			playerCamera.transform.LookAt(targetPosition);
+					targetPosition.x,
+					targetPosition.y + yDistance,
+					targetPosition.z + zDistance
+					);
+			if (isMouseClick == false)
+			{
+				playerCamera.transform.LookAt(targetPosition);	
+			}
+		}
+		
+		public void SetCameraRotation(Vector2 rotation)
+		{
+			Vector3 cameraPosition = playerCamera.transform.position;
+
+			playerCamera.transform.RotateAround(cameraPosition, Vector3.up, rotation.x);
+		}
+
+		public void SetMouseClick(bool mouseClick)
+		{
+			isMouseClick = mouseClick;
 		}
 
 		public Vector3 ScreenToWorld(Vector2 screenPos)

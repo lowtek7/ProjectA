@@ -33,6 +33,11 @@ namespace UnityService.Input
 			int yMove = 0;
 			int zMove = 0;
 
+			float xRotateCameraMove = 0.0f;
+			float yRotateCameraMove = 0.0f;
+
+			bool isMouseClick = false;
+
 			if (UnityEngine.Input.GetKey(KeyCode.W))
 			{
 				zMove += 1;
@@ -63,14 +68,32 @@ namespace UnityService.Input
 				yMove -= 1;
 			}
 			
+			if (UnityEngine.Input.GetMouseButton(0))
+			{
+				isMouseClick = true;
+				xRotateCameraMove = UnityEngine.Input.GetAxis("Mouse X");
+				yRotateCameraMove = UnityEngine.Input.GetAxis("Mouse X");
+			}
+			
+			if (UnityEngine.Input.GetMouseButtonUp(0))
+			{
+				isMouseClick = false;
+			}
+			
 
 			var moveDirection = new Vector3(xMove, yMove, zMove).normalized;
+
+			var cameraRotation = new Vector2(xRotateCameraMove, yRotateCameraMove);
+			
 
 			foreach (var entity in inputQuery)
 			{
 				ref var moveInputComponent = ref entity.Get<InputComponent>();
 
 				moveInputComponent.MoveDirection = moveDirection;
+
+				moveInputComponent.CameraRotation = cameraRotation;
+				moveInputComponent.IsMouseClick = isMouseClick;
 			}
 		}
 	}

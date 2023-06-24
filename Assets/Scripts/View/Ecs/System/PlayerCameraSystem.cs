@@ -9,9 +9,12 @@ namespace View.Ecs.System
 	public class PlayerCameraSystem : ISystem
 	{
 		private Query<PlayerCameraComponent, TransformComponent> query;
+		
+		private Query<InputComponent> inputQuery;
 
 		public void Init(World world)
 		{
+			inputQuery = new (world);
 			query = new Query<PlayerCameraComponent, TransformComponent>(world);
 		}
 
@@ -24,6 +27,14 @@ namespace View.Ecs.System
 					ref var transformComponent = ref entity.Get<TransformComponent>();
 
 					instance.SetCameraPosition(transformComponent.Position);
+				}
+				
+				foreach (var entity in inputQuery)
+				{
+					ref var inputComponent = ref entity.Get<InputComponent>();
+
+					instance.SetCameraRotation(inputComponent.CameraRotation);
+					instance.SetMouseClick(inputComponent.IsMouseClick);
 				}
 			}
 		}

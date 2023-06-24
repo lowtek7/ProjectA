@@ -6,6 +6,10 @@ namespace Service.Camera
 	{
 		void SetCameraPosition(Vector3 position);
 
+		void SetCameraRotation(Vector2 rotation);
+
+		void SetMouseClick(bool mouseClick);
+
 		Vector3 ScreenToWorld(Vector2 screenPos);
 
 		Vector2 WorldToScreen(Vector3 worldPos);
