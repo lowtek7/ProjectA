@@ -30,7 +30,7 @@ namespace Core.Pool
 
 		public ObjectPool(int capacity = 32)
 		{
-			if (capacity == 0)
+			if (capacity <= 0)
 			{
 				Debug.LogWarning("Capacity must always be greater than 0.");
 				capacity = 32;
