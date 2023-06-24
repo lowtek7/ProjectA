@@ -72,7 +72,7 @@ namespace UnityService.Input
 			{
 				isMouseClick = true;
 				xRotateCameraMove = UnityEngine.Input.GetAxis("Mouse X");
-				yRotateCameraMove = UnityEngine.Input.GetAxis("Mouse X");
+				yRotateCameraMove = UnityEngine.Input.GetAxis("Mouse Y");
 			}
 			
 			if (UnityEngine.Input.GetMouseButtonUp(0))

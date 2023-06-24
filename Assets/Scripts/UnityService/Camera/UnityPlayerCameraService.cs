@@ -48,9 +48,10 @@ namespace UnityService.Camera
 		
 		public void SetCameraRotation(Vector2 rotation)
 		{
-			Vector3 cameraPosition = playerCamera.transform.position;
+			float yRotate = playerCamera.transform.eulerAngles.y + rotation.x;
+			float xRotate = playerCamera.transform.eulerAngles.x - rotation.y;
 
-			playerCamera.transform.RotateAround(cameraPosition, Vector3.up, rotation.x);
+			playerCamera.transform.rotation = Quaternion.Euler(xRotate, yRotate, 0);
 		}
 
 		public void SetMouseClick(bool mouseClick)
