@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Game.Editor.Texture
 {
@@ -8,7 +7,11 @@ namespace Game.Editor.Texture
 	public class TexturePacker : ScriptableObject
 	{
 		public List<Texture2D> textures;
-		public string filePath = "Assets/GameAsset";
-		public string fileName = "Texture";
+		public string filePath = "Assets/GameAsset/Textures/Packed";
+		public string fileName = "PackedTexture";
+		public int maxPixelSize = 1 << 8;
+
+		public string uvDataPath = "Assets/GameAsset/ScriptableObject/Texture/Uvs";
+		public string uvDataName = "PackedTextureUvs";
 	}
 }
