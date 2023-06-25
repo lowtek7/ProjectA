@@ -16,5 +16,10 @@ MonoBehaviour:
   - {fileID: 2800000, guid: e899e851c0e772c48b6b84bd5b54eb0e, type: 3}
   - {fileID: 2800000, guid: 9cb21da72bf4e6c48804cfc95240ee1b, type: 3}
   - {fileID: 2800000, guid: f39d1db5e9cd1974e897676bfbd503e6, type: 3}
+  - {fileID: 2800000, guid: 89dc3572cbb8fa24db98165d3b9befbd, type: 3}
+  - {fileID: 2800000, guid: 0b2aa75c335ab58419e25cb05dfece9a, type: 3}
   filePath: Assets/GameAsset/Textures/Packed
   fileName: ChunkTexture
+  maxPixelSize: 256
+  uvDataPath: Assets/GameAsset/ScriptableObject/Texture/Uvs
+  uvDataName: PackedTextureUvs

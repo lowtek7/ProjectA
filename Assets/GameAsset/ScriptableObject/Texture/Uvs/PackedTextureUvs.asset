@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c858ba0be5b142e0bcc33cf99450530f, type: 3}
+  m_Name: PackedTextureUvs
+  m_EditorClassIdentifier: 
+  uvs:
+  - startX: 0
+    startY: 0
+    originTexture: {fileID: 2800000, guid: e899e851c0e772c48b6b84bd5b54eb0e, type: 3}
+  - startX: 16
+    startY: 0
+    originTexture: {fileID: 2800000, guid: 9cb21da72bf4e6c48804cfc95240ee1b, type: 3}
+  - startX: 32
+    startY: 0
+    originTexture: {fileID: 2800000, guid: f39d1db5e9cd1974e897676bfbd503e6, type: 3}
+  - startX: 48
+    startY: 0
+    originTexture: {fileID: 2800000, guid: 89dc3572cbb8fa24db98165d3b9befbd, type: 3}
+  - startX: 64
+    startY: 0
+    originTexture: {fileID: 2800000, guid: 0b2aa75c335ab58419e25cb05dfece9a, type: 3}
+  textureSize: 256
