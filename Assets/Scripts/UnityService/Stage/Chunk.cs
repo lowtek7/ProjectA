@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using DG.DemiEditor;
+using UnityEditor;
 using UnityEngine;
+using UnityService.Texture;
 
 namespace UnityService.Stage
 {
-	public enum BlockId
-	{
-		Empty = 0,
-		Dirt = 1,
-	}
-
 	public class Chunk : MonoBehaviour
 	{
 		private MeshRenderer _meshRenderer;
@@ -19,26 +16,51 @@ namespace UnityService.Stage
 		List<int> triangles = new();
 		List<Vector2> uvs = new();
 
-		private BlockId[,,] voxelMap;
+		private string[,,] _voxelMap;
+
+		private BlockSpecHolder _blockSpecHolder;
+		private PackedTextureUvHolder _uvHolder;
 
 		private void Awake()
 		{
 			_meshFilter = GetComponent<MeshFilter>();
 			_meshRenderer = GetComponent<MeshRenderer>();
 
-			voxelMap = new BlockId[VoxelConstants.ChunkWidth, VoxelConstants.ChunkHeight, VoxelConstants.ChunkWidth];
+			_voxelMap = new string[VoxelConstants.ChunkWidth, VoxelConstants.ChunkHeight, VoxelConstants.ChunkWidth];
 
-			for (int y = 0; y < voxelMap.GetLength(1); y++)
+			for (int y = 0; y < _voxelMap.GetLength(1); y++)
 			{
-				for (int x = 0; x < voxelMap.GetLength(0); x++)
+				for (int x = 0; x < _voxelMap.GetLength(0); x++)
 				{
-					for (int z = 0; z < voxelMap.GetLength(2); z++)
+					for (int z = 0; z < _voxelMap.GetLength(2); z++)
 					{
-						voxelMap[x, y, z] = (y % VoxelConstants.ChunkWidth < x || y % VoxelConstants.ChunkWidth < z) ?
-							BlockId.Dirt : BlockId.Empty;
+						_voxelMap[x, y, z] = (y % VoxelConstants.ChunkWidth < x || y % VoxelConstants.ChunkWidth < z) ?
+							"dirt": null;
 					}
 				}
 			}
+
+			for (int y = 0; y < _voxelMap.GetLength(1); y++)
+			{
+				for (int x = 0; x < _voxelMap.GetLength(0); x++)
+				{
+					for (int z = 0; z < _voxelMap.GetLength(2); z++)
+					{
+						// FIXME : 이 규칙은 블록마다 따로 분리 필요
+						if (_voxelMap[x, y, z] == "dirt" &&
+						    !IsSolidAt(new Vector3Int(x, y, z) + VoxelConstants.NearVoxels[5]))
+						{
+							_voxelMap[x, y, z] = "grass_dirt";
+						}
+					}
+				}
+			}
+
+			// FIXME : 원래는 AssetFactory에서 얻어와야 하지만, 테스트 씬에서 사용할 수 있도록 세팅
+			_blockSpecHolder = AssetDatabase.LoadAssetAtPath<BlockSpecHolder>(
+				"Assets/GameAsset/ScriptableObject/Texture/BlockSpecs.asset");
+			_uvHolder = AssetDatabase.LoadAssetAtPath<PackedTextureUvHolder>(
+				"Assets/GameAsset/ScriptableObject/Texture/Uvs/PackedTextureUvs.asset");
 
 			RebuildMesh();
 		}
@@ -47,11 +69,11 @@ namespace UnityService.Stage
 		{
 			var vertexIndex = 0;
 
-			for (int y = 0; y < voxelMap.GetLength(1); y++)
+			for (int y = 0; y < _voxelMap.GetLength(1); y++)
 			{
-				for (int x = 0; x < voxelMap.GetLength(0); x++)
+				for (int x = 0; x < _voxelMap.GetLength(0); x++)
 				{
-					for (int z = 0; z < voxelMap.GetLength(2); z++)
+					for (int z = 0; z < _voxelMap.GetLength(2); z++)
 					{
 						var pos = new Vector3Int(x, y, z);
 
@@ -83,6 +105,12 @@ namespace UnityService.Stage
 		{
 			var sideCount = VoxelConstants.VoxelTris.GetLength(0);
 			var vertexInRectCount = VoxelConstants.VoxelTris.GetLength(1);
+			var blockName = _voxelMap[pos.x, pos.y, pos.z];
+
+			if (!_blockSpecHolder.NameToSpec.TryGetValue(blockName, out var blockSpec))
+			{
+				return vertexIndex;
+			}
 
 			for (int p = 0; p < sideCount; p++)
 			{
@@ -91,31 +119,20 @@ namespace UnityService.Stage
 					continue;
 				}
 
-				// FIXME : 더 줄일 수 있을지도...?
-				for (int i = 0; i < vertexInRectCount; i++)
+				if (_uvHolder.NameToUvs.TryGetValue(blockSpec.textures[p].name, out var uvData))
 				{
-					vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[p, i]] + pos);
-
-					var uv = VoxelConstants.VoxelUvs[i];
-
-					// FIXME : 데이터를 Scriptable에서 가져와야 함
-					var x = 0;
-					var y = 0;
-					var textureSize = 16;
-					var atlasSize = 256;
-
-					if (p < 4 && !IsSolidAt(pos + VoxelConstants.NearVoxels[5]))
+					// FIXME : 더 줄일 수 있을지도...?
+					for (int i = 0; i < vertexInRectCount; i++)
 					{
-						x = 2;
-					}
-					else if (p == 5)
-					{
-						x = 1;
-					}
+						vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[p, i]] + pos);
 
-					var pixelUv = new Vector2(x + uv.x, y + uv.y) * textureSize;
+						var uv = VoxelConstants.VoxelUvs[i];
 
-					uvs.Add(pixelUv / atlasSize);
+						var pixelUv = new Vector2(uvData.startX + uv .x * uvData.originTexture.width,
+							uvData.startY + uv.y * uvData.originTexture.height);
+
+						uvs.Add(pixelUv / _uvHolder.textureSize);
+					}
 				}
 
 				// 시계방향으로 그려준다.
@@ -135,14 +152,14 @@ namespace UnityService.Stage
 		private bool IsSolidAt(Vector3Int pos)
 		{
 			if (pos.x < 0 || pos.y < 0 || pos.z < 0 ||
-			    pos.x >= voxelMap.GetLength(0) ||
-			    pos.y >= voxelMap.GetLength(1) ||
-			    pos.z >= voxelMap.GetLength(2))
+			    pos.x >= _voxelMap.GetLength(0) ||
+			    pos.y >= _voxelMap.GetLength(1) ||
+			    pos.z >= _voxelMap.GetLength(2))
 			{
 				return false;
 			}
 
-			return voxelMap[pos.x, pos.y, pos.z] != BlockId.Empty;
+			return !_voxelMap[pos.x, pos.y, pos.z].IsNullOrEmpty();
 		}
 	}
 }

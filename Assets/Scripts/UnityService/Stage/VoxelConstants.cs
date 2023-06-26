@@ -48,6 +48,6 @@ namespace UnityService.Stage
 		};
 
 		public static readonly int ChunkWidth = 1 << 4;
-		public static readonly int ChunkHeight = 1 << 9;
+		public static readonly int ChunkHeight = 1 << 4;
 	}
 }
