@@ -1,8 +1,7 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
-namespace Game.Editor.Texture
+namespace UnityService.Texture
 {
 	[CustomEditor(typeof(PackedTextureUvHolder))]
 	public class PackedTextureUvHolderEditor : UnityEditor.Editor

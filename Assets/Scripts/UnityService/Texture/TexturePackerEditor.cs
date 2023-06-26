@@ -3,7 +3,7 @@ using UnityEngine;
 using Application = UnityEngine.Device.Application;
 using IO = System.IO;
 
-namespace Game.Editor.Texture
+namespace UnityService.Texture
 {
 	[CustomEditor(typeof(TexturePacker))]
 	public class TexturePackerEditor : UnityEditor.Editor

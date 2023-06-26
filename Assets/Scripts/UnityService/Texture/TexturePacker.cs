@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Editor.Texture
+namespace UnityService.Texture
 {
 	[CreateAssetMenu(menuName = "TexturePacking/TexturePacker", fileName = "NewTexturePacker")]
 	public class TexturePacker : ScriptableObject

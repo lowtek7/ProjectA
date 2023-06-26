@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
+using System.Linq;
 using UnityEngine;
 
-namespace Game.Editor.Texture
+namespace UnityService.Texture
 {
 	public class PackedTextureUvHolder : ScriptableObject
 	{
@@ -20,5 +20,8 @@ namespace Game.Editor.Texture
 		public List<PackedTextureUv> uvs = new();
 
 		public int textureSize = 1 << 8;
+
+		private Dictionary<string, PackedTextureUv> _nameToUvs;
+		public Dictionary<string, PackedTextureUv> NameToUvs => _nameToUvs ??= uvs.ToDictionary(uv => uv.originTexture.name);
 	}
 }

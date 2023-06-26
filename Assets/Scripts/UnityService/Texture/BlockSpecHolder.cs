@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Game.Editor.Texture
+namespace UnityService.Texture
 {
 	[Serializable]
 	public class BlockSpec
