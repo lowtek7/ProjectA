@@ -1,5 +1,8 @@
 ﻿using BlitzEcs;
 using Game.Ecs.Component;
+using Service;
+using Service.Camera;
+using Service.Cursor;
 using Service.Input;
 using UnityEngine;
 
@@ -79,7 +82,20 @@ namespace UnityService.Input
 			{
 				isMouseClick = false;
 			}
-			
+
+			if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+			{
+				if (ServiceManager.TryGetService(out ICursorInputService cursorInstance))
+				{
+					cursorInstance.ToggleActiveCursor();
+					cursorInstance.ToggleLockToScreenCursor();
+				}
+
+				if (ServiceManager.TryGetService(out IPlayerCameraService playerCameraInstance))
+				{
+					playerCameraInstance.ToggleShowCursor();
+				}
+			}
 
 			var moveDirection = new Vector3(xMove, yMove, zMove).normalized;
 
