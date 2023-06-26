@@ -30,9 +30,9 @@ namespace Game.Ecs.Component
 		}
 
 		[SerializeField]
-		private Vector2 direction;
+		private Vector3 direction;
 
-		public Vector2 Direction
+		public Vector3 Direction
 		{
 			get => direction;
 			set => direction = value;
