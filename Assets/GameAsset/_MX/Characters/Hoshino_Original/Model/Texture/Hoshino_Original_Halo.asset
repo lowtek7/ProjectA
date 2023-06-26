@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!28 &2800000
+Texture2D:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hoshino_Original_Halo
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_Width: 32
+  m_Height: 32
+  m_CompleteImageSize: 576
+  m_TextureFormat: 50
+  m_MipCount: 1
+  m_IsReadable: 0
+  m_IgnoreMasterTextureLimit: 0
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_AlphaIsTransparency: 1
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_LightmapFormat: 0
+  m_ColorSpace: 1
+  image data: 576
+  _typelessdata: 6f20cdc84e98e9c994040000000000006f20ef444e98eded94040000000000006f20cd483e9849c994040000000000006f20ef403e9849c994040000000000006f20ef403e984dc994040000000000006f20cdcc7e1849c9d6d2ca5a592b6b651f02cb8b11435b1bb1f718397b2f04001f02c38d1741531bf1ff39ad85a024046f20d70d7bbaecedbdfd7f5b4b4a02006f20d70d7bbaecedbdfd7f7b4f4a03006f20d70d7bbaecedbdfd7f7b4f4a03006f20fb816a3a494929b9b7ff6f6b49496f20b331653348c9bdfd7f7b4f4a02006f20b331659f48c9397d7fdf4b4a02006f20b331659f48c93d7d7f7b4f4a02006f20b331653348c9bdfd7f5b4f4a02006f20b331659f48c9ad7d7f7b4f4a02006f20e338643348c9bdfd7f7b6b4a02006f209b2b52ff48c9bdfd7f5b4b4a02006f209b2b52ff48c9bdfd7f5b4b4a02006f209b2b52ff48c9bdfd7f5b4b4a02006f209b2b52ff48c9bdfd7f5b4b4a02006f209b2b52ff48c9bdfd7f5b4b4a02006f209b2b52ff48c9bdfd7f5b4b4a02006f00d3eccfb9a5a452d45afeefde96926f00d3eccfb9a5a452d45afeefde96926f00d3eccfb9a5a452d45afeefde96926f00d3eccfb9a5a452d45afeefde96926f00d3eccfb9a5a452d45afeefde96926f00d3eccfb9a5a452d45afeefde96926fc0d6eba4fffdfb7fffeffffdbf97926fc0d6eba4fffdfb7fffeffffdbf97926fc0d6eba4fffdfb7fffeffffdbf97926fc0d6eba4fffdfb7fffeffffdbf97926fc0d6eba4fffdfb7fffeffffdbf97926fc0d6eba4fffddffffb7fffefff9592
+  m_StreamData:
+    offset: 0
+    size: 0
+    path:

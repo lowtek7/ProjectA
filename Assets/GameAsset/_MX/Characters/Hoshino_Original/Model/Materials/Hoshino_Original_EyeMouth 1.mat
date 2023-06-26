@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hoshino_Original_EyeMouth 1
+  m_Shader: {fileID: 4800000, guid: 34f7a0a2c5b1410419a76df99ab6a722, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AOMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BTexture:
+        m_Texture: {fileID: 2800000, guid: 960fcd107d2cc6b47b9bc18d182009f9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GlossinessMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 960fcd107d2cc6b47b9bc18d182009f9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTexA:
+        m_Texture: {fileID: 2800000, guid: fa75a459e5276b24b8932e86dafa0c02, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTexB:
+        m_Texture: {fileID: 2800000, guid: 960fcd107d2cc6b47b9bc18d182009f9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 1, y: 1}
+    - _MouthTex:
+        m_Texture: {fileID: 2800000, guid: 960fcd107d2cc6b47b9bc18d182009f9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MouthTileTex:
+        m_Texture: {fileID: 2800000, guid: 960fcd107d2cc6b47b9bc18d182009f9, type: 2}
+        m_Scale: {x: 0.5, y: 0.5}
+        m_Offset: {x: 0.25, y: 0.5}
+    - _ParTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AOWeight: 0
+    - _AlphaClip: 0
+    - _BTextureIndex: 1
+    - _BUILTIN_QueueControl: 0
+    - _BUILTIN_QueueOffset: 0
+    - _Blend: 0
+    - _BumpScale: 1
+    - _ColorMask: 15
+    - _Cull: 2
+    - _Cull_Mode: 2
+    - _Custom_Data_Offset_Use: 0
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DitherThreshold: 0
+    - _DstBlend: 0
+    - _EmissionIntensity: 0
+    - _Fold: 3
+    - _FresnelIntensity: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0
+    - _GlossyReflections: 1
+    - _GrayBrightness: 1
+    - _HighDivision: 0
+    - _LowDivision: 0
+    - _Metallic: 0
+    - _MidDivision: 0
+    - _MouthTileCols: 8
+    - _MouthTileRows: 8
+    - _OcclusionStrength: 1
+    - _OutlineWidth: 0.025
+    - _Parallax: 0.02
+    - _ScatteringAttenuation: 0.5
+    - _ScatteringSize: 0.5
+    - _ScatteringWeight: 0.5
+    - _SelectedIndex: 0
+    - _SelectedTileIndex: 1
+    - _ShadowAttenuation: 0
+    - _SmoothnessTextureChannel: 0
+    - _SpecDivision: 0
+    - _SpecIntensity: 1
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Surface: 0
+    - _TileSize: 1
+    - _UVSec: 0
+    - _UseUIAlphaClip: 0
+    - _WhiteIntensity: 3.9
+    - _WorkflowMode: 1
+    - _ZOffsetFactor: 0
+    - _ZOffsetUnits: 0
+    - _ZWrite: 1
+    - _ZWrite_Mode: 0
+    m_Colors:
+    - _BTexturePosition: {r: 2.68, g: 0.7, b: 0, a: 0}
+    - _BTextureSize: {r: 1, g: 1, b: 0, a: 0}
+    - _CellSize: {r: 0.125, g: 0.125, b: 0, a: 0}
+    - _CodeAddColor: {r: 0, g: 0, b: 0, a: 0}
+    - _CodeAddRimColor: {r: 0, g: 0, b: 0, a: 0}
+    - _CodeMultiplyColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.588, g: 0.588, b: 0.588, a: 1}
+    - _Emission: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _GridSize: {r: 8, g: 8, b: 0, a: 0}
+    - _MouthRectB_Pos: {r: 0, g: 0, b: 0, a: 0}
+    - _MouthRectB_Size: {r: 1, g: 1, b: 0, a: 0}
+    - _MouthTileIndex: {r: 0, g: 0, b: 0, a: 0}
+    - _MouthTileSize: {r: 8, g: 8, b: 0, a: 0}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ScatteringColor: {r: 1, g: 0, b: 0, a: 1}
+    - _ScatteringColorSub: {r: 0.8, g: 0, b: 0.2, a: 1}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _Specular: {r: 0, g: 0, b: 0, a: 0}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _UV: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []

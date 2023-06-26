@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!28 &2800000
+Texture2D:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hoshino_Original_Face_Mask
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_Width: 32
+  m_Height: 32
+  m_CompleteImageSize: 576
+  m_TextureFormat: 50
+  m_MipCount: 1
+  m_IsReadable: 0
+  m_IgnoreMasterTextureLimit: 0
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_AlphaIsTransparency: 1
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_LightmapFormat: 0
+  m_ColorSpace: 0
+  image data: 576
+  _typelessdata: fcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000fffffcfdffffffffffff000080800000ffff
+  m_StreamData:
+    offset: 0
+    size: 0
+    path:
