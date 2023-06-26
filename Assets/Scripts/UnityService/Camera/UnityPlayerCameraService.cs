@@ -17,8 +17,6 @@ namespace UnityService.Camera
 
 		private bool isMouseClick = false;
 
-		private bool isShowCurosr = false;
-
 		public Vector3 WorldSize
 		{
 			get
@@ -42,16 +40,14 @@ namespace UnityService.Camera
 					targetPosition.y + yDistance,
 					targetPosition.z + zDistance
 					);
-			if (isMouseClick == false)
-			{
-				playerCamera.transform.LookAt(targetPosition);	
-			}
+			// if (isMouseClick == false)
+			// {
+			// 	playerCamera.transform.LookAt(targetPosition);
+			// }
 		}
 		
 		public void SetCameraRotation(Vector2 rotation)
 		{
-			if (isShowCurosr == true) return;
-			
 			float yRotate = playerCamera.transform.eulerAngles.y + rotation.x;
 			float xRotate = playerCamera.transform.eulerAngles.x - rotation.y;
 
@@ -61,11 +57,6 @@ namespace UnityService.Camera
 		public void SetMouseClick(bool mouseClick)
 		{
 			isMouseClick = mouseClick;
-		}
-
-		public void ToggleShowCursor()
-		{
-			isShowCurosr = !(isShowCurosr);
 		}
 
 		public Vector3 ScreenToWorld(Vector2 screenPos)

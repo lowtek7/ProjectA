@@ -1,5 +1,7 @@
 using System;
 using Core.Unity;
+using UnityEngine;
+
 
 namespace Game.Ecs.Component
 {
@@ -10,9 +12,22 @@ namespace Game.Ecs.Component
 	
 	public struct CursorComponent : IComponent
 	{
+		[SerializeField]
+		private bool isShowCursor;
+		
+		public bool IsShowCursor
+		{
+			get => isShowCursor;
+			
+			set => isShowCursor = value;
+		}
+		
 		public IComponent Clone()
 		{
-			return new InputComponent();
+			return new CursorComponent
+			{
+				isShowCursor = isShowCursor
+			};
 		}
 	}
 }

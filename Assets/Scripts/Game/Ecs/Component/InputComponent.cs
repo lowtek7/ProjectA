@@ -16,7 +16,7 @@ namespace Game.Ecs.Component
 
 		[SerializeField]
 		private bool isMouseClick;
-		
+
 		public Vector3 MoveDirection
 		{
 			get => moveDirection;
@@ -43,7 +43,7 @@ namespace Game.Ecs.Component
 			{
 				moveDirection = moveDirection,
 				cameraRotation = cameraRotation,
-				isMouseClick= isMouseClick
+				isMouseClick= isMouseClick,
 			};
 		}
 	}

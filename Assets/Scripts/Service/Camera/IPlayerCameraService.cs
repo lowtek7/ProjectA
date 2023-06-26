@@ -10,8 +10,6 @@ namespace Service.Camera
 
 		void SetMouseClick(bool mouseClick);
 
-		void ToggleShowCursor();
-
 		Vector3 ScreenToWorld(Vector2 screenPos);
 
 		Vector2 WorldToScreen(Vector3 worldPos);
