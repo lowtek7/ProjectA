@@ -2,12 +2,12 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
-  serializedVersion: 10
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: OL_Hosino_Origninal_Weapon
+  serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -17,7 +17,7 @@ Mesh:
     firstVertex: 0
     vertexCount: 2462
     localAABB:
-      m_Center: {x: -2.2351742E-08, y: 1.8626451E-09, z: 1.4901161E-08}
+      m_Center: {x: -0.000000022351742, y: 0.0000000018626451, z: 0.000000014901161}
       m_Extent: {x: 0.08303925, y: 0.03452079, z: 0.28468847}
   m_Shapes:
     vertices: []
@@ -25,32 +25,32 @@ Mesh:
     channels: []
     fullWeights: []
   m_BindPose:
-  - e00: 1.4902653E-06
+  - e00: 0.0000014902653
     e01: 1
-    e02: 1.4600097E-07
+    e02: 0.00000014600097
     e03: -0.0026552556
     e10: -1
-    e11: 1.4902652E-06
-    e12: -1.0536693E-07
+    e11: 0.0000014902652
+    e12: -0.00000010536693
     e13: 0.032359958
-    e20: -1.0536715E-07
-    e21: -1.4600079E-07
+    e20: -0.00000010536715
+    e21: -0.00000014600079
     e22: 1
     e23: 0.119874746
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  - e00: 1.967066E-06
+  - e00: 0.000001967066
     e01: 1
-    e02: 1.4600097E-07
+    e02: 0.00000014600097
     e03: -0.0026553413
     e10: -1
-    e11: 1.967066E-06
-    e12: 2.10737E-08
+    e11: 0.000001967066
+    e12: 0.0000000210737
     e13: 0.0057840943
-    e20: 2.1073411E-08
-    e21: -1.4600101E-07
+    e20: 0.000000021073411
+    e21: -0.00000014600101
     e22: 1
     e23: 0.22894065
     e30: 0
@@ -58,25 +58,22 @@ Mesh:
     e32: 0
     e33: 1
   - e00: 1
-    e01: -1.03316E-07
-    e02: 1.6497177E-07
+    e01: -0.000000103316
+    e02: 0.00000016497177
     e03: -0.042838693
-    e10: -1.649718E-07
-    e11: -4.070574E-07
+    e10: -0.0000001649718
+    e11: -0.0000004070574
     e12: 1
     e13: 0.008923382
-    e20: -1.03315934E-07
+    e20: -0.000000103315934
     e21: -1
-    e22: -4.0705746E-07
+    e22: -0.00000040705746
     e23: 0.0026552095
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  m_BoneNameHashes:
-  - 262347834
-  - 1330717245
-  - 2143762053
+  m_BoneNameHashes: 3a1ca30f3d22514f8536c77f
   m_RootBoneNameHash: 262347834
   m_BonesAABB:
   - m_Min: {x: -0.021615453, y: -0.050679237, z: -0.106681705}
@@ -86,13 +83,13 @@ Mesh:
   - m_Min: {x: -0.006529607, y: -0.049132906, z: -0.0101501085}
     m_Max: {x: 0.015290346, y: 0.0089285355, z: 0.037176207}
   m_VariableBoneCountWeights:
-    m_Data: []
+    m_Data: 
   m_MeshCompression: 1
   m_IsReadable: 0
   m_KeepVertices: 0
   m_KeepIndices: 0
   m_IndexFormat: 0
-  m_IndexBuffer:
+  m_IndexBuffer: 
   m_VertexData:
     serializedVersion: 3
     m_VertexCount: 0
@@ -154,7 +151,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 7386
@@ -208,15 +205,17 @@ Mesh:
       m_BitSize: 12
     m_UVInfo: 5
   m_LocalAABB:
-    m_Center: {x: -2.2351742E-08, y: 1.8626451E-09, z: 1.4901161E-08}
+    m_Center: {x: -0.000000022351742, y: 0.0000000018626451, z: 0.000000014901161}
     m_Extent: {x: 0.08303925, y: 0.03452079, z: 0.28468847}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
-  m_MeshMetrics[0]: 0.23863141
-  m_MeshMetrics[1]: 1
+  m_CookingOptions: 30
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
+  'm_MeshMetrics[0]': 0.23863141
+  'm_MeshMetrics[1]': 1
   m_MeshOptimizationFlags: -1
   m_StreamData:
+    serializedVersion: 2
     offset: 0
     size: 0
-    path:
+    path: 
