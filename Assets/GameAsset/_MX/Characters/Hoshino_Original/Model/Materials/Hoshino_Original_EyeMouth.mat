@@ -20,15 +20,16 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2000
   stringTagMap:
-    RenderType: Opaque
+    RenderType: Transparent
   disabledShaderPasses:
   - HairShadowMask
+  - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: fa75a459e5276b24b8932e86dafa0c02, type: 2}
+        m_Texture: {fileID: 2800000, guid: 3b137aac081373740857fd7ea3920f1f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -106,7 +107,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DiffuseRampV: 0
     - _DitherThreshold: 0
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EnableMatCap: 0
     - _EnableOutline: 1
     - _EnableStencil: 0
@@ -147,13 +148,13 @@ Material:
     - _SpecularShiftIntensity: 1
     - _SpecularStep: 0.5
     - _SpecularType: 0
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _StencilComp: 0
     - _StencilOp: 0
     - _StencilRef: 1
     - _StencilType: 0
     - _Surface: 0
-    - _SurfaceType: 0
+    - _SurfaceType: 1
     - _UVSec: 0
     - _UseSmoothNormal: 0
     - _WhiteIntensity: 3.9
