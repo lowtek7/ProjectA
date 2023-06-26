@@ -13,9 +13,6 @@ namespace View.Behaviours
 	/// </summary>
 	public class EntityTransformBehaviour : CustomBehaviour, IUnitBehaviour, IUpdate
 	{
-		[SerializeField]
-		private Transform spriteTransform;
-
 		private Entity _selfEntity;
 
 		public void Connect(Entity entity)
@@ -35,20 +32,8 @@ namespace View.Behaviours
 				if (_selfEntity.Has<TransformComponent>())
 				{
 					var transformComponent = _selfEntity.Get<TransformComponent>();
-					var direction2d = transformComponent.Direction2D;
-					var prevScale = spriteTransform.localScale;
-					var scaleX = Mathf.Abs(prevScale.x);
 
 					transform.position = transformComponent.Position;
-
-					if ((direction2d & Direction2D.Left) != 0)
-					{
-						spriteTransform.localScale = new Vector3(scaleX * -1, prevScale.y, prevScale.z);
-					}
-					else if ((direction2d & Direction2D.Right) != 0)
-					{
-						spriteTransform.localScale = new Vector3(scaleX, prevScale.y, prevScale.z);
-					}
 				}
 			}
 		}

@@ -64,6 +64,7 @@ namespace Game.World
 					var systemObject = Activator.CreateInstance(systemType);
 					if (systemObject is ISystem system)
 					{
+						Debug.LogWarning($"{systemType.FullName} is not assigned order");
 						systems.Add(system);
 					}
 				}
