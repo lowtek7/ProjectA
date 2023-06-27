@@ -40,6 +40,7 @@ namespace Game.Ecs.System
 					if (moveDirection != Vector3.zero)
 					{
 						transformComponent.Direction = moveDirection;
+						movementComponent.TargetRotation = Quaternion.LookRotation(moveDirection);
 					}
 
 					movementComponent.MoveDir = moveDirection;

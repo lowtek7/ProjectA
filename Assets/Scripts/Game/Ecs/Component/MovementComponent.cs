@@ -27,14 +27,23 @@ namespace Game.Ecs.Component
 			get => moveSpeed;
 			set => moveSpeed = value;
 		}
-		
+
 		[SerializeField]
 		private float rotateSpeed;
-		
+
 		public float RotateSpeed
 		{
 			get => rotateSpeed;
 			set => rotateSpeed = value;
+		}
+
+		[SerializeField]
+		private Quaternion targetRotation;
+
+		public Quaternion TargetRotation
+		{
+			get => targetRotation;
+			set => targetRotation = value;
 		}
 
 		public IComponent Clone()
@@ -43,7 +52,8 @@ namespace Game.Ecs.Component
 			{
 				moveDir = moveDir,
 				moveSpeed = moveSpeed,
-				rotateSpeed = rotateSpeed
+				rotateSpeed = rotateSpeed,
+				targetRotation = targetRotation
 			};
 		}
 	}

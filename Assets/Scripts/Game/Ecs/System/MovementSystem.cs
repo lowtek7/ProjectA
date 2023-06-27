@@ -1,5 +1,7 @@
-﻿using BlitzEcs;
+﻿using System;
+using BlitzEcs;
 using Core.Unity;
+using Core.Utility;
 using Game.Ecs.Component;
 using UnityEngine;
 
@@ -32,12 +34,14 @@ namespace Game.Ecs.System
 					var dist = movementComponent.MoveSpeed * deltaTime;
 
 					transformComponent.Position += (dir * dist);
+				}
 
-					// 캐릭터 회전
-					var targetRotation = Quaternion.LookRotation(dir);
+				// 캐릭터 회전
+				if (!(Math.Abs(movementComponent.TargetRotation.y - transformComponent.Rotation.y) < FloatUtility.Epsilon))
+				{
 					var rotationDist = movementComponent.RotateSpeed * deltaTime;
 					var currentRotation = Quaternion.RotateTowards(transformComponent.Rotation,
-						targetRotation, rotationDist);
+						movementComponent.TargetRotation, rotationDist);
 
 					transformComponent.Rotation = currentRotation;
 				}
