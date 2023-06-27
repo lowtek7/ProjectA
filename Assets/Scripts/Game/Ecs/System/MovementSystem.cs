@@ -32,6 +32,14 @@ namespace Game.Ecs.System
 					var dist = movementComponent.MoveSpeed * deltaTime;
 
 					transformComponent.Position += (dir * dist);
+
+					// 캐릭터 회전
+					var targetRotation = Quaternion.LookRotation(dir);
+					var rotationDist = movementComponent.RotateSpeed * deltaTime;
+					var currentRotation = Quaternion.RotateTowards(transformComponent.Rotation,
+						targetRotation, rotationDist);
+
+					transformComponent.Rotation = currentRotation;
 				}
 			}
 		}

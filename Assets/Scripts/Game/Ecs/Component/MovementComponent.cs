@@ -27,13 +27,23 @@ namespace Game.Ecs.Component
 			get => moveSpeed;
 			set => moveSpeed = value;
 		}
+		
+		[SerializeField]
+		private float rotateSpeed;
+		
+		public float RotateSpeed
+		{
+			get => rotateSpeed;
+			set => rotateSpeed = value;
+		}
 
 		public IComponent Clone()
 		{
 			return new MovementComponent
 			{
 				moveDir = moveDir,
-				moveSpeed = moveSpeed
+				moveSpeed = moveSpeed,
+				rotateSpeed = rotateSpeed
 			};
 		}
 	}

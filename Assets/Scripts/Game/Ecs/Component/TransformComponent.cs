@@ -38,6 +38,15 @@ namespace Game.Ecs.Component
 			set => direction = value;
 		}
 
+		[SerializeField]
+		private Quaternion rotation;
+
+		public Quaternion Rotation
+		{
+			get => rotation;
+			set => rotation = value;
+		}
+
 		public Direction2D Direction2D
 		{
 			get

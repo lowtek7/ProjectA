@@ -15,9 +15,12 @@ namespace View.Behaviours
 	{
 		private Entity _selfEntity;
 
+		private Transform _transform;
+
 		public void Connect(Entity entity)
 		{
 			_selfEntity = entity;
+			_transform = transform;
 		}
 
 		public void Disconnect()
@@ -33,7 +36,8 @@ namespace View.Behaviours
 				{
 					var transformComponent = _selfEntity.Get<TransformComponent>();
 
-					transform.position = transformComponent.Position;
+					_transform.position = transformComponent.Position;
+					_transform.rotation = transformComponent.Rotation;
 				}
 			}
 		}
