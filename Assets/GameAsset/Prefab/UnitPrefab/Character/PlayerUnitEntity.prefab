@@ -86,7 +86,7 @@ MonoBehaviour:
       data:
         moveSpeed: 1
         moveDir: {x: 0, y: 0, z: 0}
-        rotateSpeed: 20
+        rotateSpeed: 1200
     - rid: 8986602489903841450
       type: {class: PlayerCameraComponent, ns: Game.Ecs.Component, asm: Game}
     - rid: 8986602489903841451
