@@ -37,7 +37,7 @@ namespace Game.Ecs.System
 				}
 
 				// 캐릭터 회전
-				if (!(Math.Abs(movementComponent.TargetRotation.y - transformComponent.Rotation.y) < FloatUtility.Epsilon))
+				if (!transformComponent.Rotation.eulerAngles.y.IsAlmostCloseTo(movementComponent.TargetRotation.eulerAngles.y))
 				{
 					var rotationDist = movementComponent.RotateSpeed * deltaTime;
 					var currentRotation = Quaternion.RotateTowards(transformComponent.Rotation,
