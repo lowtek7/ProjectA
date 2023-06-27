@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 9089028694116063776}
   - component: {fileID: -5123256311199164676}
   - component: {fileID: 7624615287391324703}
+  - component: {fileID: 21333732949860917}
   - component: {fileID: -670353975871280648}
   m_Layer: 0
   m_Name: PlayerUnitEntity
@@ -114,7 +115,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfdb9c88a7fe49cfb826b5f6e07ce3e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteTransform: {fileID: 0}
+--- !u!114 &21333732949860917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437570332950855499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8176803f72504d70a5a0b9873ad5f428, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1249759958523604870}
+  defaultAnimName: Cafe_Idle
 --- !u!82 &-670353975871280648
 AudioSource:
   m_ObjectHideFlags: 0
@@ -275,5 +289,10 @@ PrefabInstance:
 --- !u!4 &1159957977013958518 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4819976213561127, guid: 9b0889c307789704eb402f9468b47fe2, type: 3}
+  m_PrefabInstance: {fileID: 1155701191540525137}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1249759958523604870 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 95114437732247511, guid: 9b0889c307789704eb402f9468b47fe2, type: 3}
   m_PrefabInstance: {fileID: 1155701191540525137}
   m_PrefabAsset: {fileID: 0}

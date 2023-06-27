@@ -3,8 +3,8 @@ using BlitzEcs;
 using Core.Unity;
 using Game.Ecs.Component;
 using Game.Unit;
-using Library.JSAnim2D;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace View.Behaviours
 {
@@ -12,14 +12,31 @@ namespace View.Behaviours
 	{
 		private Entity _selfEntity;
 
-		private JSAnimator[] _animators = Array.Empty<JSAnimator>();
+		/// <summary>
+		/// 캐릭터 애니메이터를 인스펙터에서 찾아야함.
+		/// </summary>
+		[SerializeField]
+		private Animator animator;
 
-		private static string[] Directions => new[] { "down", "left", "right", "up" };
+		/// <summary>
+		/// 시작시 재생할 기본 애니메이션 이름.
+		/// </summary>
+		[SerializeField]
+		private string defaultAnimName;
 
 		public void Connect(Entity entity)
 		{
 			_selfEntity = entity;
-			_animators = gameObject.GetComponentsInChildren<JSAnimator>();
+
+			if (animator is null)
+			{
+				// 애니메이터가 없으므로 강제로 찾아서 넣어준다.
+				animator = gameObject.GetComponentInChildren<Animator>();
+
+				Debug.LogError("Error. Animator is null.");
+			}
+
+			animator.Play(defaultAnimName);
 		}
 
 		public void Disconnect()
@@ -37,32 +54,7 @@ namespace View.Behaviours
 				{
 					var transformComponent = _selfEntity.Get<TransformComponent>();
 					var movementComponent = _selfEntity.Get<MovementComponent>();
-
-					if (movementComponent.MoveDir != Vector3.zero)
-					{
-						var moveAnimStr = $"walk_{transformComponent.DirectionName}";
-
-						foreach (var animator in _animators)
-						{
-							animator.Play(moveAnimStr);
-						}
-					}
-					else
-					{
-						var idleAnimStr = $"idle_{transformComponent.DirectionName}";
-
-						foreach (var animator in _animators)
-						{
-							animator.Play(idleAnimStr);
-						}
-					}
 				}
-			}
-
-			foreach (var animator in _animators)
-			{
-				// 나중에 speed도 시간값에 곱하는것을 고려하기
-				animator.AnimationUpdate(deltaTime);
 			}
 		}
 	}
