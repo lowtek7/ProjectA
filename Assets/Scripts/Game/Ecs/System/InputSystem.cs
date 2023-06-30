@@ -44,6 +44,7 @@ namespace Game.Ecs.System
 					}
 
 					movementComponent.MoveDir = moveDirection;
+					movementComponent.IsRun = inputComponent.IsRun;
 				}
 			}
 		}

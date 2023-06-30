@@ -7,8 +7,12 @@ namespace Game.Ecs.Component
 	[Serializable]
 	public struct MovementComponent : IComponent
 	{
-		[SerializeField]
-		private float moveSpeed;
+		public enum MoveState
+		{
+			Stop = 0,
+			Walk = 1,
+			IsRun = 2
+		}
 
 		/// <summary>
 		/// 이 값이 Vector.zero가 아니라면 Move하게 될 것
@@ -22,10 +26,22 @@ namespace Game.Ecs.Component
 			set => moveDir = value;
 		}
 
-		public float MoveSpeed
+		[SerializeField]
+		private float walkSpeed;
+
+		public float WalkSpeed
 		{
-			get => moveSpeed;
-			set => moveSpeed = value;
+			get => walkSpeed;
+			set => walkSpeed = value;
+		}
+
+		[SerializeField]
+		private float runSpeed;
+
+		public float RunSpeed
+		{
+			get => runSpeed;
+			set => runSpeed = value;
 		}
 
 		[SerializeField]
@@ -46,16 +62,58 @@ namespace Game.Ecs.Component
 			set => targetRotation = value;
 		}
 
-		public bool IsMoving => MoveDir != Vector3.zero;
+		private bool _isRun;
+
+		public bool IsRun
+		{
+			get => _isRun;
+			set => _isRun = value;
+		}
+
+		public float CurrentSpeed
+		{
+			get
+			{
+				if (CurrentMoveState == MoveState.Walk)
+				{
+					return walkSpeed;
+				}
+
+				if (CurrentMoveState == MoveState.IsRun)
+				{
+					return runSpeed;
+				}
+
+				return 0;
+			}
+		}
+
+		public MoveState CurrentMoveState
+		{
+			get
+			{
+				if (MoveDir != Vector3.zero)
+				{
+					return _isRun == false ? MoveState.Walk : MoveState.IsRun;
+				}
+
+				return MoveState.Stop;
+			}
+		}
+
+		public bool IsMoving => CurrentMoveState != MoveState.Stop;
+
+		public bool IsRunning => CurrentMoveState == MoveState.IsRun;
 
 		public IComponent Clone()
 		{
 			return new MovementComponent
 			{
 				moveDir = moveDir,
-				moveSpeed = moveSpeed,
+				walkSpeed = walkSpeed,
 				rotateSpeed = rotateSpeed,
-				targetRotation = targetRotation
+				targetRotation = targetRotation,
+				_isRun = _isRun
 			};
 		}
 	}

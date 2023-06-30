@@ -31,7 +31,7 @@ namespace Game.Ecs.System
 				{
 					// 여기서 normalize하는것이 과연 올바른것일까?
 					var dir = movementComponent.MoveDir;
-					var dist = movementComponent.MoveSpeed * deltaTime;
+					var dist = movementComponent.CurrentSpeed * deltaTime;
 
 					transformComponent.Position += (dir * dist);
 				}

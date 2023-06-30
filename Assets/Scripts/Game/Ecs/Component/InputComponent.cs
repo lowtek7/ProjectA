@@ -10,31 +10,40 @@ namespace Game.Ecs.Component
 	{
 		[SerializeField]
 		private Vector3 moveDirection;
-		
+
 		[SerializeField]
 		private Vector3 cameraRotation;
 
 		[SerializeField]
 		private bool isMouseClick;
 
+		[SerializeField]
+		private bool isRun;
+
 		public Vector3 MoveDirection
 		{
 			get => moveDirection;
 			set => moveDirection = value;
 		}
-		
+
 		public Vector2 CameraRotation
 		{
 			get => cameraRotation;
-			
+
 			set => cameraRotation = value;
 		}
-		
+
 		public bool IsMouseClick
 		{
 			get => isMouseClick;
-			
+
 			set => isMouseClick = value;
+		}
+
+		public bool IsRun
+		{
+			get => isRun;
+			set => isRun = value;
 		}
 
 		public IComponent Clone()
@@ -44,6 +53,7 @@ namespace Game.Ecs.Component
 				moveDirection = moveDirection,
 				cameraRotation = cameraRotation,
 				isMouseClick= isMouseClick,
+				isRun = isRun,
 			};
 		}
 	}

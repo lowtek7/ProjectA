@@ -46,6 +46,8 @@ namespace UnityService.Input
 
 			bool isMouseClick = false;
 
+			bool isRun = false;
+
 			if (UnityEngine.Input.GetKey(KeyCode.W))
 			{
 				zMove += 1;
@@ -65,22 +67,28 @@ namespace UnityService.Input
 			{
 				xMove -= 1;
 			}
-			
+
 			if (UnityEngine.Input.GetKey(KeyCode.Space))
 			{
 				yMove += 1;
 			}
-			
+
 			if (UnityEngine.Input.GetKey(KeyCode.C))
 			{
 				yMove -= 1;
 			}
-			
+
+			if (UnityEngine.Input.GetKey(KeyCode.LeftShift))
+			{
+				isRun = true;
+			}
+
+
 			if (UnityEngine.Input.GetMouseButton(0))
 			{
 				isMouseClick = true;
 			}
-			
+
 			if (UnityEngine.Input.GetMouseButtonUp(0))
 			{
 				isMouseClick = false;
@@ -100,30 +108,28 @@ namespace UnityService.Input
 			foreach (var entity in CursorQuery)
 			{
 				ref var cursorComponent = ref entity.Get<CursorComponent>();
-				
+
 				if (cursorComponent.IsShowCursor == false)
 				{
 					xRotateCameraMove = UnityEngine.Input.GetAxis("Mouse X");
 					yRotateCameraMove = UnityEngine.Input.GetAxis("Mouse Y");
 				}
 			}
-			
+
 			var cameraRotation = new Vector2(xRotateCameraMove, yRotateCameraMove);
-			
+
 			foreach (var entity in inputQuery)
 			{
 				ref var moveInputComponent = ref entity.Get<InputComponent>();
 
 				moveInputComponent.MoveDirection = moveDirection;
-				
-				moveInputComponent.IsMouseClick = isMouseClick;
-				
-				moveInputComponent.CameraRotation = cameraRotation;
-			}
-			
-			
-			
 
+				moveInputComponent.IsMouseClick = isMouseClick;
+
+				moveInputComponent.CameraRotation = cameraRotation;
+
+				moveInputComponent.IsRun = isRun;
+			}
 		}
 	}
 }
