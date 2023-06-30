@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using BlitzEcs;
 using Core.Unity;
 using Core.Utility;
@@ -128,6 +127,7 @@ namespace Game.World
 		{
 			world = null;
 			ServiceManager.RemoveCallback(this);
+			poolManager.Dispose();
 		}
 	}
 }
