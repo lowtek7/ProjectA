@@ -24,6 +24,12 @@ namespace View.Behaviours
 		[SerializeField]
 		private string defaultAnimName;
 
+		/// <summary>
+		/// 걷는 애니메이션 컨디션 이름
+		/// </summary>
+		[SerializeField]
+		private string walkAnimConditionName;
+
 		public void Connect(Entity entity)
 		{
 			_selfEntity = entity;
@@ -54,6 +60,8 @@ namespace View.Behaviours
 				{
 					var transformComponent = _selfEntity.Get<TransformComponent>();
 					var movementComponent = _selfEntity.Get<MovementComponent>();
+
+					animator.SetBool(walkAnimConditionName, movementComponent.IsMoving);
 				}
 			}
 		}

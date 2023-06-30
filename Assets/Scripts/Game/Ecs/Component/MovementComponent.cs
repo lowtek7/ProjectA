@@ -46,6 +46,8 @@ namespace Game.Ecs.Component
 			set => targetRotation = value;
 		}
 
+		public bool IsMoving => MoveDir != Vector3.zero;
+
 		public IComponent Clone()
 		{
 			return new MovementComponent

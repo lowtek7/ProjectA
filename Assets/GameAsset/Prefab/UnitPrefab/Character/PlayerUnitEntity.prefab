@@ -87,6 +87,7 @@ MonoBehaviour:
         moveSpeed: 1
         moveDir: {x: 0, y: 0, z: 0}
         rotateSpeed: 1200
+        targetRotation: {x: 0, y: 0, z: 0, w: 0}
     - rid: 8986602489903841450
       type: {class: PlayerCameraComponent, ns: Game.Ecs.Component, asm: Game}
     - rid: 8986602489903841451
@@ -130,6 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1249759958523604870}
   defaultAnimName: Cafe_Idle
+  walkAnimConditionName: CafeMove
 --- !u!82 &-670353975871280648
 AudioSource:
   m_ObjectHideFlags: 0
