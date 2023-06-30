@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace UnityService.Texture
+namespace UnityService.Texture.Editor
 {
 	[CustomPropertyDrawer(typeof(BlockSpec))]
 	public class BlockSpecDrawer : UnityEditor.PropertyDrawer
