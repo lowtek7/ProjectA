@@ -1,6 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DG.DemiEditor;
+using Game;
+using Game.Asset;
+using Service;
+using Service.Stage;
 using UnityEditor;
 using UnityEngine;
 using UnityService.Texture;
@@ -9,24 +12,44 @@ namespace UnityService.Stage
 {
 	public class Chunk : MonoBehaviour
 	{
-		private MeshRenderer _meshRenderer;
 		private MeshFilter _meshFilter;
+		private MeshRenderer _meshRenderer;
 
-		List<Vector3> vertices = new();
-		List<int> triangles = new();
-		List<Vector2> uvs = new();
+		private readonly List<Vector3> _vertices = new();
+		private readonly List<int> _triangles = new();
+		private readonly List<Vector2> _uvs = new();
 
 		private string[,,] _voxelMap;
 
 		private BlockSpecHolder _blockSpecHolder;
 		private PackedTextureUvHolder _uvHolder;
 
+		private Vector3Int _coord;
+
+		private bool _isAir = false;
+
 		private void Awake()
 		{
 			_meshFilter = GetComponent<MeshFilter>();
 			_meshRenderer = GetComponent<MeshRenderer>();
 
-			_voxelMap = new string[VoxelConstants.ChunkWidth, VoxelConstants.ChunkHeight, VoxelConstants.ChunkWidth];
+			_voxelMap = new string[VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount];
+		}
+
+		public void Initialize(Vector3Int coord)
+		{
+			_coord = coord;
+
+			// FIXME
+			if (AssetFactory.Instance.TryGetAssetReader<ScriptableAssetModule>(out var assetModule))
+			{
+				assetModule.TryGet("BlockSpecs", out _blockSpecHolder);
+
+				assetModule.TryGet("PackedTextureUvs", out _uvHolder);
+			}
+
+			// FIXME : 테스트용 코드
+			_isAir = transform.position.y >= 0;
 
 			for (int y = 0; y < _voxelMap.GetLength(1); y++)
 			{
@@ -34,11 +57,31 @@ namespace UnityService.Stage
 				{
 					for (int z = 0; z < _voxelMap.GetLength(2); z++)
 					{
-						_voxelMap[x, y, z] = (y % VoxelConstants.ChunkWidth < x || y % VoxelConstants.ChunkWidth < z) ?
-							"dirt": null;
+						if (_isAir)
+						{
+							_voxelMap[x, y, z] = null;
+						}
+						else
+						{
+							_voxelMap[x, y, z] = "dirt";
+						}
+
+						// _voxelMap[x, y, z] = (y % VoxelConstants.ChunkAxisCount < x || y % VoxelConstants.ChunkAxisCount < z) ?
+						// 	"dirt": null;
 					}
 				}
 			}
+		}
+
+		public void RebuildMesh()
+		{
+			if (_isAir)
+			{
+				_meshRenderer.enabled = false;
+				return;
+			}
+
+			_meshRenderer.enabled = true;
 
 			for (int y = 0; y < _voxelMap.GetLength(1); y++)
 			{
@@ -46,7 +89,7 @@ namespace UnityService.Stage
 				{
 					for (int z = 0; z < _voxelMap.GetLength(2); z++)
 					{
-						// FIXME : 이 규칙은 블록마다 따로 분리 필요
+						// FIXME : 이 규칙은 블록마다 따로 분리하고 로직을 위쪽(Service)으로 빼야 함
 						if (_voxelMap[x, y, z] == "dirt" &&
 						    !IsSolidAt(new Vector3Int(x, y, z) + VoxelConstants.NearVoxels[5]))
 						{
@@ -56,17 +99,6 @@ namespace UnityService.Stage
 				}
 			}
 
-			// FIXME : 원래는 AssetFactory에서 얻어와야 하지만, 테스트 씬에서 사용할 수 있도록 세팅
-			_blockSpecHolder = AssetDatabase.LoadAssetAtPath<BlockSpecHolder>(
-				"Assets/GameAsset/ScriptableObject/Texture/BlockSpecs.asset");
-			_uvHolder = AssetDatabase.LoadAssetAtPath<PackedTextureUvHolder>(
-				"Assets/GameAsset/ScriptableObject/Texture/Uvs/PackedTextureUvs.asset");
-
-			RebuildMesh();
-		}
-
-		public void RebuildMesh()
-		{
 			var vertexIndex = 0;
 
 			for (int y = 0; y < _voxelMap.GetLength(1); y++)
@@ -79,7 +111,7 @@ namespace UnityService.Stage
 
 						if (IsSolidAt(pos))
 						{
-							vertexIndex = AddVoxelData(pos, vertexIndex);
+							AddVoxelData(pos, ref vertexIndex);
 						}
 					}
 				}
@@ -87,21 +119,21 @@ namespace UnityService.Stage
 
 			var mesh = new Mesh
 			{
-				vertices = vertices.ToArray(),
-				triangles = triangles.ToArray(),
-				uv = uvs.ToArray(),
+				vertices = _vertices.ToArray(),
+				triangles = _triangles.ToArray(),
+				uv = _uvs.ToArray(),
 			};
 
-			vertices.Clear();
-			triangles.Clear();
-			uvs.Clear();
+			// FIXME : 매번 뺐다 넣었다 하지 않고, 해당 블록의 Vertex / Triangle / Uv 위치를 알 방법이 있을까?
+			_vertices.Clear();
+			_triangles.Clear();
+			_uvs.Clear();
 
 			mesh.RecalculateNormals();
 
 			_meshFilter.mesh = mesh;
 		}
-
-		private int AddVoxelData(Vector3Int pos, int vertexIndex)
+		private void AddVoxelData(Vector3Int pos, ref int vertexIndex)
 		{
 			var sideCount = VoxelConstants.VoxelTris.GetLength(0);
 			var vertexInRectCount = VoxelConstants.VoxelTris.GetLength(1);
@@ -109,7 +141,7 @@ namespace UnityService.Stage
 
 			if (!_blockSpecHolder.NameToSpec.TryGetValue(blockName, out var blockSpec))
 			{
-				return vertexIndex;
+				return;
 			}
 
 			for (int p = 0; p < sideCount; p++)
@@ -124,38 +156,42 @@ namespace UnityService.Stage
 					// FIXME : 더 줄일 수 있을지도...?
 					for (int i = 0; i < vertexInRectCount; i++)
 					{
-						vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[p, i]] + pos);
+						_vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[p, i]] + pos);
 
 						var uv = VoxelConstants.VoxelUvs[i];
 
 						var pixelUv = new Vector2(uvData.startX + uv .x * uvData.originTexture.width,
 							uvData.startY + uv.y * uvData.originTexture.height);
 
-						uvs.Add(pixelUv / _uvHolder.textureSize);
+						_uvs.Add(pixelUv / _uvHolder.textureSize);
 					}
 				}
 
 				// 시계방향으로 그려준다.
-				triangles.Add(vertexIndex);
-				triangles.Add(vertexIndex + 1);
-				triangles.Add(vertexIndex + 2);
-				triangles.Add(vertexIndex + 2);
-				triangles.Add(vertexIndex + 1);
-				triangles.Add(vertexIndex + 3);
+				_triangles.Add(vertexIndex);
+				_triangles.Add(vertexIndex + 1);
+				_triangles.Add(vertexIndex + 2);
+				_triangles.Add(vertexIndex + 2);
+				_triangles.Add(vertexIndex + 1);
+				_triangles.Add(vertexIndex + 3);
 
 				vertexIndex += vertexInRectCount;
 			}
-
-			return vertexIndex;
 		}
 
-		private bool IsSolidAt(Vector3Int pos)
+		public bool IsSolidAt(Vector3Int pos)
 		{
+			// FIXME : 다른 Chunk 데이터를 참조하여 체크해야 함
 			if (pos.x < 0 || pos.y < 0 || pos.z < 0 ||
 			    pos.x >= _voxelMap.GetLength(0) ||
 			    pos.y >= _voxelMap.GetLength(1) ||
 			    pos.z >= _voxelMap.GetLength(2))
 			{
+				if (ServiceManager.TryGetService<IChunkService>(out var chunkService))
+				{
+					return chunkService.IsSolidAtOuter(_coord, pos);
+				}
+
 				return false;
 			}
 

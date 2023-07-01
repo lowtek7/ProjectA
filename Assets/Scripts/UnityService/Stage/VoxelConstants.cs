@@ -47,7 +47,8 @@ namespace UnityService.Stage
 			Vector3Int.up,
 		};
 
-		public static readonly int ChunkWidth = 1 << 4;
-		public static readonly int ChunkHeight = 1 << 4;
+		public static readonly int ChunkAxisExponent = 4;
+
+		public static readonly int ChunkAxisCount = 1 << ChunkAxisExponent;
 	}
 }
