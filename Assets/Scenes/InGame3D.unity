@@ -271,12 +271,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: poolItems.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: poolItems.Array.data[2].prefab
       value: 
-      objectReference: {fileID: 34536163113152759, guid: f6d61bef78174414299ed4b8c1dec971, type: 3}
+      objectReference: {fileID: 2649889999284191728, guid: f7793e55b15393849852aefd4ffb2928, type: 3}
     - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: poolItems.Array.data[3].prefab
       value: 
@@ -287,7 +287,7 @@ PrefabInstance:
       objectReference: {fileID: 34536163113152759, guid: f6d61bef78174414299ed4b8c1dec971, type: 3}
     - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: poolItems.Array.data[2].initialPoolSize
-      value: 1
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: poolItems.Array.data[3].initialPoolSize
