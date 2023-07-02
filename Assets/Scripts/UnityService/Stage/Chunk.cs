@@ -15,10 +15,9 @@ namespace UnityService.Stage
 		private MeshFilter _meshFilter;
 		private MeshRenderer _meshRenderer;
 
-		private readonly List<Vector3> _vertices = new();
-		private readonly List<int> _triangles = new();
-		private readonly List<Vector2> _uvs = new();
-
+		private List<Vector3> _vertices;
+		private List<int> _triangles;
+		private List<Vector2> _uvs;
 		private string[,,] _voxelMap;
 
 		private BlockSpecHolder _blockSpecHolder;
@@ -34,6 +33,13 @@ namespace UnityService.Stage
 			_meshRenderer = GetComponent<MeshRenderer>();
 
 			_voxelMap = new string[VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount];
+
+			// Capacity를 미리 크게 잡아둠
+			var normalSideCount = VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.VoxelTris.Length;
+
+			_vertices = new(normalSideCount * 4);
+			_uvs = new(normalSideCount * 4);
+			_triangles = new(normalSideCount * 2);
 		}
 
 		public void Initialize(Vector3Int coord)
@@ -151,20 +157,30 @@ namespace UnityService.Stage
 					continue;
 				}
 
-				if (_uvHolder.NameToUvs.TryGetValue(blockSpec.textures[p].name, out var uvData))
+				if (!_uvHolder.NameToUvs.TryGetValue(blockSpec.textures[p].name, out var uvData))
 				{
-					// FIXME : 더 줄일 수 있을지도...?
-					for (int i = 0; i < vertexInRectCount; i++)
-					{
-						_vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[p, i]] + pos);
+					continue;
+				}
 
-						var uv = VoxelConstants.VoxelUvs[i];
+				// 카운트가 모자라다면 Doubling
+				if (_vertices.Capacity <= _vertices.Count)
+				{
+					_vertices.Capacity <<= 1;
+					_uvs.Capacity <<= 1;
+					_triangles.Capacity <<= 1;
+				}
 
-						var pixelUv = new Vector2(uvData.startX + uv .x * uvData.originTexture.width,
-							uvData.startY + uv.y * uvData.originTexture.height);
+				// FIXME : 더 줄일 수 있을지도...?
+				for (int i = 0; i < vertexInRectCount; i++)
+				{
+					_vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[p, i]] + pos);
 
-						_uvs.Add(pixelUv / _uvHolder.textureSize);
-					}
+					var uv = VoxelConstants.VoxelUvs[i];
+
+					var pixelUv = new Vector2(uvData.startX + uv .x * uvData.originTexture.width,
+						uvData.startY + uv.y * uvData.originTexture.height);
+
+					_uvs.Add(pixelUv / _uvHolder.textureSize);
 				}
 
 				// 시계방향으로 그려준다.
@@ -195,7 +211,7 @@ namespace UnityService.Stage
 				return false;
 			}
 
-			return !_voxelMap[pos.x, pos.y, pos.z].IsNullOrEmpty();
+			return _voxelMap[pos.x, pos.y, pos.z] != null;
 		}
 	}
 }
