@@ -2,10 +2,10 @@
     "name": "UnityService.Texture.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:3c33906e7901e8248baa45e86e837117",
-        "GUID:e9818aa5e56212c48a2a1676946e05f6",
-        "GUID:22ab9aaae7cdbe742ba8a063e2f0134b",
-        "GUID:df911c7643027fb4380e5ae640881398"
+        "Core",
+        "Game",
+        "Service",
+        "UnityService"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

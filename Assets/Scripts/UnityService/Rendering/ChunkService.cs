@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BlitzEcs;
+using Game;
+using Game.Asset;
 using Game.Ecs.Component;
 using Service;
 using Service.ObjectPool;
-using Service.Stage;
+using Service.Rendering;
+using Service.Texture;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityService.Stage;
+using UnityService.Texture;
 
-namespace UnityService.Stage
+namespace UnityService.Rendering
 {
 	/// <summary>
 	/// 여기서는 청크의 인덱스 좌표를 Coord로 사용
@@ -35,6 +40,8 @@ namespace UnityService.Stage
 		private List<Vector3Int> _chunkLocalCoords = new();
 
 		private Vector3Int _currentCenterCoord = Vector3Int.zero;
+
+		private Dictionary<string, PackedTextureUvInfo[]> _uvInfos;
 
 		public void Init(World world)
 		{
@@ -70,6 +77,51 @@ namespace UnityService.Stage
 			_addedChunkCoordBuffer = new(bufferSize);
 
 			_chunkPoolGuid = new Guid(chunkPoolGuid);
+
+			if (AssetFactory.Instance.TryGetAssetReader<ScriptableAssetModule>(out var assetModule))
+			{
+				if (assetModule.TryGet<BlockSpecHolder>("BlockSpecs", out var blockSpecHolder) &&
+				    assetModule.TryGet<PackedTextureUvHolder>("PackedTextureUvs", out var uvHolder))
+				{
+					_uvInfos = new(blockSpecHolder.blockSpecs.Count);
+
+					var nameToUvInfo = new Dictionary<string, PackedTextureUvInfo>(uvHolder.uvs.Count);
+
+					foreach (var uv in uvHolder.uvs)
+					{
+						nameToUvInfo.Add(uv.originTexture.name, new PackedTextureUvInfo
+						{
+							startX = (float)uv.startX / uvHolder.textureSize,
+							startY = (float)uv.startY / uvHolder.textureSize,
+							width = (float)uv.originTexture.width / uvHolder.textureSize,
+							height = (float)uv.originTexture.height / uvHolder.textureSize,
+						});
+					}
+
+					foreach (var blockSpec in blockSpecHolder.blockSpecs)
+					{
+						var blockUvs = new PackedTextureUvInfo[blockSpec.textures.Length];
+
+						for (int i = 0; i < blockUvs.Length; i++)
+						{
+							var textureName = blockSpec.textures[i].name;
+
+							if (nameToUvInfo.TryGetValue(textureName, out var info))
+							{
+								blockUvs[i] = info;
+							}
+							else
+							{
+								Debug.LogError($"Has no texture [{textureName}] in PackedTextureUvHolder[{uvHolder.name}].");
+							}
+						}
+
+						_uvInfos.Add(blockSpec.name, blockUvs);
+					}
+
+					nameToUvInfo.Clear();
+				}
+			}
 		}
 
 		public void LateUpdate()
@@ -254,6 +306,26 @@ namespace UnityService.Stage
 			var otherPos = localPos - nearDir * VoxelConstants.ChunkAxisCount;
 
 			return chunk.IsSolidAt(otherPos);
+		}
+
+		public bool TryGetUvInfo(string blockName, int sideIndex, out PackedTextureUvInfo info)
+		{
+			if (_uvInfos.TryGetValue(blockName, out var infos))
+			{
+				info = infos[sideIndex];
+				return true;
+			}
+
+			// 없으면 빈 데이터 반환
+			info = new PackedTextureUvInfo
+			{
+				startX = 0,
+				startY = 0,
+				width = 0,
+				height = 0,
+			};
+
+			return false;
 		}
 	}
 }

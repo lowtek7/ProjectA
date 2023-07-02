@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
-using DG.DemiEditor;
 using Game;
 using Game.Asset;
 using Service;
-using Service.Stage;
-using UnityEditor;
+using Service.Rendering;
 using UnityEngine;
+using UnityService.Stage;
 using UnityService.Texture;
 
-namespace UnityService.Stage
+namespace UnityService.Rendering
 {
 	public class Chunk : MonoBehaviour
 	{
@@ -19,9 +18,6 @@ namespace UnityService.Stage
 		private List<int> _triangles;
 		private List<Vector2> _uvs;
 		private string[,,] _voxelMap;
-
-		private BlockSpecHolder _blockSpecHolder;
-		private PackedTextureUvHolder _uvHolder;
 
 		private Vector3Int _coord;
 
@@ -45,14 +41,6 @@ namespace UnityService.Stage
 		public void Initialize(Vector3Int coord)
 		{
 			_coord = coord;
-
-			// FIXME
-			if (AssetFactory.Instance.TryGetAssetReader<ScriptableAssetModule>(out var assetModule))
-			{
-				assetModule.TryGet("BlockSpecs", out _blockSpecHolder);
-
-				assetModule.TryGet("PackedTextureUvs", out _uvHolder);
-			}
 
 			// FIXME : 테스트용 코드
 			_isAir = transform.position.y >= 0;
@@ -141,14 +129,14 @@ namespace UnityService.Stage
 		}
 		private void AddVoxelData(Vector3Int pos, ref int vertexIndex)
 		{
-			var sideCount = VoxelConstants.VoxelTris.GetLength(0);
-			var vertexInRectCount = VoxelConstants.VoxelTris.GetLength(1);
-			var blockName = _voxelMap[pos.x, pos.y, pos.z];
-
-			if (!_blockSpecHolder.NameToSpec.TryGetValue(blockName, out var blockSpec))
+			if (!ServiceManager.TryGetService<IChunkService>(out var chunkService))
 			{
 				return;
 			}
+
+			var sideCount = VoxelConstants.VoxelTris.GetLength(0);
+			var vertexInRectCount = VoxelConstants.VoxelTris.GetLength(1);
+			var blockName = _voxelMap[pos.x, pos.y, pos.z];
 
 			for (int p = 0; p < sideCount; p++)
 			{
@@ -157,7 +145,7 @@ namespace UnityService.Stage
 					continue;
 				}
 
-				if (!_uvHolder.NameToUvs.TryGetValue(blockSpec.textures[p].name, out var uvData))
+				if (!chunkService.TryGetUvInfo(blockName, p, out var uvInfo))
 				{
 					continue;
 				}
@@ -175,12 +163,12 @@ namespace UnityService.Stage
 				{
 					_vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[p, i]] + pos);
 
-					var uv = VoxelConstants.VoxelUvs[i];
+					var uvNormal = VoxelConstants.VoxelUvs[i];
 
-					var pixelUv = new Vector2(uvData.startX + uv .x * uvData.originTexture.width,
-						uvData.startY + uv.y * uvData.originTexture.height);
+					var uv = new Vector2(uvInfo.startX + uvNormal.x * uvInfo.width,
+						uvInfo.startY + uvNormal.y * uvInfo.height);
 
-					_uvs.Add(pixelUv / _uvHolder.textureSize);
+					_uvs.Add(uv);
 				}
 
 				// 시계방향으로 그려준다.

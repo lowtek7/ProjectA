@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UnityService.Stage
+namespace UnityService.Rendering
 {
 	public static class VoxelConstants
 	{

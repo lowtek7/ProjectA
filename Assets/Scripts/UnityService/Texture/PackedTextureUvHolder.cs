@@ -20,8 +20,5 @@ namespace UnityService.Texture
 		public List<PackedTextureUv> uvs = new();
 
 		public int textureSize = 1 << 8;
-
-		private Dictionary<string, PackedTextureUv> _nameToUvs;
-		public Dictionary<string, PackedTextureUv> NameToUvs => _nameToUvs ??= uvs.ToDictionary(uv => uv.originTexture.name);
 	}
 }
