@@ -29,7 +29,7 @@ namespace UnityService.Rendering
 		private World _world;
 		private Query<PlayerComponent, TransformComponent> _playerQuery;
 
-		private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
+		private readonly Dictionary<Vector3Int, IChunk> _chunks = new();
 
 		private List<Vector3Int> _removeChunkCoordBuffer;
 		private List<Vector3Int> _addChunkCoordBuffer;
@@ -259,10 +259,10 @@ namespace UnityService.Rendering
 				return;
 			}
 
-			objectPoolService.Despawn(chunk.gameObject);
+			objectPoolService.Despawn(chunk.GameObject);
 		}
 
-		public bool IsSolidAt(Vector3Int chunkCoord, int x, int y, int z)
+		public bool IsSolidAt(IChunk chunk, int x, int y, int z)
 		{
 			var nearX = 0;
 			var nearY = 0;
@@ -302,18 +302,18 @@ namespace UnityService.Rendering
 
 			if (!isRenewed)
 			{
-				return false;
+				return chunk.IsSolidAt(x, y, z);
 			}
 
 			var nearDir = new Vector3Int(nearX, nearY, nearZ);
-			var otherCoord = chunkCoord + nearDir;
+			var otherCoord = chunk.Coord + nearDir;
 
-			if (!_chunks.TryGetValue(otherCoord, out var chunk))
+			if (!_chunks.TryGetValue(otherCoord, out var nearChunk))
 			{
 				return false;
 			}
 
-			return chunk.IsSolidAt(
+			return nearChunk.IsSolidAt(
 				x - (nearX << VoxelConstants.ChunkAxisExponent),
 				y - (nearY << VoxelConstants.ChunkAxisExponent),
 				z - (nearZ << VoxelConstants.ChunkAxisExponent)

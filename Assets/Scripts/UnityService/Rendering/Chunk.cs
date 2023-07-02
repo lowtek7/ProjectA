@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UnityService.Rendering
 {
-	public class Chunk : MonoBehaviour
+	public class Chunk : MonoBehaviour, IChunk
 	{
 		private MeshFilter _meshFilter;
 		private MeshRenderer _meshRenderer;
@@ -13,9 +13,11 @@ namespace UnityService.Rendering
 		private List<Vector3> _vertices;
 		private List<int> _triangles;
 		private List<Vector2> _uvs;
-		private string[,,] _voxelMap;
+		private string[,,] _blockMap;
 
-		private Vector3Int _coord;
+		public GameObject GameObject => gameObject;
+
+		public Vector3Int Coord { get; private set; }
 
 		private bool _isAir = false;
 
@@ -24,7 +26,7 @@ namespace UnityService.Rendering
 			_meshFilter = GetComponent<MeshFilter>();
 			_meshRenderer = GetComponent<MeshRenderer>();
 
-			_voxelMap = new string[VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount];
+			_blockMap = new string[VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount];
 
 			// Capacity를 미리 크게 잡아둠
 			var normalSideCount = VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.VoxelTris.Length;
@@ -36,7 +38,7 @@ namespace UnityService.Rendering
 
 		public void Initialize(Vector3Int coord)
 		{
-			_coord = coord;
+			Coord = coord;
 
 			// FIXME : 테스트용 코드
 			_isAir = transform.position.y >= 0;
@@ -49,14 +51,14 @@ namespace UnityService.Rendering
 					{
 						if (_isAir)
 						{
-							_voxelMap[x, y, z] = null;
+							_blockMap[x, y, z] = null;
 						}
 						else
 						{
-							_voxelMap[x, y, z] = "dirt";
+							_blockMap[x, y, z] = "dirt";
 						}
 
-						// _voxelMap[x, y, z] = (y % VoxelConstants.ChunkAxisCount < x || y % VoxelConstants.ChunkAxisCount < z) ?
+						// _blockMap[x, y, z] = (y % VoxelConstants.ChunkAxisCount < x || y % VoxelConstants.ChunkAxisCount < z) ?
 						// 	"dirt": null;
 					}
 				}
@@ -73,8 +75,12 @@ namespace UnityService.Rendering
 
 			_meshRenderer.enabled = true;
 
-			// FIXME : 임시 처리
+			if (!ServiceManager.TryGetService<IChunkService>(out var chunkService))
+			{
+				return;
+			}
 
+			// FIXME : 임시 처리
 			for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
 			{
 				for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
@@ -82,9 +88,9 @@ namespace UnityService.Rendering
 					for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
 					{
 						// FIXME : 이 규칙은 블록마다 따로 분리하고 로직을 위쪽(Service)으로 빼야 함
-						if (_voxelMap[x, y, z] == "dirt" && !IsSolidAt(x, y + 1, z))
+						if (_blockMap[x, y, z] == "dirt" && !chunkService.IsSolidAt(this, x, y + 1, z))
 						{
-							_voxelMap[x, y, z] = "grass_dirt";
+							_blockMap[x, y, z] = "grass_dirt";
 						}
 					}
 				}
@@ -100,7 +106,7 @@ namespace UnityService.Rendering
 					{
 						if (IsSolidAt(x, y, z))
 						{
-							AddVoxelData(x, y, z, ref vertexIndex);
+							AddVoxelData(chunkService, x, y, z, ref vertexIndex);
 						}
 					}
 				}
@@ -122,21 +128,17 @@ namespace UnityService.Rendering
 
 			_meshFilter.mesh = mesh;
 		}
-		private void AddVoxelData(int x, int y, int z, ref int vertexIndex)
-		{
-			if (!ServiceManager.TryGetService<IChunkService>(out var chunkService))
-			{
-				return;
-			}
 
-			var blockName = _voxelMap[x, y, z];
+		private void AddVoxelData(IChunkService chunkService, int x, int y, int z, ref int vertexIndex)
+		{
+			var blockName = _blockMap[x, y, z];
 			var pos = new Vector3(x, y, z);
 
 			for (int p = 0; p < VoxelConstants.BlockSideCount; p++)
 			{
 				var nearDir = VoxelConstants.NearVoxels[p];
 
-				if (IsSolidAt(x + nearDir.x, y + nearDir.y, z + nearDir.z))
+				if (chunkService.IsSolidAt(this, x + nearDir.x, y + nearDir.y, z + nearDir.z))
 				{
 					continue;
 				}
@@ -181,20 +183,7 @@ namespace UnityService.Rendering
 
 		public bool IsSolidAt(int x, int y, int z)
 		{
-			if (x < 0 || y < 0 || z < 0 ||
-			    x >= VoxelConstants.ChunkAxisCount ||
-			    y >= VoxelConstants.ChunkAxisCount ||
-			    z >= VoxelConstants.ChunkAxisCount)
-			{
-				if (ServiceManager.TryGetService<IChunkService>(out var chunkService))
-				{
-					return chunkService.IsSolidAt(_coord, x, y, z);
-				}
-
-				return false;
-			}
-
-			return _voxelMap[x, y, z] != null;
+			return _blockMap[x, y, z] != null;
 		}
 	}
 }
