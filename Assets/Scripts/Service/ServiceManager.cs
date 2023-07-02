@@ -9,7 +9,7 @@ namespace Service
 		void OnActivateService(IGameService service);
 		void OnDeactivateService(IGameService service);
 	}
-	
+
 	public static class ServiceManager
 	{
 		private static Dictionary<Type, IGameService> serviceMap = new Dictionary<Type, IGameService>();
@@ -27,7 +27,7 @@ namespace Service
 				service = (CT)result;
 				return true;
 			}
-			
+
 			return false;
 		}
 
@@ -47,7 +47,7 @@ namespace Service
 			{
 				return;
 			}
-			
+
 			{
 				if (serviceMap.TryGetValue(serviceInterfaceType, out var original))
 				{
@@ -73,7 +73,7 @@ namespace Service
 					callback.OnActivate();
 				}
 			}
-			
+
 			foreach (var callback in callbacks)
 			{
 				callback.OnActivateService(service);
@@ -97,7 +97,7 @@ namespace Service
 				}
 
 				serviceMap.Remove(serviceInterfaceType);
-				
+
 				foreach (var callback in callbacks)
 				{
 					callback.OnDeactivateService(service);
@@ -147,7 +147,7 @@ namespace Service
 					callback.OnDeactivateService(service);
 				}
 			}
-			
+
 			serviceMap.Clear();
 		}
 	}
