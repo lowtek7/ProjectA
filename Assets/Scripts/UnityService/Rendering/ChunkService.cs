@@ -314,9 +314,9 @@ namespace UnityService.Rendering
 			}
 
 			return chunk.IsSolidAt(
-				x - nearX << VoxelConstants.ChunkAxisExponent,
-				y - nearY << VoxelConstants.ChunkAxisExponent,
-				z - nearZ << VoxelConstants.ChunkAxisExponent
+				x - (nearX << VoxelConstants.ChunkAxisExponent),
+				y - (nearY << VoxelConstants.ChunkAxisExponent),
+				z - (nearZ << VoxelConstants.ChunkAxisExponent)
 				);
 		}
 
