@@ -1,11 +1,7 @@
 ﻿using System.Collections.Generic;
-using Game;
-using Game.Asset;
 using Service;
 using Service.Rendering;
 using UnityEngine;
-using UnityService.Stage;
-using UnityService.Texture;
 
 namespace UnityService.Rendering
 {
@@ -45,11 +41,11 @@ namespace UnityService.Rendering
 			// FIXME : 테스트용 코드
 			_isAir = transform.position.y >= 0;
 
-			for (int y = 0; y < _voxelMap.GetLength(1); y++)
+			for (int y = 0; y <VoxelConstants.ChunkAxisCount; y++)
 			{
-				for (int x = 0; x < _voxelMap.GetLength(0); x++)
+				for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
 				{
-					for (int z = 0; z < _voxelMap.GetLength(2); z++)
+					for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
 					{
 						if (_isAir)
 						{
@@ -77,15 +73,16 @@ namespace UnityService.Rendering
 
 			_meshRenderer.enabled = true;
 
-			for (int y = 0; y < _voxelMap.GetLength(1); y++)
+			// FIXME : 임시 처리
+
+			for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
 			{
-				for (int x = 0; x < _voxelMap.GetLength(0); x++)
+				for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
 				{
-					for (int z = 0; z < _voxelMap.GetLength(2); z++)
+					for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
 					{
 						// FIXME : 이 규칙은 블록마다 따로 분리하고 로직을 위쪽(Service)으로 빼야 함
-						if (_voxelMap[x, y, z] == "dirt" &&
-						    !IsSolidAt(new Vector3Int(x, y, z) + VoxelConstants.NearVoxels[5]))
+						if (_voxelMap[x, y, z] == "dirt" && !IsSolidAt(x, y + 1, z))
 						{
 							_voxelMap[x, y, z] = "grass_dirt";
 						}
@@ -95,17 +92,15 @@ namespace UnityService.Rendering
 
 			var vertexIndex = 0;
 
-			for (int y = 0; y < _voxelMap.GetLength(1); y++)
+			for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
 			{
-				for (int x = 0; x < _voxelMap.GetLength(0); x++)
+				for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
 				{
-					for (int z = 0; z < _voxelMap.GetLength(2); z++)
+					for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
 					{
-						var pos = new Vector3Int(x, y, z);
-
-						if (IsSolidAt(pos))
+						if (IsSolidAt(x, y, z))
 						{
-							AddVoxelData(pos, ref vertexIndex);
+							AddVoxelData(x, y, z, ref vertexIndex);
 						}
 					}
 				}
@@ -127,20 +122,21 @@ namespace UnityService.Rendering
 
 			_meshFilter.mesh = mesh;
 		}
-		private void AddVoxelData(Vector3Int pos, ref int vertexIndex)
+		private void AddVoxelData(int x, int y, int z, ref int vertexIndex)
 		{
 			if (!ServiceManager.TryGetService<IChunkService>(out var chunkService))
 			{
 				return;
 			}
 
-			var sideCount = VoxelConstants.VoxelTris.GetLength(0);
-			var vertexInRectCount = VoxelConstants.VoxelTris.GetLength(1);
-			var blockName = _voxelMap[pos.x, pos.y, pos.z];
+			var blockName = _voxelMap[x, y, z];
+			var pos = new Vector3(x, y, z);
 
-			for (int p = 0; p < sideCount; p++)
+			for (int p = 0; p < VoxelConstants.BlockSideCount; p++)
 			{
-				if (IsSolidAt(pos + VoxelConstants.NearVoxels[p]))
+				var nearDir = VoxelConstants.NearVoxels[p];
+
+				if (IsSolidAt(x + nearDir.x, y + nearDir.y, z + nearDir.z))
 				{
 					continue;
 				}
@@ -159,7 +155,7 @@ namespace UnityService.Rendering
 				}
 
 				// FIXME : 더 줄일 수 있을지도...?
-				for (int i = 0; i < vertexInRectCount; i++)
+				for (int i = 0; i < VoxelConstants.VertexInSideCount; i++)
 				{
 					_vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[p, i]] + pos);
 
@@ -179,27 +175,26 @@ namespace UnityService.Rendering
 				_triangles.Add(vertexIndex + 1);
 				_triangles.Add(vertexIndex + 3);
 
-				vertexIndex += vertexInRectCount;
+				vertexIndex += VoxelConstants.VertexInSideCount;
 			}
 		}
 
-		public bool IsSolidAt(Vector3Int pos)
+		public bool IsSolidAt(int x, int y, int z)
 		{
-			// FIXME : 다른 Chunk 데이터를 참조하여 체크해야 함
-			if (pos.x < 0 || pos.y < 0 || pos.z < 0 ||
-			    pos.x >= _voxelMap.GetLength(0) ||
-			    pos.y >= _voxelMap.GetLength(1) ||
-			    pos.z >= _voxelMap.GetLength(2))
+			if (x < 0 || y < 0 || z < 0 ||
+			    x >= VoxelConstants.ChunkAxisCount ||
+			    y >= VoxelConstants.ChunkAxisCount ||
+			    z >= VoxelConstants.ChunkAxisCount)
 			{
 				if (ServiceManager.TryGetService<IChunkService>(out var chunkService))
 				{
-					return chunkService.IsSolidAtOuter(_coord, pos);
+					return chunkService.IsSolidAt(_coord, x, y, z);
 				}
 
 				return false;
 			}
 
-			return _voxelMap[pos.x, pos.y, pos.z] != null;
+			return _voxelMap[x, y, z] != null;
 		}
 	}
 }

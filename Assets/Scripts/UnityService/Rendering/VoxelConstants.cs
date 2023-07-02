@@ -47,6 +47,9 @@ namespace UnityService.Rendering
 			Vector3Int.up,
 		};
 
+		public static readonly int BlockSideCount = VoxelTris.GetLength(0);
+		public static readonly int VertexInSideCount = VoxelTris.GetLength(1);
+
 		public static readonly int ChunkAxisExponent = 4;
 
 		public static readonly int ChunkAxisCount = 1 << ChunkAxisExponent;

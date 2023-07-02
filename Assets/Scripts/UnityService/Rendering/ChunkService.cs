@@ -262,40 +262,50 @@ namespace UnityService.Rendering
 			objectPoolService.Despawn(chunk.gameObject);
 		}
 
-		public bool IsSolidAtOuter(Vector3Int chunkCoord, Vector3Int localPos)
+		public bool IsSolidAt(Vector3Int chunkCoord, int x, int y, int z)
 		{
-			var nearDir = Vector3Int.zero;
+			var nearX = 0;
+			var nearY = 0;
+			var nearZ = 0;
+			var isRenewed = false;
 
-			if (localPos.x < 0)
+			if (x < 0)
 			{
-				nearDir = Vector3Int.left;
+				nearX = -1;
+				isRenewed = true;
 			}
-			else if (localPos.x >= VoxelConstants.ChunkAxisCount)
+			else if (x >= VoxelConstants.ChunkAxisCount)
 			{
-				nearDir = Vector3Int.right;
+				nearX = 1;
+				isRenewed = true;
 			}
-			else if (localPos.y < 0)
+			else if (y < 0)
 			{
-				nearDir = Vector3Int.down;
+				nearY = -1;
+				isRenewed = true;
 			}
-			else if (localPos.y >= VoxelConstants.ChunkAxisCount)
+			else if (y >= VoxelConstants.ChunkAxisCount)
 			{
-				nearDir = Vector3Int.up;
+				nearY = 1;
+				isRenewed = true;
 			}
-			else if (localPos.z < 0)
+			else if (z < 0)
 			{
-				nearDir = Vector3Int.back;
+				nearZ = -1;
+				isRenewed = true;
 			}
-			else if (localPos.z >= VoxelConstants.ChunkAxisCount)
+			else if (z >= VoxelConstants.ChunkAxisCount)
 			{
-				nearDir = Vector3Int.forward;
+				nearZ = 1;
+				isRenewed = true;
 			}
 
-			if (nearDir == Vector3Int.zero)
+			if (!isRenewed)
 			{
 				return false;
 			}
 
+			var nearDir = new Vector3Int(nearX, nearY, nearZ);
 			var otherCoord = chunkCoord + nearDir;
 
 			if (!_chunks.TryGetValue(otherCoord, out var chunk))
@@ -303,9 +313,11 @@ namespace UnityService.Rendering
 				return false;
 			}
 
-			var otherPos = localPos - nearDir * VoxelConstants.ChunkAxisCount;
-
-			return chunk.IsSolidAt(otherPos);
+			return chunk.IsSolidAt(
+				x - nearX << VoxelConstants.ChunkAxisExponent,
+				y - nearY << VoxelConstants.ChunkAxisExponent,
+				z - nearZ << VoxelConstants.ChunkAxisExponent
+				);
 		}
 
 		public bool TryGetUvInfo(string blockName, int sideIndex, out PackedTextureUvInfo info)
