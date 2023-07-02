@@ -339,5 +339,10 @@ namespace UnityService.Rendering
 
 			return false;
 		}
+
+		public bool TryGetChunk(Vector3Int coord, out IChunk chunk)
+		{
+			return _chunks.TryGetValue(coord, out chunk);
+		}
 	}
 }

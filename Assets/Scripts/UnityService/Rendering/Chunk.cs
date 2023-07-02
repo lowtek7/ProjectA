@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Service;
 using Service.Rendering;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 namespace UnityService.Rendering
@@ -19,7 +21,12 @@ namespace UnityService.Rendering
 
 		public Vector3Int Coord { get; private set; }
 
-		private bool _isAir = false;
+		private bool[] _isSolidMap;
+
+		public bool[] IsSolidMap => _isSolidMap;
+
+		// FIXME : 테스트용
+		private string _chunkType;
 
 		private void Awake()
 		{
@@ -28,8 +35,11 @@ namespace UnityService.Rendering
 
 			_blockMap = new string[VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount, VoxelConstants.ChunkAxisCount];
 
+			_isSolidMap = new bool[VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount];
+
 			// Capacity를 미리 크게 잡아둠
-			var normalSideCount = VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.VoxelTris.Length;
+			var normalSideCount =
+				VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.BlockSideCount;
 
 			_vertices = new(normalSideCount * 4);
 			_uvs = new(normalSideCount * 4);
@@ -41,22 +51,39 @@ namespace UnityService.Rendering
 			Coord = coord;
 
 			// FIXME : 테스트용 코드
-			_isAir = transform.position.y >= 0;
-
-			for (int y = 0; y <VoxelConstants.ChunkAxisCount; y++)
+			if (Coord.y >= 0)
 			{
+				_chunkType = null;
+			}
+			else if (Coord.y == -1)
+			{
+				_chunkType = "grass_dirt";
+			}
+			else
+			{
+				_chunkType = "dirt";
+			}
+
+			for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
+			{
+				var yWeight = y << VoxelConstants.ChunkAxisExponent;
+
 				for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
 				{
+					var xWeight = x << (VoxelConstants.ChunkAxisExponent << 1);
+
 					for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
 					{
-						if (_isAir)
-						{
-							_blockMap[x, y, z] = null;
-						}
-						else
+						if (_chunkType == "grass_dirt" && y < VoxelConstants.ChunkAxisCount - 1)
 						{
 							_blockMap[x, y, z] = "dirt";
 						}
+						else
+						{
+							_blockMap[x, y, z] = _chunkType;
+						}
+
+						_isSolidMap[xWeight | yWeight | z] = _blockMap[x, y, z] != null;
 
 						// _blockMap[x, y, z] = (y % VoxelConstants.ChunkAxisCount < x || y % VoxelConstants.ChunkAxisCount < z) ?
 						// 	"dirt": null;
@@ -67,7 +94,7 @@ namespace UnityService.Rendering
 
 		public void RebuildMesh()
 		{
-			if (_isAir)
+			if (_chunkType == null)
 			{
 				_meshRenderer.enabled = false;
 				return;
@@ -80,22 +107,6 @@ namespace UnityService.Rendering
 				return;
 			}
 
-			// FIXME : 임시 처리
-			for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
-			{
-				for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
-				{
-					for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
-					{
-						// FIXME : 이 규칙은 블록마다 따로 분리하고 로직을 위쪽(Service)으로 빼야 함
-						if (_blockMap[x, y, z] == "dirt" && !chunkService.IsSolidAt(this, x, y + 1, z))
-						{
-							_blockMap[x, y, z] = "grass_dirt";
-						}
-					}
-				}
-			}
-
 			var vertexIndex = 0;
 
 			for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
@@ -104,7 +115,7 @@ namespace UnityService.Rendering
 				{
 					for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
 					{
-						if (IsSolidAt(x, y, z))
+						if (_blockMap[x, y, z] != null)
 						{
 							AddVoxelData(chunkService, x, y, z, ref vertexIndex);
 						}
@@ -183,7 +194,10 @@ namespace UnityService.Rendering
 
 		public bool IsSolidAt(int x, int y, int z)
 		{
-			return _blockMap[x, y, z] != null;
+			var xWeight = x << (VoxelConstants.ChunkAxisExponent << 1);
+			var yWeight = y << VoxelConstants.ChunkAxisExponent;
+
+			return _isSolidMap[xWeight | yWeight | z];
 		}
 	}
 }

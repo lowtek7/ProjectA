@@ -13,5 +13,7 @@ namespace Service.Rendering
 		Vector3Int Coord { get; }
 
 		GameObject GameObject { get; }
+
+		bool[] IsSolidMap { get; }
 	}
 }
