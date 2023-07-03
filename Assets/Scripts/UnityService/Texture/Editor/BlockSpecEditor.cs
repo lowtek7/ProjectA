@@ -18,7 +18,7 @@ namespace UnityService.Texture.Editor
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
-			return (16 + 4) * (1 + 6);
+			return (16 + 4) * (1 + 1 + 6);
 		}
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -27,6 +27,10 @@ namespace UnityService.Texture.Editor
 
 			var prevPos = new Rect(position.position.x, position.position.y + 2, position.width, 16);
 			EditorGUI.PropertyField(prevPos, property.FindPropertyRelative(nameof(BlockSpec.name)));
+
+			prevPos = new Rect(position.x, prevPos.yMax + 4, position.width, 16);
+
+			EditorGUI.PropertyField(prevPos, property.FindPropertyRelative(nameof(BlockSpec.blockId)));
 
 			var textureArrayProp = property.FindPropertyRelative(nameof(BlockSpec.textures));
 

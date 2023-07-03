@@ -6,9 +6,12 @@ namespace Service.Rendering
 	{
 		void Initialize(Vector3Int coord);
 
-		void RebuildMesh();
+		void RebuildMesh(bool[] isSolidLeft, bool[] isSolidRight, bool[] isSolidUp,
+			bool[] isSolidDown, bool[] isSolidForward, bool[] isSolidBack);
 
 		bool IsSolidAt(int x, int y, int z);
+
+		bool UpdateBuildMesh();
 
 		Vector3Int Coord { get; }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using BlitzEcs;
 using Game;
 using Game.Asset;
@@ -10,7 +9,6 @@ using Service.ObjectPool;
 using Service.Rendering;
 using Service.Texture;
 using UnityEngine;
-using UnityService.Stage;
 using UnityService.Texture;
 
 namespace UnityService.Rendering
@@ -42,6 +40,14 @@ namespace UnityService.Rendering
 		private Vector3Int _currentCenterCoord = Vector3Int.zero;
 
 		private Dictionary<string, PackedTextureUvInfo[]> _uvInfos;
+
+		public static readonly Dictionary<int, PackedTextureUvInfo> UvInfo = new();
+
+		public static readonly bool[] EmptySolidMap = new bool[
+			VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount
+		];
+
+		public readonly List<Vector3Int> _chunksNeedBuildMesh = new();
 
 		public void Init(World world)
 		{
@@ -109,6 +115,8 @@ namespace UnityService.Rendering
 							if (nameToUvInfo.TryGetValue(textureName, out var info))
 							{
 								blockUvs[i] = info;
+
+								UvInfo.Add((blockSpec.blockId << 3) | i, info);
 							}
 							else
 							{
@@ -164,11 +172,6 @@ namespace UnityService.Rendering
 					RemoveChunk(coord);
 				}
 
-				if (_removeChunkCoordBuffer.Count > 0)
-				{
-					Debug.LogError(_removeChunkCoordBuffer.Count);
-				}
-
 				_removeChunkCoordBuffer.Clear();
 
 				// Add
@@ -205,15 +208,50 @@ namespace UnityService.Rendering
 				{
 					if (_chunks.TryGetValue(coord, out var chunk))
 					{
-						chunk.RebuildMesh();
+						chunk.RebuildMesh(
+							GetSolidMap(coord + Vector3Int.left),
+							GetSolidMap(coord + Vector3Int.right),
+							GetSolidMap(coord + Vector3Int.up),
+							GetSolidMap(coord + Vector3Int.down),
+							GetSolidMap(coord + Vector3Int.forward),
+							GetSolidMap(coord + Vector3Int.back)
+							);
+
+						_chunksNeedBuildMesh.Add(coord);
 					}
 				}
 
 				_addedChunkCoordBuffer.Clear();
 
+				for (int i = 0; i < _chunksNeedBuildMesh.Count; i++)
+				{
+					var coord = _chunksNeedBuildMesh[i];
+					var done = true;
+
+					if (_chunks.TryGetValue(coord, out var chunk))
+					{
+						done = chunk.UpdateBuildMesh();
+					}
+
+					if (done)
+					{
+						_chunksNeedBuildMesh.RemoveAt(i--);
+					}
+				}
+
 				// FIXME
 				break;
 			}
+		}
+
+		private bool[] GetSolidMap(Vector3Int coord)
+		{
+			if (_chunks.TryGetValue(coord, out var chunk))
+			{
+				return chunk.IsSolidMap;
+			}
+
+			return EmptySolidMap;
 		}
 
 		private int GetChunkIndex(float value)

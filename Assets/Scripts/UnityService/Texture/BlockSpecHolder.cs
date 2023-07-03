@@ -9,6 +9,7 @@ namespace UnityService.Texture
 	public class BlockSpec
 	{
 		public string name = "new_block";
+		public int blockId = -1;
 		public Texture2D[] textures = new Texture2D[6];
 	}
 
