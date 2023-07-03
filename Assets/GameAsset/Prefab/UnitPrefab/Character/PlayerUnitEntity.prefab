@@ -65,7 +65,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   components:
   - rid: 8986602489903841287
-  - rid: 8986602489903841450
+  - rid: 2371249708091310080
   - rid: 8986602489903841451
   - rid: 1820560736419053572
   - rid: 7904022502624198873
@@ -77,6 +77,15 @@ MonoBehaviour:
       data:
         boundsSize: {x: 3, y: 3, z: 3}
         offset: {x: 0, y: 0, z: 0}
+    - rid: 2371249708091310080
+      type: {class: PlayerCameraComponent, ns: Game.Ecs.Component, asm: Game}
+      data:
+        minRadius: 3
+        maxRadius: 15
+        minAzimuthInRad: 0
+        maxAzimuthInRad: 360
+        minElevationInRad: 0
+        maxElevationInRad: 80
     - rid: 7904022502624198873
       type: {class: NameComponent, ns: Game.Ecs.Component, asm: Game}
       data:
@@ -89,8 +98,6 @@ MonoBehaviour:
         runSpeed: 3
         rotateSpeed: 1200
         targetRotation: {x: 0, y: 0, z: 0, w: 0}
-    - rid: 8986602489903841450
-      type: {class: PlayerCameraComponent, ns: Game.Ecs.Component, asm: Game}
     - rid: 8986602489903841451
       type: {class: PlayerComponent, ns: Game.Ecs.Component, asm: Game}
 --- !u!114 &-5123256311199164676

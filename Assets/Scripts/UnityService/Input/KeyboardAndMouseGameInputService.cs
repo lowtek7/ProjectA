@@ -17,6 +17,8 @@ namespace UnityService.Input
 
 		private Query<CursorComponent> CursorQuery;
 
+		private Query<PlayerCameraComponent> cameraQuery;
+
 		// 사용하지 않고 있으며 경고가 나와서 주석처리
 		//private bool activated = false;
 
@@ -28,6 +30,8 @@ namespace UnityService.Input
 			inputQuery = new Query<InputComponent>(world);
 
 			CursorQuery = new Query<CursorComponent>(world);
+
+			cameraQuery = new Query<PlayerCameraComponent>(world);
 
 			// 인풋 관리는 한 곳에서만 진행할 것이므로,
 			inputEntity = world.Spawn();
@@ -41,8 +45,8 @@ namespace UnityService.Input
 			int yMove = 0;
 			int zMove = 0;
 
-			float xRotateCameraMove = 0.0f;
-			float yRotateCameraMove = 0.0f;
+			float mouseXDegree = 0.0f;
+			float mouseYDegree = 0.0f;
 
 			bool isMouseClick = false;
 
@@ -111,12 +115,19 @@ namespace UnityService.Input
 
 				if (cursorComponent.IsShowCursor == false)
 				{
-					xRotateCameraMove = UnityEngine.Input.GetAxis("Mouse X");
-					yRotateCameraMove = UnityEngine.Input.GetAxis("Mouse Y");
+					mouseXDegree = UnityEngine.Input.GetAxis("Mouse X");
+					mouseYDegree = UnityEngine.Input.GetAxis("Mouse Y");
+					
 				}
 			}
+			
+			foreach (var entity in cameraQuery)
+			{
+				ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
 
-			var cameraRotation = new Vector2(xRotateCameraMove, yRotateCameraMove);
+				cameraComponent.MouseXDegree = mouseXDegree;
+				cameraComponent.MouseYDegree = mouseYDegree;
+			}
 
 			foreach (var entity in inputQuery)
 			{
@@ -125,8 +136,6 @@ namespace UnityService.Input
 				moveInputComponent.MoveDirection = moveDirection;
 
 				moveInputComponent.IsMouseClick = isMouseClick;
-
-				moveInputComponent.CameraRotation = cameraRotation;
 
 				moveInputComponent.IsRun = isRun;
 			}

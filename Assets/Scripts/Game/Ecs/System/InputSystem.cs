@@ -2,6 +2,7 @@
 using Core.Unity;
 using Game.Ecs.Component;
 using Service;
+using Service.Camera;
 using Service.Input;
 using UnityEngine;
 
@@ -24,6 +25,11 @@ namespace Game.Ecs.System
 			if (ServiceManager.TryGetService<IGameInputService>(out var inputService))
 			{
 				inputService.Fetch();
+			}
+			
+			if (ServiceManager.TryGetService<IPlayerCameraService>(out var cameraService))
+			{
+				cameraService.Fetch();
 			}
 
 			foreach (var entity in _inputQuery)

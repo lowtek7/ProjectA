@@ -4,12 +4,25 @@ namespace Service.Camera
 {
 	public interface IPlayerCameraService : IGameService
 	{
-		void SetCameraPosition(Vector3 position);
+		void Fetch();
+		//구면 좌표계 새로작성 코드
+		void SetSpherical(
+			(float min, float init, float max) radius,
+			(float min, float init, float max) azimuth, 
+			(float min, float init, float max) elevation);
 
-		void SetCameraRotation(Vector2 rotation);
+		void SetAzimuth(float degree);
 
-		void SetMouseClick(bool mouseClick);
+		void AddAzimuth(float degree);
 
+		void SetElevation(float degree);
+
+		void AddElevation(float degree);
+
+		void SetRadius(float value);
+
+		void AddRadius(float value);
+		
 		Vector3 ScreenToWorld(Vector2 screenPos);
 
 		Vector2 WorldToScreen(Vector3 worldPos);
