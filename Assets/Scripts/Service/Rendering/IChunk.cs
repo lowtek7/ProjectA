@@ -18,5 +18,7 @@ namespace Service.Rendering
 		GameObject GameObject { get; }
 
 		bool[] IsSolidMap { get; }
+
+		bool NeedWaitBuildMesh { get; }
 	}
 }

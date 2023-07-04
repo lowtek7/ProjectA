@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Buffers;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Service;
 using Service.Rendering;
@@ -23,11 +25,17 @@ namespace UnityService.Rendering
 
 		public bool[] IsSolidMap => _isSolidMap;
 
+		public bool NeedWaitBuildMesh => _chunkType != null;
+
 		// FIXME : 테스트용
 		private string _chunkType;
 
 		private BuildingMeshJob? _currentBuildingMeshJob;
 		private JobHandle? _currentBuildingMeshJobHandler;
+
+		private Vector3[] _verticesPool;
+		private int[] _trianglesPool;
+		private Vector2[] _uvsPool;
 
 		private struct BuildingMeshJob : IJob
 		{
@@ -240,6 +248,14 @@ namespace UnityService.Rendering
 			_blockIdMap = new int[VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount];
 
 			_isSolidMap = new bool[VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount];
+
+			// Capacity를 미리 크게 잡아둠
+			var normalSideCount =
+				VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.BlockSideCount;
+
+			_verticesPool = new Vector3[normalSideCount * 4];
+			_trianglesPool = new int[normalSideCount * 2];
+			_uvsPool = new Vector2[normalSideCount * 4];
 		}
 
 		public void Initialize(Vector3Int coord)
@@ -312,22 +328,33 @@ namespace UnityService.Rendering
 
 		public bool UpdateBuildMesh()
 		{
+			if (_chunkType == null)
+			{
+				return true;
+			}
+
 			if (_currentBuildingMeshJobHandler == null || !_currentBuildingMeshJobHandler.Value.IsCompleted ||
 			    _currentBuildingMeshJob == null)
 			{
 				return false;
 			}
 
+			var buildingMeshJob = _currentBuildingMeshJob.Value;
+
 			_currentBuildingMeshJobHandler.Value.Complete();
+
+			var verticesSeg = CopyNativeList(buildingMeshJob.vertices, ref _verticesPool);
+			var trianglesSeg = CopyNativeList(buildingMeshJob.triangles, ref _trianglesPool);
+			var uvsSeg = CopyNativeList(buildingMeshJob.uvs, ref _uvsPool);
 
 			var mesh = new Mesh
 			{
-				vertices = _currentBuildingMeshJob.Value.vertices.ToArray(),
-				triangles = _currentBuildingMeshJob.Value.triangles.ToArray(),
-				uv = _currentBuildingMeshJob.Value.uvs.ToArray(),
+				vertices = verticesSeg.Array,
+				triangles = trianglesSeg.Array,
+				uv = uvsSeg.Array
 			};
 
-			_currentBuildingMeshJob.Value.Dispose();
+			buildingMeshJob.Dispose();
 
 			_currentBuildingMeshJob = null;
 			_currentBuildingMeshJobHandler = null;
@@ -347,6 +374,25 @@ namespace UnityService.Rendering
 			var yWeight = y << VoxelConstants.ChunkAxisExponent;
 
 			return _isSolidMap[xWeight | yWeight | z];
+		}
+
+		private ArraySegment<T> CopyNativeList<T>(NativeList<T> from, ref T[] to) where T : unmanaged
+		{
+			var length = from.Length;
+
+			if (to.Length < length)
+			{
+				to = new T[length];
+			}
+
+			for (int i = 0; i < length; i++)
+			{
+				to[i] = from[i];
+			}
+
+			var segment = new ArraySegment<T>(to, 0, length);
+
+			return segment;
 		}
 	}
 }

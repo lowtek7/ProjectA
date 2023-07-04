@@ -217,7 +217,10 @@ namespace UnityService.Rendering
 							GetSolidMap(coord + Vector3Int.back)
 							);
 
-						_chunksNeedBuildMesh.Add(coord);
+						if (chunk.NeedWaitBuildMesh)
+						{
+							_chunksNeedBuildMesh.Add(coord);
+						}
 					}
 				}
 
