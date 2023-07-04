@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Service;
 using Service.Rendering;
 using Unity.Collections;
 using Unity.Jobs;
@@ -385,10 +381,7 @@ namespace UnityService.Rendering
 				to = new T[length];
 			}
 
-			for (int i = 0; i < length; i++)
-			{
-				to[i] = from[i];
-			}
+			RAMGUnsafe.UnsafeUtility.CopyToFast(from.AsArray(), to);
 
 			var segment = new ArraySegment<T>(to, 0, length);
 
