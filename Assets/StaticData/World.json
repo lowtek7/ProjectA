@@ -113,22 +113,22 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            88,
-                            147,
-                            68,
-                            96,
-                            44,
-                            91,
-                            241,
-                            68,
-                            167,
-                            56,
-                            228,
-                            204,
-                            245,
-                            32,
-                            66,
-                            115
+                            230,
+                            232,
+                            59,
+                            37,
+                            233,
+                            102,
+                            100,
+                            75,
+                            190,
+                            166,
+                            53,
+                            219,
+                            232,
+                            35,
+                            73,
+                            132
                         ]
                     }
                 }
@@ -220,7 +220,14 @@
                     "ns": "Game.Ecs.Component",
                     "asm": "Game"
                 },
-                "data": {}
+                "data": {
+                    "minRadius": 3.0,
+                    "maxRadius": 15.0,
+                    "minAzimuthInRad": 0.0,
+                    "maxAzimuthInRad": 360.0,
+                    "minElevationInRad": 0.0,
+                    "maxElevationInRad": 80.0
+                }
             },
             {
                 "rid": 1007,
