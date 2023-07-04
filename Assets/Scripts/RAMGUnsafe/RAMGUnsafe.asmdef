@@ -1,19 +1,10 @@
 {
-    "name": "UnityService",
+    "name": "RAMGUnsafe",
     "rootNamespace": "",
-    "references": [
-        "Core",
-        "Game",
-        "Service",
-        "View",
-        "KdTree",
-        "JSPool",
-        "Unity.Collections",
-        "RAMGUnsafe"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
