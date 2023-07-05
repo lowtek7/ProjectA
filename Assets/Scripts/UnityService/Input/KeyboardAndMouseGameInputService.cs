@@ -126,7 +126,7 @@ namespace UnityService.Input
 				ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
 
 				cameraComponent.MouseXDegree = mouseXDegree;
-				cameraComponent.MouseYDegree = mouseYDegree;
+				cameraComponent.MouseYDegree = -mouseYDegree;
 			}
 
 			foreach (var entity in inputQuery)

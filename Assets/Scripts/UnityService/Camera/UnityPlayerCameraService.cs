@@ -107,7 +107,7 @@ namespace UnityService.Camera
 				value += ROTCYCLE;
 			}
 
-			if (value > ROTCYCLE)
+			if (value >= ROTCYCLE)
 			{
 				value -= ROTCYCLE;
 			}
