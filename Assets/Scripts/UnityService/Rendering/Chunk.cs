@@ -21,10 +21,10 @@ namespace UnityService.Rendering
 
 		public bool[] IsSolidMap => _isSolidMap;
 
-		public bool NeedWaitBuildMesh => _chunkType != null;
+		public bool NeedWaitBuildMesh => _chunkType > 0;
 
 		// FIXME : 테스트용
-		private string _chunkType;
+		private int _chunkType;
 
 		private BuildingMeshJob? _currentBuildingMeshJob;
 		private JobHandle? _currentBuildingMeshJobHandler;
@@ -35,11 +35,13 @@ namespace UnityService.Rendering
 
 		private struct BuildingMeshJob : IJob
 		{
-			public NativeList<Vector3> vertices;
-			public NativeList<int> triangles;
-			public NativeList<Vector2> uvs;
+			public NativeArray<Vector3> vertices;
+			public NativeArray<int> triangles;
+			public NativeArray<Vector2> uvs;
 
 			public NativeArray<int> blockMap;
+
+			public NativeArray<int> meshDataCounts;
 
 			[ReadOnly]
 			private NativeArray<bool> _isSolidSelf;
@@ -58,6 +60,10 @@ namespace UnityService.Rendering
 
 			private int _triangleVertexWalker;
 
+			private int _verticesIndexWalker;
+			private int _trianglesIndexWalker;
+			private int _uvsIndexWalker;
+
 			public BuildingMeshJob(int[] blockIdMap, bool[] isSolidSelf, bool[] isSolidLeft, bool[] isSolidRight,
 				bool[] isSolidUp, bool[] isSolidDown, bool[] isSolidForward, bool[] isSolidBack)
 			{
@@ -72,14 +78,20 @@ namespace UnityService.Rendering
 				_isSolidBack = new NativeArray<bool>(isSolidBack, lifeType);
 
 				// Capacity를 미리 크게 잡아둠
-				var normalSideCount =
-					VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.BlockSideCount;
+				var normalSideCount = VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount *
+					VoxelConstants.BlockSideCount / 2;
 
-				vertices = new NativeList<Vector3>(normalSideCount * 4, lifeType);
-				triangles = new NativeList<int>(normalSideCount * 2, lifeType);
-				uvs = new NativeList<Vector2>(normalSideCount * 4, lifeType);
+				vertices = new NativeArray<Vector3>(normalSideCount * 4, lifeType);
+				triangles = new NativeArray<int>(normalSideCount * 2, lifeType);
+				uvs = new NativeArray<Vector2>(normalSideCount * 4, lifeType);
+
+				// Vertex, Uv, Triangle 순서로 저장될 것
+				meshDataCounts = new NativeArray<int>(3, lifeType);
 
 				_triangleVertexWalker = 0;
+				_verticesIndexWalker = 0;
+				_trianglesIndexWalker = 0;
+				_uvsIndexWalker = 0;
 
 				blockMap = new NativeArray<int>(blockIdMap, lifeType);
 			}
@@ -89,6 +101,7 @@ namespace UnityService.Rendering
 				vertices.Dispose();
 				triangles.Dispose();
 				uvs.Dispose();
+				meshDataCounts.Dispose();
 
 				blockMap.Dispose();
 
@@ -121,6 +134,10 @@ namespace UnityService.Rendering
 						}
 					}
 				}
+
+				meshDataCounts[0] = _verticesIndexWalker;
+				meshDataCounts[1] = _uvsIndexWalker;
+				meshDataCounts[2] = _trianglesIndexWalker;
 			}
 
 			private void AddBlock(int x, int y, int z, int blockId)
@@ -202,34 +219,26 @@ namespace UnityService.Rendering
 						continue;
 					}
 
-					// 카운트가 모자라다면 Doubling
-					if (vertices.Capacity <= vertices.Length)
-					{
-						vertices.Capacity <<= 1;
-						uvs.Capacity <<= 1;
-						triangles.Capacity <<= 1;
-					}
-
 					// FIXME : 더 줄일 수 있을지도...?
 					for (int i = 0; i < VoxelConstants.VertexInSideCount; i++)
 					{
-						vertices.Add(VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[s, i]] + pos);
+						vertices[_verticesIndexWalker++] = VoxelConstants.VoxelVerts[VoxelConstants.VoxelTris[s, i]] + pos;
 
 						var uvNormal = VoxelConstants.VoxelUvs[i];
 
 						var uv = new Vector2(uvInfo.startX + uvNormal.x * uvInfo.width,
 							uvInfo.startY + uvNormal.y * uvInfo.height);
 
-						uvs.Add(uv);
+						uvs[_uvsIndexWalker++] = uv;
 					}
 
 					// 시계방향으로 그려준다.
-					triangles.Add(_triangleVertexWalker);
-					triangles.Add(_triangleVertexWalker + 1);
-					triangles.Add(_triangleVertexWalker + 2);
-					triangles.Add(_triangleVertexWalker + 2);
-					triangles.Add(_triangleVertexWalker + 1);
-					triangles.Add(_triangleVertexWalker + 3);
+					triangles[_trianglesIndexWalker++] = _triangleVertexWalker;
+					triangles[_trianglesIndexWalker++] = _triangleVertexWalker + 1;
+					triangles[_trianglesIndexWalker++] = _triangleVertexWalker + 2;
+					triangles[_trianglesIndexWalker++] = _triangleVertexWalker + 2;
+					triangles[_trianglesIndexWalker++] = _triangleVertexWalker + 1;
+					triangles[_trianglesIndexWalker++] = _triangleVertexWalker + 3;
 
 					_triangleVertexWalker += VoxelConstants.VertexInSideCount;
 				}
@@ -261,15 +270,15 @@ namespace UnityService.Rendering
 			// FIXME : 테스트용 코드
 			if (Coord.y >= 0)
 			{
-				_chunkType = null;
+				_chunkType = -1;
 			}
 			else if (Coord.y == -1)
 			{
-				_chunkType = "grass_dirt";
+				_chunkType = 1;
 			}
 			else
 			{
-				_chunkType = "dirt";
+				_chunkType = 2;
 			}
 
 			for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
@@ -284,11 +293,11 @@ namespace UnityService.Rendering
 					{
 						var index = xWeight | yWeight | z;
 
-						if (_chunkType == "grass_dirt" && y == VoxelConstants.ChunkAxisCount - 1)
+						if (_chunkType == 1 && y == VoxelConstants.ChunkAxisCount - 1)
 						{
 							_blockIdMap[index] = 1;
 						}
-						else if (_chunkType == null)
+						else if (!NeedWaitBuildMesh)
 						{
 							_blockIdMap[index] = -1;
 						}
@@ -308,7 +317,7 @@ namespace UnityService.Rendering
 		{
 			_meshRenderer.enabled = false;
 
-			if (_chunkType == null)
+			if (!NeedWaitBuildMesh)
 			{
 				return;
 			}
@@ -339,9 +348,9 @@ namespace UnityService.Rendering
 
 			_currentBuildingMeshJobHandler.Value.Complete();
 
-			var verticesSeg = CopyNativeList(buildingMeshJob.vertices, ref _verticesPool);
-			var trianglesSeg = CopyNativeList(buildingMeshJob.triangles, ref _trianglesPool);
-			var uvsSeg = CopyNativeList(buildingMeshJob.uvs, ref _uvsPool);
+			var verticesSeg = CopyNativeArray(buildingMeshJob.vertices, ref _verticesPool, buildingMeshJob.meshDataCounts[0]);
+			var uvsSeg = CopyNativeArray(buildingMeshJob.uvs, ref _uvsPool, buildingMeshJob.meshDataCounts[1]);
+			var trianglesSeg = CopyNativeArray(buildingMeshJob.triangles, ref _trianglesPool, buildingMeshJob.meshDataCounts[2]);
 
 			var mesh = new Mesh
 			{
@@ -372,7 +381,7 @@ namespace UnityService.Rendering
 			return _isSolidMap[xWeight | yWeight | z];
 		}
 
-		private ArraySegment<T> CopyNativeList<T>(NativeList<T> from, ref T[] to) where T : unmanaged
+		private ArraySegment<T> CopyNativeArray<T>(NativeArray<T> from, ref T[] to, int count) where T : unmanaged
 		{
 			var length = from.Length;
 
@@ -381,7 +390,9 @@ namespace UnityService.Rendering
 				to = new T[length];
 			}
 
-			RAMGUnsafe.UnsafeUtility.CopyToFast(from.AsArray(), to);
+			var slice = new NativeSlice<T>(from, 0, count);
+
+			RAMGUnsafe.UnsafeUtility.CopyToFast(slice, to);
 
 			var segment = new ArraySegment<T>(to, 0, length);
 
