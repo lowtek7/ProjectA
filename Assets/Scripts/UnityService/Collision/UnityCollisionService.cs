@@ -34,14 +34,14 @@ namespace UnityService.Collision
 				var moverTransformComponent = moverEntity.Get<TransformComponent>();
 
 				var moverPos = moverTransformComponent.Position + moveDist;
-				var moveCapsuleCenter = moverCapsuleColliderComponent.Center;
-				var moveCapsuleDir = moverCapsuleColliderComponent.Direction;
-				var moveCapsuleHeight = moverCapsuleColliderComponent.Height;
+				var moverCapsuleCenter = moverCapsuleColliderComponent.Center;
+				var moverCapsuleDir = moverCapsuleColliderComponent.Direction;
+				var moverCapsuleHeight = moverCapsuleColliderComponent.Height;
 
-				var moverCapsuleBase = moverPos + moveCapsuleCenter - moveCapsuleDir * (moveCapsuleHeight * 0.5f);
-				var moverCapsuleTip = moverCapsuleBase + moveCapsuleDir * moveCapsuleHeight;
+				var moverCapsuleBase = moverPos + moverCapsuleCenter - moverCapsuleDir * (moverCapsuleHeight * 0.5f);
+				var moverCapsuleTip = moverCapsuleBase + moverCapsuleDir * moverCapsuleHeight;
 
-				Vector3 moverLineEndOffset = moveCapsuleDir * moverCapsuleColliderComponent.Radius;
+				Vector3 moverLineEndOffset = moverCapsuleDir * moverCapsuleColliderComponent.Radius;
 				Vector3 moverBaseCircleCenter = moverCapsuleBase + moverLineEndOffset;
 				Vector3 moverTipCircleCenter = moverCapsuleTip - moverLineEndOffset;
 
