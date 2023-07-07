@@ -15,7 +15,7 @@ namespace UnityService.Rendering
 
 		public GameObject GameObject => gameObject;
 
-		public Vector3Int Coord { get; private set; }
+		public int CoordId { get; private set; }
 
 		private bool[] _isSolidMap;
 
@@ -263,21 +263,21 @@ namespace UnityService.Rendering
 			_uvsPool = new Vector2[normalSideCount * 4];
 		}
 
-		public void Initialize(Vector3Int coord)
+		public void Initialize(int coordId)
 		{
 			_meshRenderer.enabled = false;
 
-			Coord = coord;
+			CoordId = coordId;
 
 			State = ChunkState.WaitBuild;
 
 			// FIXME : 테스트용 코드
-			if (Coord.y >= 0)
+			if (VoxelUtility.GetCoordY(CoordId) >= 0)
 			{
 				_chunkType = -1;
 				State = ChunkState.Done;
 			}
-			else if (Coord.y == -1)
+			else if (VoxelUtility.GetCoordY(CoordId) == -1)
 			{
 				_chunkType = 1;
 			}
@@ -298,9 +298,9 @@ namespace UnityService.Rendering
 					{
 						var index = xWeight | yWeight | z;
 
-						if (_chunkType == 1 && y == VoxelConstants.ChunkAxisCount - 1)
+						if (_chunkType == 1 && y < VoxelConstants.ChunkAxisCount - 1)
 						{
-							_blockIdMap[index] = 1;
+							_blockIdMap[index] = 2;
 						}
 						else
 						{

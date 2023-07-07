@@ -51,7 +51,23 @@ namespace UnityService.Rendering
 		public static readonly int VertexInSideCount = VoxelTris.GetLength(1);
 
 		public static readonly int ChunkAxisExponent = 4;
-
 		public static readonly int ChunkAxisCount = 1 << ChunkAxisExponent;
+
+		public static readonly int ChunkCoordZExponent = 0;
+		private static readonly int ChunkCoordZBitCount = 12;
+		public static readonly int ChunkCoordZOffset = 1 << (ChunkCoordZBitCount - 1);
+		public static readonly int ChunkCoordZBitRange = 0xFFF;
+
+		public static readonly int ChunkCoordYExponent = ChunkCoordZExponent + ChunkCoordZBitCount;
+		private static readonly int ChunkCoordYBitCount = 4;
+		public static readonly int ChunkCoordYOffset = 1 << (ChunkCoordYBitCount - 1);
+		public static readonly int ChunkCoordYBitRange = 0xF000;
+
+		public static readonly int ChunkCoordXExponent = ChunkCoordYExponent + ChunkCoordYBitCount;
+		private static readonly int ChunkCoordXBitCount = 12;
+		public static readonly int ChunkCoordXOffset = 1 << (ChunkCoordXBitCount - 1);
+		public static readonly int ChunkCoordXBitRange = 0xFFF0000;
+
+		public static readonly int InvalidCoordId = ChunkCoordXBitRange + ChunkCoordYBitRange + ChunkCoordZBitRange + 1;
 	}
 }

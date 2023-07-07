@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BlitzEcs;
 using Game;
 using Game.Asset;
@@ -22,33 +23,30 @@ namespace UnityService.Rendering
 		[SerializeField]
 		private string chunkPoolGuid;
 
+		[SerializeField]
+		private int loadCoordMagnitude = 3;
+
 		private Guid _chunkPoolGuid;
 
 		private World _world;
 		private Query<PlayerComponent, TransformComponent> _playerQuery;
 
-		private readonly Dictionary<Vector3Int, IChunk> _chunks = new();
+		private Dictionary<int, IChunk> _chunks;
 
-		private List<Vector3Int> _removeChunkCoordBuffer;
-		private List<Vector3Int> _addChunkCoordBuffer;
+		private List<int> _removeChunkCoordBuffer;
+		private List<int> _addChunkCoordBuffer;
+		private List<int> _waitBuildChunkCoords;
+		private List<int> _buildingChunkCoords;
 
-		private List<Vector3Int> _waitBuildChunkCoords;
-
-		[SerializeField]
-		private int loadCoordMagnitude = 3;
 		private List<Vector3Int> _chunkLocalCoords = new();
 
-		private Vector3Int _currentCenterCoord = Vector3Int.zero;
-
-		private Dictionary<string, PackedTextureUvInfo[]> _uvInfos;
+		private int _currentCenterCoord = VoxelConstants.InvalidCoordId;
 
 		public static readonly Dictionary<int, PackedTextureUvInfo> UvInfo = new();
 
 		private static readonly bool[] EmptySolidMap = new bool[
 			VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount
 		];
-
-		private readonly List<Vector3Int> _buildingChunkCoords = new();
 
 		private const int MaxMeshBuildingJobCount = 5;
 
@@ -58,9 +56,6 @@ namespace UnityService.Rendering
 
 			_playerQuery = new Query<PlayerComponent, TransformComponent>(world);
 
-			// 완전 구석탱이로 보내버린 다음에 청크를 새로 생성하도록 함
-			// _currentCenterCoord = Vector3Int.one * (Int32.MaxValue - _loadCoordMagnitude);
-
 			// 대략 구체에 가까운 모양새로 생성
 			for (int x = -loadCoordMagnitude; x <= loadCoordMagnitude; x++)
 			{
@@ -68,11 +63,11 @@ namespace UnityService.Rendering
 				{
 					for (int z = -loadCoordMagnitude; z <= loadCoordMagnitude; z++)
 					{
-						var coord = new Vector3Int(x, y, z);
+						var coordVector = new Vector3Int(x, y, z);
 
-						if (coord.sqrMagnitude <= loadCoordMagnitude * loadCoordMagnitude)
+						if (coordVector.sqrMagnitude <= loadCoordMagnitude * loadCoordMagnitude)
 						{
-							_chunkLocalCoords.Add(coord);
+							_chunkLocalCoords.Add(coordVector);
 						}
 					}
 				}
@@ -83,9 +78,12 @@ namespace UnityService.Rendering
 			// 동시에 사용 가능한 Coord 개수로 Add/Remove 버퍼 사이즈를 잡아줌
 			var bufferSize = _chunkLocalCoords.Count;
 
+			_chunks = new(bufferSize);
+
 			_removeChunkCoordBuffer = new(bufferSize);
 			_addChunkCoordBuffer = new(bufferSize);
 			_waitBuildChunkCoords = new(bufferSize);
+			_buildingChunkCoords = new(MaxMeshBuildingJobCount);
 
 			_chunkPoolGuid = new Guid(chunkPoolGuid);
 
@@ -147,55 +145,59 @@ namespace UnityService.Rendering
 				var curPos = transformComponent.Position;
 				var prevCenterCoord = _currentCenterCoord;
 
-				_currentCenterCoord = new Vector3Int(
-					GetChunkIndex(curPos.x),
-					GetChunkIndex(curPos.y),
-					GetChunkIndex(curPos.z)
+				_currentCenterCoord = VoxelUtility.GetCoordId(
+					VoxelUtility.GetCoordAxis(curPos.x),
+					VoxelUtility.GetCoordAxis(curPos.y),
+					VoxelUtility.GetCoordAxis(curPos.z)
 					);
 
 				// Remove
-				foreach (var keyValue in _chunks)
+				if (_currentCenterCoord != prevCenterCoord)
 				{
-					var coord = keyValue.Key;
-
-					if ((_currentCenterCoord - coord).sqrMagnitude > loadCoordMagnitude * loadCoordMagnitude)
+					foreach (var keyValue in _chunks)
 					{
-						var nextChunkCoord = prevCenterCoord - coord + _currentCenterCoord;
+						var coord = keyValue.Key;
 
-						_addChunkCoordBuffer.Add(nextChunkCoord);
+						if (VoxelUtility.GetCoordSqrDistance(_currentCenterCoord, coord) > loadCoordMagnitude * loadCoordMagnitude)
+						{
+							// 전체 Offset은 고정되어있고, 한번 빼고 한번 더했기 때문에 Coord 값은 정상적으로 도출됨
+							var nextChunkCoord = prevCenterCoord - coord + _currentCenterCoord;
 
-						_removeChunkCoordBuffer.Add(coord);
-					}
-				}
+							_addChunkCoordBuffer.Add(nextChunkCoord);
 
-				foreach (var coord in _removeChunkCoordBuffer)
-				{
-					RemoveChunk(coord);
-				}
-
-				_removeChunkCoordBuffer.Clear();
-
-				// Add
-				if (_chunks.Count == 0)
-				{
-					foreach (var localCoord in _chunkLocalCoords)
-					{
-						var coord = _currentCenterCoord + localCoord;
-
-						AddChunk(coord);
+							_removeChunkCoordBuffer.Add(coord);
+						}
 					}
 
-					_chunkLocalCoords = null;
-				}
-				else
-				{
-					foreach (var coord in _addChunkCoordBuffer)
+					foreach (var coord in _removeChunkCoordBuffer)
 					{
-						AddChunk(coord);
+						RemoveChunk(coord);
 					}
-				}
 
-				_addChunkCoordBuffer.Clear();
+					_removeChunkCoordBuffer.Clear();
+
+					// Add
+					if (_chunks.Count == 0)
+					{
+						foreach (var localCoord in _chunkLocalCoords)
+						{
+							var coord = VoxelUtility.MoveCoord(_currentCenterCoord, localCoord.x, localCoord.y, localCoord.z);
+
+							AddChunk(coord);
+						}
+
+						_chunkLocalCoords = null;
+					}
+					else
+					{
+						foreach (var coord in _addChunkCoordBuffer)
+						{
+							AddChunk(coord);
+						}
+					}
+
+					_addChunkCoordBuffer.Clear();
+				}
 
 				// Streaming
 				for (int i = 0; i < _waitBuildChunkCoords.Count; i++)
@@ -207,13 +209,13 @@ namespace UnityService.Rendering
 						if (chunk.State == ChunkState.WaitBuild && _buildingChunkCoords.Count < MaxMeshBuildingJobCount)
 						{
 							chunk.RebuildMesh(
-								GetSolidMap(coord + Vector3Int.left),
-								GetSolidMap(coord + Vector3Int.right),
-								GetSolidMap(coord + Vector3Int.up),
-								GetSolidMap(coord + Vector3Int.down),
-								GetSolidMap(coord + Vector3Int.forward),
-								GetSolidMap(coord + Vector3Int.back)
-							);
+								GetSolidMap(coord - (1 << VoxelConstants.ChunkCoordXExponent)),
+								GetSolidMap(coord + (1 << VoxelConstants.ChunkCoordXExponent)),
+								GetSolidMap(coord + (1 << VoxelConstants.ChunkCoordYExponent)),
+								GetSolidMap(coord - (1 << VoxelConstants.ChunkCoordYExponent)),
+								GetSolidMap(coord + (1 << VoxelConstants.ChunkCoordZExponent)),
+								GetSolidMap(coord - (1 << VoxelConstants.ChunkCoordZExponent))
+								);
 
 							_waitBuildChunkCoords.RemoveAt(i--);
 
@@ -251,7 +253,7 @@ namespace UnityService.Rendering
 			}
 		}
 
-		private bool[] GetSolidMap(Vector3Int coord)
+		private bool[] GetSolidMap(int coord)
 		{
 			if (_chunks.TryGetValue(coord, out var chunk))
 			{
@@ -261,12 +263,7 @@ namespace UnityService.Rendering
 			return EmptySolidMap;
 		}
 
-		private int GetChunkIndex(float value)
-		{
-			return Mathf.RoundToInt(value) >> VoxelConstants.ChunkAxisCount;
-		}
-
-		private void AddChunk(Vector3Int coord)
+		private void AddChunk(int coord)
 		{
 			if (_chunks.ContainsKey(coord))
 			{
@@ -279,8 +276,9 @@ namespace UnityService.Rendering
 				return;
 			}
 
-			var newChunk = objectPoolService.Spawn<Chunk>(
-				_chunkPoolGuid, coord * VoxelConstants.ChunkAxisCount);
+			var newChunk = objectPoolService.Spawn<Chunk>(_chunkPoolGuid,
+				new Vector3(VoxelUtility.GetCoordX(coord), VoxelUtility.GetCoordY(coord), VoxelUtility.GetCoordZ(coord)) *
+				VoxelConstants.ChunkAxisCount);
 
 			_chunks.Add(coord, newChunk);
 
@@ -292,7 +290,7 @@ namespace UnityService.Rendering
 			}
 		}
 
-		private void RemoveChunk(Vector3Int coord)
+		private void RemoveChunk(int coord)
 		{
 			if (!_chunks.TryGetValue(coord, out var chunk))
 			{

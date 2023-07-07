@@ -12,7 +12,7 @@ namespace Service.Rendering
 
 	public interface IChunk
 	{
-		void Initialize(Vector3Int coord);
+		void Initialize(int coordId);
 
 		void RebuildMesh(bool[] isSolidLeft, bool[] isSolidRight, bool[] isSolidUp,
 			bool[] isSolidDown, bool[] isSolidForward, bool[] isSolidBack);
@@ -21,7 +21,7 @@ namespace Service.Rendering
 
 		void UpdateBuildMesh();
 
-		Vector3Int Coord { get; }
+		int CoordId { get; }
 
 		GameObject GameObject { get; }
 
