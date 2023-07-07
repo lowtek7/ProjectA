@@ -67,16 +67,18 @@ MonoBehaviour:
   - rid: 8986602489903841287
   - rid: 2371249708091310080
   - rid: 8986602489903841451
-  - rid: 1820560736419053572
+  - rid: 1400488748929777664
   - rid: 7904022502624198873
   references:
     version: 2
     RefIds:
-    - rid: 1820560736419053572
-      type: {class: BoundsComponent, ns: Game.Ecs.Component, asm: Game}
+    - rid: 1400488748929777664
+      type: {class: CapsuleColliderComponent, ns: Game.Ecs.Component, asm: Game}
       data:
-        boundsSize: {x: 3, y: 3, z: 3}
-        offset: {x: 0, y: 0, z: 0}
+        center: {x: 0, y: 0.5, z: 0}
+        direction: {x: 0, y: 1, z: 0}
+        radius: 0.25
+        height: 2
     - rid: 2371249708091310080
       type: {class: PlayerCameraComponent, ns: Game.Ecs.Component, asm: Game}
       data:

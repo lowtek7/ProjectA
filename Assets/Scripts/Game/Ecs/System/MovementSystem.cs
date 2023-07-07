@@ -3,6 +3,8 @@ using BlitzEcs;
 using Core.Unity;
 using Core.Utility;
 using Game.Ecs.Component;
+using Service;
+using Service.Collision;
 using UnityEngine;
 
 namespace Game.Ecs.System
@@ -29,11 +31,19 @@ namespace Game.Ecs.System
 				// MoveDir가 zero가 아니라면 계산해줌
 				if (movementComponent.MoveDir != Vector3.zero)
 				{
-					// 여기서 normalize하는것이 과연 올바른것일까?
+					ServiceManager.TryGetService<ICollisionService>(out var collisionService);
+
 					var dir = movementComponent.MoveDir;
 					var dist = movementComponent.CurrentSpeed * deltaTime;
 
-					transformComponent.Position += (dir * dist);
+					if (collisionService.IsCollision(entity, (dir * dist)))
+					{
+						// 충돌 알림
+					}
+					else
+					{
+						transformComponent.Position += (dir * dist);
+					}
 				}
 
 				// 캐릭터 회전
