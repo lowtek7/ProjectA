@@ -31,7 +31,8 @@ namespace UnityService.Rendering
 
 		private List<Vector3Int> _removeChunkCoordBuffer;
 		private List<Vector3Int> _addChunkCoordBuffer;
-		private List<Vector3Int> _addedChunkCoordBuffer;
+
+		private List<Vector3Int> _waitBuildChunkCoords;
 
 		[SerializeField]
 		private int loadCoordMagnitude = 3;
@@ -43,11 +44,13 @@ namespace UnityService.Rendering
 
 		public static readonly Dictionary<int, PackedTextureUvInfo> UvInfo = new();
 
-		public static readonly bool[] EmptySolidMap = new bool[
+		private static readonly bool[] EmptySolidMap = new bool[
 			VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount
 		];
 
-		public readonly List<Vector3Int> _chunksNeedBuildMesh = new();
+		private readonly List<Vector3Int> _buildingChunkCoords = new();
+
+		private const int MaxMeshBuildingJobCount = 5;
 
 		public void Init(World world)
 		{
@@ -75,12 +78,14 @@ namespace UnityService.Rendering
 				}
 			}
 
+			_chunkLocalCoords.Sort((a, b) => a.sqrMagnitude.CompareTo(b.sqrMagnitude));
+
 			// 동시에 사용 가능한 Coord 개수로 Add/Remove 버퍼 사이즈를 잡아줌
 			var bufferSize = _chunkLocalCoords.Count;
 
 			_removeChunkCoordBuffer = new(bufferSize);
 			_addChunkCoordBuffer = new(bufferSize);
-			_addedChunkCoordBuffer = new(bufferSize);
+			_waitBuildChunkCoords = new(bufferSize);
 
 			_chunkPoolGuid = new Guid(chunkPoolGuid);
 
@@ -89,8 +94,6 @@ namespace UnityService.Rendering
 				if (assetModule.TryGet<BlockSpecHolder>("BlockSpecs", out var blockSpecHolder) &&
 				    assetModule.TryGet<PackedTextureUvHolder>("PackedTextureUvs", out var uvHolder))
 				{
-					_uvInfos = new(blockSpecHolder.blockSpecs.Count);
-
 					var nameToUvInfo = new Dictionary<string, PackedTextureUvInfo>(uvHolder.uvs.Count);
 
 					foreach (var uv in uvHolder.uvs)
@@ -123,8 +126,6 @@ namespace UnityService.Rendering
 								Debug.LogError($"Has no texture [{textureName}] in PackedTextureUvHolder[{uvHolder.name}].");
 							}
 						}
-
-						_uvInfos.Add(blockSpec.name, blockUvs);
 					}
 
 					nameToUvInfo.Clear();
@@ -175,18 +176,13 @@ namespace UnityService.Rendering
 				_removeChunkCoordBuffer.Clear();
 
 				// Add
-				// FIXME : 제일 첫 생성을 한 방에 처리할 방법이 없을까?
-				// Preset 메소드를 하나 만들까 했는데, 그러면 결국 업데이트 어딘가에서 해당 조건을 체크하고 있어야 해서 똑같은 상황이라 이대로 둠
 				if (_chunks.Count == 0)
 				{
 					foreach (var localCoord in _chunkLocalCoords)
 					{
 						var coord = _currentCenterCoord + localCoord;
 
-						if (AddChunk(coord))
-						{
-							_addedChunkCoordBuffer.Add(coord);
-						}
+						AddChunk(coord);
 					}
 
 					_chunkLocalCoords = null;
@@ -195,50 +191,58 @@ namespace UnityService.Rendering
 				{
 					foreach (var coord in _addChunkCoordBuffer)
 					{
-						if (AddChunk(coord))
-						{
-							_addedChunkCoordBuffer.Add(coord);
-						}
+						AddChunk(coord);
 					}
 				}
 
 				_addChunkCoordBuffer.Clear();
 
-				foreach (var coord in _addedChunkCoordBuffer)
+				// Streaming
+				for (int i = 0; i < _waitBuildChunkCoords.Count; i++)
 				{
+					var coord = _waitBuildChunkCoords[i];
+
 					if (_chunks.TryGetValue(coord, out var chunk))
 					{
-						chunk.RebuildMesh(
-							GetSolidMap(coord + Vector3Int.left),
-							GetSolidMap(coord + Vector3Int.right),
-							GetSolidMap(coord + Vector3Int.up),
-							GetSolidMap(coord + Vector3Int.down),
-							GetSolidMap(coord + Vector3Int.forward),
-							GetSolidMap(coord + Vector3Int.back)
+						if (chunk.State == ChunkState.WaitBuild && _buildingChunkCoords.Count < MaxMeshBuildingJobCount)
+						{
+							chunk.RebuildMesh(
+								GetSolidMap(coord + Vector3Int.left),
+								GetSolidMap(coord + Vector3Int.right),
+								GetSolidMap(coord + Vector3Int.up),
+								GetSolidMap(coord + Vector3Int.down),
+								GetSolidMap(coord + Vector3Int.forward),
+								GetSolidMap(coord + Vector3Int.back)
 							);
 
-						if (chunk.NeedWaitBuildMesh)
-						{
-							_chunksNeedBuildMesh.Add(coord);
+							_waitBuildChunkCoords.RemoveAt(i--);
+
+							_buildingChunkCoords.Add(coord);
 						}
+					}
+					else
+					{
+						_waitBuildChunkCoords.RemoveAt(i--);
 					}
 				}
 
-				_addedChunkCoordBuffer.Clear();
-
-				for (int i = 0; i < _chunksNeedBuildMesh.Count; i++)
+				// Check Build Done
+				for (int i = 0; i < _buildingChunkCoords.Count; i++)
 				{
-					var coord = _chunksNeedBuildMesh[i];
-					var done = true;
+					var coord = _buildingChunkCoords[i];
 
 					if (_chunks.TryGetValue(coord, out var chunk))
 					{
-						done = chunk.UpdateBuildMesh();
-					}
+						chunk.UpdateBuildMesh();
 
-					if (done)
+						if (chunk.State == ChunkState.Done)
+						{
+							_buildingChunkCoords.RemoveAt(i--);
+						}
+					}
+					else
 					{
-						_chunksNeedBuildMesh.RemoveAt(i--);
+						_buildingChunkCoords.RemoveAt(i--);
 					}
 				}
 
@@ -262,17 +266,17 @@ namespace UnityService.Rendering
 			return Mathf.RoundToInt(value) >> VoxelConstants.ChunkAxisCount;
 		}
 
-		private bool AddChunk(Vector3Int coord)
+		private void AddChunk(Vector3Int coord)
 		{
 			if (_chunks.ContainsKey(coord))
 			{
 				Debug.LogError("왠진 모르겠는데 청크 인덱스 좌표가 이미 들어가있음");
-				return false;
+				return;
 			}
 
 			if (!ServiceManager.TryGetService<IObjectPoolService>(out var objectPoolService))
 			{
-				return false;
+				return;
 			}
 
 			var newChunk = objectPoolService.Spawn<Chunk>(
@@ -282,7 +286,10 @@ namespace UnityService.Rendering
 
 			newChunk.Initialize(coord);
 
-			return true;
+			if (newChunk.State == ChunkState.WaitBuild)
+			{
+				_waitBuildChunkCoords.Add(coord);
+			}
 		}
 
 		private void RemoveChunk(Vector3Int coord)
@@ -301,89 +308,9 @@ namespace UnityService.Rendering
 			}
 
 			objectPoolService.Despawn(chunk.GameObject);
-		}
 
-		public bool IsSolidAt(IChunk chunk, int x, int y, int z)
-		{
-			var nearX = 0;
-			var nearY = 0;
-			var nearZ = 0;
-			var isRenewed = false;
-
-			if (x < 0)
-			{
-				nearX = -1;
-				isRenewed = true;
-			}
-			else if (x >= VoxelConstants.ChunkAxisCount)
-			{
-				nearX = 1;
-				isRenewed = true;
-			}
-			else if (y < 0)
-			{
-				nearY = -1;
-				isRenewed = true;
-			}
-			else if (y >= VoxelConstants.ChunkAxisCount)
-			{
-				nearY = 1;
-				isRenewed = true;
-			}
-			else if (z < 0)
-			{
-				nearZ = -1;
-				isRenewed = true;
-			}
-			else if (z >= VoxelConstants.ChunkAxisCount)
-			{
-				nearZ = 1;
-				isRenewed = true;
-			}
-
-			if (!isRenewed)
-			{
-				return chunk.IsSolidAt(x, y, z);
-			}
-
-			var nearDir = new Vector3Int(nearX, nearY, nearZ);
-			var otherCoord = chunk.Coord + nearDir;
-
-			if (!_chunks.TryGetValue(otherCoord, out var nearChunk))
-			{
-				return false;
-			}
-
-			return nearChunk.IsSolidAt(
-				x - (nearX << VoxelConstants.ChunkAxisExponent),
-				y - (nearY << VoxelConstants.ChunkAxisExponent),
-				z - (nearZ << VoxelConstants.ChunkAxisExponent)
-				);
-		}
-
-		public bool TryGetUvInfo(string blockName, int sideIndex, out PackedTextureUvInfo info)
-		{
-			if (_uvInfos.TryGetValue(blockName, out var infos))
-			{
-				info = infos[sideIndex];
-				return true;
-			}
-
-			// 없으면 빈 데이터 반환
-			info = new PackedTextureUvInfo
-			{
-				startX = 0,
-				startY = 0,
-				width = 0,
-				height = 0,
-			};
-
-			return false;
-		}
-
-		public bool TryGetChunk(Vector3Int coord, out IChunk chunk)
-		{
-			return _chunks.TryGetValue(coord, out chunk);
+			_waitBuildChunkCoords.Remove(coord);
+			_buildingChunkCoords.Remove(coord);
 		}
 	}
 }

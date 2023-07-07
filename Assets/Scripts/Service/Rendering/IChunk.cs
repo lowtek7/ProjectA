@@ -2,6 +2,14 @@
 
 namespace Service.Rendering
 {
+	public enum ChunkState
+	{
+		None,
+		WaitBuild,
+		Building,
+		Done
+	}
+
 	public interface IChunk
 	{
 		void Initialize(Vector3Int coord);
@@ -11,7 +19,7 @@ namespace Service.Rendering
 
 		bool IsSolidAt(int x, int y, int z);
 
-		bool UpdateBuildMesh();
+		void UpdateBuildMesh();
 
 		Vector3Int Coord { get; }
 
@@ -19,6 +27,6 @@ namespace Service.Rendering
 
 		bool[] IsSolidMap { get; }
 
-		bool NeedWaitBuildMesh { get; }
+		ChunkState State { get; }
 	}
 }

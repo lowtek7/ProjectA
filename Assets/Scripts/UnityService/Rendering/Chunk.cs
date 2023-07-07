@@ -21,7 +21,7 @@ namespace UnityService.Rendering
 
 		public bool[] IsSolidMap => _isSolidMap;
 
-		public bool NeedWaitBuildMesh => _chunkType > 0;
+		public ChunkState State { get; private set; } = ChunkState.None;
 
 		// FIXME : 테스트용
 		private int _chunkType;
@@ -39,9 +39,9 @@ namespace UnityService.Rendering
 			public NativeArray<int> triangles;
 			public NativeArray<Vector2> uvs;
 
-			public NativeArray<int> blockMap;
-
 			public NativeArray<int> meshDataCounts;
+
+			private NativeArray<int> _blockMap;
 
 			[ReadOnly]
 			private NativeArray<bool> _isSolidSelf;
@@ -93,7 +93,7 @@ namespace UnityService.Rendering
 				_trianglesIndexWalker = 0;
 				_uvsIndexWalker = 0;
 
-				blockMap = new NativeArray<int>(blockIdMap, lifeType);
+				_blockMap = new NativeArray<int>(blockIdMap, lifeType);
 			}
 
 			public void Dispose()
@@ -103,7 +103,7 @@ namespace UnityService.Rendering
 				uvs.Dispose();
 				meshDataCounts.Dispose();
 
-				blockMap.Dispose();
+				_blockMap.Dispose();
 
 				_isSolidSelf.Dispose();
 				_isSolidLeft.Dispose();
@@ -128,8 +128,8 @@ namespace UnityService.Rendering
 						{
 							var index = xWeight | yWeight | z;
 
-							if (blockMap[index] >= 0) {
-								AddBlock(x, y, z, blockMap[index]);
+							if (_blockMap[index] >= 0) {
+								AddBlock(x, y, z, _blockMap[index]);
 							}
 						}
 					}
@@ -265,12 +265,17 @@ namespace UnityService.Rendering
 
 		public void Initialize(Vector3Int coord)
 		{
+			_meshRenderer.enabled = false;
+
 			Coord = coord;
+
+			State = ChunkState.WaitBuild;
 
 			// FIXME : 테스트용 코드
 			if (Coord.y >= 0)
 			{
 				_chunkType = -1;
+				State = ChunkState.Done;
 			}
 			else if (Coord.y == -1)
 			{
@@ -297,13 +302,9 @@ namespace UnityService.Rendering
 						{
 							_blockIdMap[index] = 1;
 						}
-						else if (!NeedWaitBuildMesh)
-						{
-							_blockIdMap[index] = -1;
-						}
 						else
 						{
-							_blockIdMap[index] = 2;
+							_blockIdMap[index] = _chunkType;
 						}
 
 						_isSolidMap[index] = _blockIdMap[index] >= 0;
@@ -315,12 +316,12 @@ namespace UnityService.Rendering
 		public void RebuildMesh(bool[] isSolidLeft, bool[] isSolidRight, bool[] isSolidUp,
 			bool[] isSolidDown, bool[] isSolidForward, bool[] isSolidBack)
 		{
-			_meshRenderer.enabled = false;
-
-			if (!NeedWaitBuildMesh)
+			if (State != ChunkState.WaitBuild)
 			{
 				return;
 			}
+
+			State = ChunkState.Building;
 
 			_currentBuildingMeshJob = new BuildingMeshJob(_blockIdMap, _isSolidMap,
 				isSolidLeft, isSolidRight, isSolidUp, isSolidDown, isSolidForward, isSolidBack);
@@ -331,17 +332,17 @@ namespace UnityService.Rendering
 			}
 		}
 
-		public bool UpdateBuildMesh()
+		public void UpdateBuildMesh()
 		{
-			if (_chunkType == null)
+			if (State != ChunkState.Building)
 			{
-				return true;
+				return;
 			}
 
 			if (_currentBuildingMeshJobHandler == null || !_currentBuildingMeshJobHandler.Value.IsCompleted ||
 			    _currentBuildingMeshJob == null)
 			{
-				return false;
+				return;
 			}
 
 			var buildingMeshJob = _currentBuildingMeshJob.Value;
@@ -365,12 +366,10 @@ namespace UnityService.Rendering
 			_currentBuildingMeshJobHandler = null;
 
 			mesh.RecalculateNormals();
-
 			_meshFilter.mesh = mesh;
-
 			_meshRenderer.enabled = true;
 
-			return true;
+			State = ChunkState.Done;
 		}
 
 		public bool IsSolidAt(int x, int y, int z)
