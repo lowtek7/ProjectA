@@ -9,13 +9,13 @@ using UnityEngine.UIElements;
 namespace UnityService.Camera
 {
 	[UnityService(typeof(IPlayerCameraService))]
-	public class UnityPlayerCameraService : MonoBehaviour, IPlayerCameraService, IGameServiceCallback
+	public class UnityPlayerCameraService : MonoBehaviour, IPlayerCameraService
 	{
 		[SerializeField]
 		private UnityEngine.Camera playerCamera;
-		
+
 		private Query<PlayerCameraComponent> _cameraQuery;
-		
+
 		private Query<MovementComponent, TransformComponent, PlayerComponent> _movementQuery;
 
 		private bool isMouseClick = false;
@@ -47,20 +47,20 @@ namespace UnityService.Camera
 				if (createSpherial == false)
 				{
 					createSpherial = true;
-					
+
 					SetSpherical((cameraComponent.minRadius, cameraComponent.minRadius, cameraComponent.maxRadius),
 						(cameraComponent.minAzimuthInRad, cameraComponent.minAzimuthInRad, cameraComponent.maxAzimuthInRad),
 						(cameraComponent.minElevationInRad, cameraComponent.minElevationInRad, cameraComponent.maxElevationInRad));
 				}
-				
+
 				AddAzimuth(cameraComponent.MouseXDegree);
 				AddElevation(cameraComponent.MouseYDegree);
 			}
-			
+
 			foreach (var moveEntity in _movementQuery)
 			{
 				ref var transformComponent = ref moveEntity.Get<TransformComponent>();
-				
+
 				// 좀더 넓은 시야를 위해 플레이어의 약간 위쪽위치를 설정
 				var position = transformComponent.Position + Vector3.up;
 
@@ -68,11 +68,11 @@ namespace UnityService.Camera
 				//playerCamera.transform.position = sphericalCoordinates.TranslateRadius(sw * Time.deltaTime * scrollSpeed).toCartesian + newPosition;
 
 				playerCamera.transform.position = position + ToCartesianPos();
-				
+
 				playerCamera.transform.LookAt(transformComponent.Position);
 			}
 		}
-		
+
 		//구면 카메라 코드
 		public void SetSpherical(
 			(float min, float init, float max) radius,
@@ -82,7 +82,7 @@ namespace UnityService.Camera
 			foreach (var entity in _cameraQuery)
 			{
 				ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
-				
+
 				cameraComponent.minRadius = radius.min;
 				cameraComponent.maxRadius = radius.max;
 				SetRadius(radius.init);
@@ -97,7 +97,7 @@ namespace UnityService.Camera
 				SetElevation(elevation.init * Mathf.Deg2Rad);
 			}
 		}
-		
+
 		public void SetAzimuth(float degree)
 		{
 			float value = degree * Mathf.Deg2Rad;
@@ -193,15 +193,15 @@ namespace UnityService.Camera
 					cameraComponent.maxRadius);
 			}
 		}
-		
+
 		private Vector3 ToCartesianPos()
 		{
 			Vector3 position = Vector3.zero;
-			
+
 			foreach (var entity in _cameraQuery)
 			{
 				ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
-				
+
 				position = new Vector3(
 					cameraComponent.Radius
 					* Mathf.Sin(cameraComponent.Elevation)
@@ -214,7 +214,7 @@ namespace UnityService.Camera
 			}
 			return position;
 		}
-		
+
 		public Vector3 ScreenToWorld(Vector2 screenPos)
 		{
 			return playerCamera.ScreenToWorldPoint(screenPos);
@@ -238,12 +238,12 @@ namespace UnityService.Camera
 
 		public void OnActivate()
 		{
-			
+
 		}
 
 		public void OnDeactivate()
 		{
-			
+
 		}
 	}
 }

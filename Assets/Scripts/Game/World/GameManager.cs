@@ -23,6 +23,11 @@ namespace Game.World
 
 		private readonly List<ISystem> systems = new List<ISystem>();
 
+		/// <summary>
+		/// 아직 업데이트가 불리기 전인 시스템
+		/// </summary>
+		private readonly List<IGameService> notAwakeServices = new List<IGameService>();
+
 		private Query<PlayerComponent, MovementComponent> playerQuery;
 
 		public BlitzEcs.World World => world;
@@ -77,10 +82,20 @@ namespace Game.World
 			foreach (var service in ServiceManager.Services)
 			{
 				service.Init(world);
+
+				notAwakeServices.Add(service);
 			}
 
 			var virtualWorld = SaveLoadService.LoadWorld(SaveLoadConstants.WorldDataPath);
 			virtualWorld.Realize(world);
+
+			foreach (var service in ServiceManager.Services)
+			{
+				if (service is IGameServiceCallback callback)
+				{
+					callback.OnLoadWorld();
+				}
+			}
 
 			playerQuery = new Query<PlayerComponent, MovementComponent>(world);
 			ServiceManager.AddCallback(this);
@@ -97,6 +112,16 @@ namespace Game.World
 			{
 				system.Update(dt);
 			}
+
+			foreach (var service in notAwakeServices)
+			{
+				if (service is IGameServiceCallback callback)
+				{
+					callback.OnAwake();
+				}
+			}
+
+			notAwakeServices.Clear();
 
 			ServiceManager.Update(dt);
 		}
@@ -116,6 +141,8 @@ namespace Game.World
 			if (world != null)
 			{
 				service.Init(world);
+
+				notAwakeServices.Add(service);
 			}
 		}
 
