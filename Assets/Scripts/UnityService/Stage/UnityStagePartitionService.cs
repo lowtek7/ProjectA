@@ -17,10 +17,12 @@ namespace UnityService.Stage
 		private readonly Dictionary<Guid, KdTree<float, HashSet<int>>> _treeMap = new Dictionary<Guid, KdTree<float, HashSet<int>>>();
 
 		private World _world;
-		
+
 		private Query<TransformComponent, StageSpecComponent> _query;
 
 		private float[] _arrayBuffer;
+
+		private Vector3[] pointBuffer = new Vector3[8];
 
 		/// <summary>
 		/// KD-Tree에서 사용 할 차원
@@ -77,10 +79,10 @@ namespace UnityService.Stage
 				{
 					var boundsComponent = entity.Get<BoundsComponent>();
 					var bounds = boundsComponent.GetBounds(pos);
-					var points = bounds.GetPoints();
+					bounds.GetPoints(ref pointBuffer);
 
 					// 총 8개의 점을 tree에 기록 해야한다.
-					foreach (var point in points)
+					foreach (var point in pointBuffer)
 					{
 						PosToArrayBuffer(point, ref _arrayBuffer);
 
