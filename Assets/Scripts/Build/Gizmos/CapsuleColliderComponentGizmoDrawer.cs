@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using Core.Unity;
 using Game.Ecs.Component;
 using UnityEditor;
@@ -49,3 +50,4 @@ namespace Build.Gizmos
 		}
 	}
 }
+#endif
