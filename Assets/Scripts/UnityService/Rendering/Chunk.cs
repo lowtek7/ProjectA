@@ -19,8 +19,6 @@ namespace UnityService.Rendering
 		private MeshFilter _meshFilter;
 		private MeshRenderer _meshRenderer;
 
-		public GameObject GameObject => gameObject;
-
 		public ChunkState State { get; private set; } = ChunkState.None;
 
 		private BuildingMeshJob? _currentBuildingMeshJob;

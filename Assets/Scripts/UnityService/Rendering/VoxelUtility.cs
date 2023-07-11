@@ -41,6 +41,15 @@ namespace UnityService.Rendering
 			       VoxelConstants.ChunkCoordZOffset;
 		}
 
+		public static Vector3Int ConvertIdToPos(int coordId)
+		{
+			var x = GetCoordX(coordId);
+			var y = GetCoordY(coordId);
+			var z = GetCoordZ(coordId);
+
+			return new Vector3Int(x, y, z);
+		}
+
 		public static int GetCoordSqrDistance(int aId, int bId)
 		{
 			var ax = GetCoordX(aId);
@@ -58,13 +67,24 @@ namespace UnityService.Rendering
 			return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
 		}
 
-		public static int MoveCoord(int coordId, int xDiff, int yDiff, int zDiff)
+		public static bool TryMoveCoord(int coordId, int xDiff, int yDiff, int zDiff, out int movedCoordId)
 		{
 			var x = GetCoordX(coordId) + xDiff;
 			var y = GetCoordY(coordId) + yDiff;
 			var z = GetCoordZ(coordId) + zDiff;
 
-			return GetCoordId(x, y, z);
+			if (x >= -VoxelConstants.ChunkCoordXOffset && x < VoxelConstants.ChunkCoordXOffset &&
+			    y >= -VoxelConstants.ChunkCoordYOffset && y < VoxelConstants.ChunkCoordYOffset &&
+			    z >= -VoxelConstants.ChunkCoordZOffset && z < VoxelConstants.ChunkCoordZOffset)
+			{
+				movedCoordId = GetCoordId(x, y, z);
+
+				return true;
+			}
+
+			movedCoordId = VoxelConstants.InvalidCoordId;
+
+			return false;
 		}
 	}
 }

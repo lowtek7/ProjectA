@@ -34,11 +34,10 @@ namespace UnityService.Rendering
 		private Dictionary<int, Chunk> _chunks;
 
 		private List<int> _removeChunkCoordBuffer;
-		private List<int> _addChunkCoordBuffer;
 		private List<int> _waitBuildChunkCoords;
 		private List<int> _buildingChunkCoords;
 
-		private List<Vector3Int> _chunkLocalCoords = new();
+		private readonly List<Vector3Int> _chunkLocalCoords = new();
 
 		private int _currentCenterCoord = VoxelConstants.InvalidCoordId;
 
@@ -125,7 +124,6 @@ namespace UnityService.Rendering
 			_chunks = new(bufferSize);
 
 			_removeChunkCoordBuffer = new(bufferSize);
-			_addChunkCoordBuffer = new(bufferSize);
 			_waitBuildChunkCoords = new(bufferSize);
 			_buildingChunkCoords = new(MaxMeshBuildingJobCount);
 
@@ -204,11 +202,6 @@ namespace UnityService.Rendering
 
 						if (VoxelUtility.GetCoordSqrDistance(_currentCenterCoord, coord) > loadCoordMagnitude * loadCoordMagnitude)
 						{
-							// 전체 Offset은 고정되어있고, 한번 빼고 한번 더했기 때문에 Coord 값은 정상적으로 도출됨
-							var nextChunkCoord = prevCenterCoord - coord + _currentCenterCoord;
-
-							_addChunkCoordBuffer.Add(nextChunkCoord);
-
 							_removeChunkCoordBuffer.Add(coord);
 						}
 					}
@@ -220,27 +213,18 @@ namespace UnityService.Rendering
 
 					_removeChunkCoordBuffer.Clear();
 
-					// Add
-					if (_chunks.Count == 0)
+					foreach (var localOffset in _chunkLocalCoords)
 					{
-						foreach (var localCoord in _chunkLocalCoords)
+						// 해당 좌표가 청크 범위를 넘어서지 않을 때만 체크
+						if (VoxelUtility.TryMoveCoord(_currentCenterCoord, localOffset.x, localOffset.y, localOffset.z, out var movedCoordId))
 						{
-							var coord = VoxelUtility.MoveCoord(_currentCenterCoord, localCoord.x, localCoord.y, localCoord.z);
-
-							AddChunk(coord);
-						}
-
-						_chunkLocalCoords = null;
-					}
-					else
-					{
-						foreach (var coord in _addChunkCoordBuffer)
-						{
-							AddChunk(coord);
+							// Visualize되어있지 않은 경우만 체크
+							if (!_chunks.ContainsKey(movedCoordId))
+							{
+								AddChunk(movedCoordId);
+							}
 						}
 					}
-
-					_addChunkCoordBuffer.Clear();
 				}
 
 				// Streaming
@@ -327,11 +311,12 @@ namespace UnityService.Rendering
 			var spawnCoordPos = new Vector3(VoxelUtility.GetCoordX(coord), VoxelUtility.GetCoordY(coord), VoxelUtility.GetCoordZ(coord));
 			var spawnPos = spawnCoordPos * VoxelConstants.ChunkAxisCount;
 
-			var newChunk = objectPoolService.Spawn<Chunk>(_chunkPoolGuid, spawnPos);
+			var chunkGo = objectPoolService.Spawn(_chunkPoolGuid, spawnPos);
+			var chunk = chunkGo.GetComponent<Chunk>();
 
-			_chunks.Add(coord, newChunk);
+			_chunks.Add(coord, chunk);
 
-			newChunk.Initialize();
+			chunk.Initialize();
 
 			// FIXME : 테스트용 코드
 			int chunkType;
@@ -377,7 +362,7 @@ namespace UnityService.Rendering
 				return;
 			}
 
-			objectPoolService.Despawn(chunk.GameObject);
+			objectPoolService.Despawn(chunk.gameObject);
 
 			_waitBuildChunkCoords.Remove(coord);
 			_buildingChunkCoords.Remove(coord);
