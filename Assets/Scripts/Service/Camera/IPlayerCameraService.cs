@@ -28,5 +28,7 @@ namespace Service.Camera
 		Vector2 WorldToScreen(Vector3 worldPos);
 
 		Vector3 WorldSize { get; }
+
+		Transform PlayerCameraTransform { get; }
 	}
 }

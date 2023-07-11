@@ -14,6 +14,8 @@ namespace UnityService.Camera
 		[SerializeField]
 		private UnityEngine.Camera playerCamera;
 
+		private Transform _playerCameraTransform;
+
 		private Query<PlayerCameraComponent> _cameraQuery;
 
 		private Query<MovementComponent, TransformComponent, PlayerComponent> _movementQuery;
@@ -37,6 +39,8 @@ namespace UnityService.Camera
 				return new Vector3(height * aspect, height, height * aspect);
 			}
 		}
+
+		public Transform PlayerCameraTransform => _playerCameraTransform;
 
 		void IPlayerCameraService.Fetch()
 		{
@@ -229,6 +233,7 @@ namespace UnityService.Camera
 		{
 			_cameraQuery = new Query<PlayerCameraComponent>(world);
 			_movementQuery = new (world);
+			_playerCameraTransform = playerCamera.transform;
 		}
 
 		private void Awake()

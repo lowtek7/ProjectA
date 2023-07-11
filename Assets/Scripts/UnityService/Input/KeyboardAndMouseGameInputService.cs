@@ -107,7 +107,16 @@ namespace UnityService.Input
 				}
 			}
 
-			var moveDirection = new Vector3(xMove, yMove, zMove).normalized;
+			Vector3 moveDirection = Vector3.zero;
+
+			if (ServiceManager.TryGetService<IPlayerCameraService>(out var cameraService))
+			{
+				var cameraTransform = cameraService.PlayerCameraTransform;
+				Vector3 cameraForward = new Vector3(cameraTransform.forward.x, 0, cameraTransform.forward.z).normalized;
+				Vector3 cameraRight = new Vector3(cameraTransform.right.x, 0, cameraTransform.right.z).normalized;
+
+				moveDirection = (cameraForward * zMove + cameraRight * xMove).normalized;
+			}
 
 			foreach (var entity in CursorQuery)
 			{
