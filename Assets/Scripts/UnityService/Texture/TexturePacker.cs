@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityService.Texture
@@ -15,3 +16,4 @@ namespace UnityService.Texture
 		public string uvDataName = "PackedTextureUvs";
 	}
 }
+#endif
