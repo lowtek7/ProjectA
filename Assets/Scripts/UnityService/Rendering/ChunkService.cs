@@ -31,7 +31,7 @@ namespace UnityService.Rendering
 		private World _world;
 		private Query<PlayerComponent, TransformComponent> _playerQuery;
 
-		private Dictionary<int, IChunk> _chunks;
+		private Dictionary<int, Chunk> _chunks;
 
 		private List<int> _removeChunkCoordBuffer;
 		private List<int> _addChunkCoordBuffer;
@@ -49,6 +49,50 @@ namespace UnityService.Rendering
 		];
 
 		private const int MaxMeshBuildingJobCount = 5;
+
+		private class ChunkData
+		{
+			public bool[] IsSolidMap;
+			public int[] BlockIdMap;
+			// FIXME : 임시
+			public int ChunkType;
+
+			public ChunkData(int chunkType)
+			{
+				ChunkType = chunkType;
+
+				BlockIdMap = new int[VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount];
+				IsSolidMap = new bool[VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount];
+
+				for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
+				{
+					var yWeight = y << VoxelConstants.ChunkAxisExponent;
+
+					for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
+					{
+						var xWeight = x << (VoxelConstants.ChunkAxisExponent << 1);
+
+						for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
+						{
+							var index = xWeight | yWeight | z;
+
+							if (ChunkType == 1 && y < VoxelConstants.ChunkAxisCount - 1)
+							{
+								BlockIdMap[index] = 2;
+							}
+							else
+							{
+								BlockIdMap[index] = ChunkType;
+							}
+
+							IsSolidMap[index] = BlockIdMap[index] >= 0;
+						}
+					}
+				}
+			}
+		}
+
+		private readonly Dictionary<int, ChunkData> _chunkData = new();
 
 		public void Init(World world)
 		{
@@ -206,9 +250,13 @@ namespace UnityService.Rendering
 
 					if (_chunks.TryGetValue(coord, out var chunk))
 					{
-						if (chunk.State == ChunkState.WaitBuild && _buildingChunkCoords.Count < MaxMeshBuildingJobCount)
+						if (chunk.State == ChunkState.Activated && _buildingChunkCoords.Count < MaxMeshBuildingJobCount)
 						{
+							var blockIdMap = _chunkData[coord].BlockIdMap;
+
 							chunk.RebuildMesh(
+								blockIdMap,
+								GetSolidMap(coord),
 								GetSolidMap(coord - (1 << VoxelConstants.ChunkCoordXExponent)),
 								GetSolidMap(coord + (1 << VoxelConstants.ChunkCoordXExponent)),
 								GetSolidMap(coord + (1 << VoxelConstants.ChunkCoordYExponent)),
@@ -255,9 +303,9 @@ namespace UnityService.Rendering
 
 		private bool[] GetSolidMap(int coord)
 		{
-			if (_chunks.TryGetValue(coord, out var chunk))
+			if (_chunkData.TryGetValue(coord, out var data))
 			{
-				return chunk.IsSolidMap;
+				return data.IsSolidMap;
 			}
 
 			return EmptySolidMap;
@@ -276,15 +324,39 @@ namespace UnityService.Rendering
 				return;
 			}
 
-			var newChunk = objectPoolService.Spawn<Chunk>(_chunkPoolGuid,
-				new Vector3(VoxelUtility.GetCoordX(coord), VoxelUtility.GetCoordY(coord), VoxelUtility.GetCoordZ(coord)) *
-				VoxelConstants.ChunkAxisCount);
+			var spawnCoordPos = new Vector3(VoxelUtility.GetCoordX(coord), VoxelUtility.GetCoordY(coord), VoxelUtility.GetCoordZ(coord));
+			var spawnPos = spawnCoordPos * VoxelConstants.ChunkAxisCount;
+
+			var newChunk = objectPoolService.Spawn<Chunk>(_chunkPoolGuid, spawnPos);
 
 			_chunks.Add(coord, newChunk);
 
-			newChunk.Initialize(coord);
+			newChunk.Initialize();
 
-			if (newChunk.State == ChunkState.WaitBuild)
+			// FIXME : 테스트용 코드
+			int chunkType;
+
+			if (VoxelUtility.GetCoordY(coord) >= 0)
+			{
+				chunkType = -1;
+			}
+			else if (VoxelUtility.GetCoordY(coord) == -1)
+			{
+				chunkType = 1;
+			}
+			else
+			{
+				chunkType = 2;
+			}
+
+			if (!_chunkData.ContainsKey(coord))
+			{
+				var chunkData = new ChunkData(chunkType);
+
+				_chunkData.Add(coord, chunkData);
+			}
+
+			if (chunkType != -1)
 			{
 				_waitBuildChunkCoords.Add(coord);
 			}

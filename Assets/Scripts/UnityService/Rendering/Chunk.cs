@@ -6,25 +6,22 @@ using UnityEngine;
 
 namespace UnityService.Rendering
 {
-	public class Chunk : MonoBehaviour, IChunk
+	public enum ChunkState
+	{
+		None,
+		Activated,
+		Building,
+		Done
+	}
+
+	public class Chunk : MonoBehaviour, IDisposable
 	{
 		private MeshFilter _meshFilter;
 		private MeshRenderer _meshRenderer;
 
-		private int[] _blockIdMap;
-
 		public GameObject GameObject => gameObject;
 
-		public int CoordId { get; private set; }
-
-		private bool[] _isSolidMap;
-
-		public bool[] IsSolidMap => _isSolidMap;
-
 		public ChunkState State { get; private set; } = ChunkState.None;
-
-		// FIXME : 테스트용
-		private int _chunkType;
 
 		private BuildingMeshJob? _currentBuildingMeshJob;
 		private JobHandle? _currentBuildingMeshJobHandler;
@@ -250,10 +247,6 @@ namespace UnityService.Rendering
 			_meshFilter = GetComponent<MeshFilter>();
 			_meshRenderer = GetComponent<MeshRenderer>();
 
-			_blockIdMap = new int[VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount];
-
-			_isSolidMap = new bool[VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount];
-
 			// Capacity를 미리 크게 잡아둠
 			var normalSideCount =
 				VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.BlockSideCount;
@@ -263,73 +256,56 @@ namespace UnityService.Rendering
 			_uvsPool = new Vector2[normalSideCount * 4];
 		}
 
-		public void Initialize(int coordId)
+		private void OnDestroy()
+		{
+			Dispose();
+
+			_meshFilter = null;
+			_meshRenderer = null;
+
+			_verticesPool = null;
+			_trianglesPool = null;
+			_uvsPool = null;
+		}
+
+		public void Initialize()
 		{
 			_meshRenderer.enabled = false;
 
-			CoordId = coordId;
-
-			State = ChunkState.WaitBuild;
-
-			// FIXME : 테스트용 코드
-			if (VoxelUtility.GetCoordY(CoordId) >= 0)
-			{
-				_chunkType = -1;
-				State = ChunkState.Done;
-			}
-			else if (VoxelUtility.GetCoordY(CoordId) == -1)
-			{
-				_chunkType = 1;
-			}
-			else
-			{
-				_chunkType = 2;
-			}
-
-			for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
-			{
-				var yWeight = y << VoxelConstants.ChunkAxisExponent;
-
-				for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
-				{
-					var xWeight = x << (VoxelConstants.ChunkAxisExponent << 1);
-
-					for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
-					{
-						var index = xWeight | yWeight | z;
-
-						if (_chunkType == 1 && y < VoxelConstants.ChunkAxisCount - 1)
-						{
-							_blockIdMap[index] = 2;
-						}
-						else
-						{
-							_blockIdMap[index] = _chunkType;
-						}
-
-						_isSolidMap[index] = _blockIdMap[index] >= 0;
-					}
-				}
-			}
+			State = ChunkState.Activated;
 		}
 
-		public void RebuildMesh(bool[] isSolidLeft, bool[] isSolidRight, bool[] isSolidUp,
-			bool[] isSolidDown, bool[] isSolidForward, bool[] isSolidBack)
+		public void Dispose()
 		{
-			if (State != ChunkState.WaitBuild)
+			State = ChunkState.None;
+
+			_meshRenderer.enabled = false;
+
+			//
+			_currentBuildingMeshJobHandler?.Complete();
+			_currentBuildingMeshJob?.Dispose();
+
+			_currentBuildingMeshJob = null;
+			_currentBuildingMeshJobHandler = null;
+		}
+
+		public void RebuildMesh(int[] blockIdMap, bool[] isSolidSelf,
+			bool[] isSolidLeft, bool[] isSolidRight,
+			bool[] isSolidUp, bool[] isSolidDown,
+			bool[] isSolidForward, bool[] isSolidBack)
+		{
+			if (State != ChunkState.Activated)
 			{
 				return;
 			}
 
 			State = ChunkState.Building;
 
-			_currentBuildingMeshJob = new BuildingMeshJob(_blockIdMap, _isSolidMap,
+			var buildingMeshJob = new BuildingMeshJob(blockIdMap, isSolidSelf,
 				isSolidLeft, isSolidRight, isSolidUp, isSolidDown, isSolidForward, isSolidBack);
 
-			if (_currentBuildingMeshJob != null)
-			{
-				_currentBuildingMeshJobHandler = _currentBuildingMeshJob.Value.Schedule();
-			}
+			_currentBuildingMeshJobHandler = buildingMeshJob.Schedule();
+			_currentBuildingMeshJob = buildingMeshJob;
 		}
 
 		public void UpdateBuildMesh()
@@ -370,14 +346,6 @@ namespace UnityService.Rendering
 			_meshRenderer.enabled = true;
 
 			State = ChunkState.Done;
-		}
-
-		public bool IsSolidAt(int x, int y, int z)
-		{
-			var xWeight = x << (VoxelConstants.ChunkAxisExponent << 1);
-			var yWeight = y << VoxelConstants.ChunkAxisExponent;
-
-			return _isSolidMap[xWeight | yWeight | z];
 		}
 
 		private ArraySegment<T> CopyNativeArray<T>(NativeArray<T> from, ref T[] to, int count) where T : unmanaged

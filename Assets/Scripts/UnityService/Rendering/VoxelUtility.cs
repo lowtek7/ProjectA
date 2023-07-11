@@ -6,7 +6,7 @@ namespace UnityService.Rendering
 	{
 		public static int GetCoordAxis(float value)
 		{
-			return Mathf.FloorToInt(value) >> VoxelConstants.ChunkAxisCount;
+			return Mathf.FloorToInt(value) >> VoxelConstants.ChunkAxisExponent;
 		}
 
 		/// <summary>
