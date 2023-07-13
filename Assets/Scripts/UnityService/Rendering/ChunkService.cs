@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BlitzEcs;
+using Core.Utility;
 using Game;
 using Game.Asset;
 using Game.Ecs.Component;
@@ -43,25 +44,31 @@ namespace UnityService.Rendering
 
 		public static readonly Dictionary<int, PackedTextureUvInfo> UvInfo = new();
 
-		private static readonly bool[] EmptySolidMap = new bool[
-			VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount
-		];
+		private static readonly bool[] EmptySolidMap = ArrayUtility.CreateArrayFilledWith(
+			VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount,
+			true
+			);
 
 		private const int MaxMeshBuildingJobCount = 5;
 
 		private class ChunkData
 		{
-			public bool[] IsSolidMap;
-			public int[] BlockIdMap;
-			// FIXME : 임시
-			public int ChunkType;
+			public bool[] IsSolidMap { get; private set; }
+			public int[] BlockIdMap  { get; private set; }
 
+			private int _chunkType;
+
+			public bool NeedBuild => _chunkType != -1;
+
+			// FIXME : 임시
 			public ChunkData(int chunkType)
 			{
-				ChunkType = chunkType;
+				_chunkType = chunkType;
 
-				BlockIdMap = new int[VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount];
-				IsSolidMap = new bool[VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount];
+				var capacity = VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount;
+
+				BlockIdMap = new int[capacity];
+				IsSolidMap = new bool[capacity];
 
 				for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
 				{
@@ -75,13 +82,13 @@ namespace UnityService.Rendering
 						{
 							var index = xWeight | yWeight | z;
 
-							if (ChunkType == 1 && y < VoxelConstants.ChunkAxisCount - 1)
+							if (chunkType == 1 && y < VoxelConstants.ChunkAxisCount - 1)
 							{
 								BlockIdMap[index] = 2;
 							}
 							else
 							{
-								BlockIdMap[index] = ChunkType;
+								BlockIdMap[index] = chunkType;
 							}
 
 							IsSolidMap[index] = BlockIdMap[index] >= 0;
@@ -215,16 +222,42 @@ namespace UnityService.Rendering
 
 					foreach (var localOffset in _chunkLocalCoords)
 					{
-						// 해당 좌표가 청크 범위를 넘어서지 않을 때만 체크
-						if (VoxelUtility.TryMoveCoord(_currentCenterCoord, localOffset.x, localOffset.y, localOffset.z, out var movedCoordId))
+						// 해당 좌표가 청크 범위를 넘어서지 않을 때 & Visualize되어있지 않은 경우만 체크
+						if (VoxelUtility.TryMoveCoord(_currentCenterCoord, localOffset.x, localOffset.y, localOffset.z,
+							    out var movedCoordId) && !_chunks.ContainsKey(movedCoordId))
 						{
-							// Visualize되어있지 않은 경우만 체크
-							if (!_chunks.ContainsKey(movedCoordId))
+							AddChunk(movedCoordId);
+
+							for (int i = 0; i < VoxelConstants.BlockSideCount; i++)
 							{
-								AddChunk(movedCoordId);
+								var nearOffset = VoxelConstants.NearVoxels[i];
+
+								if (VoxelUtility.TryMoveCoord(movedCoordId,
+									    nearOffset.x, nearOffset.y, nearOffset.z, out var nearCoordId))
+								{
+									if (_chunks.ContainsKey(nearCoordId) &&
+									    _chunkData.TryGetValue(nearCoordId, out var data) && data.NeedBuild)
+									{
+										if (!_waitBuildChunkCoords.Contains(nearCoordId))
+										{
+											_waitBuildChunkCoords.Add(nearCoordId);
+										}
+
+										// 이미 Building 중이면 취소
+										_buildingChunkCoords.Remove(nearCoordId);
+									}
+								}
 							}
 						}
 					}
+
+					_waitBuildChunkCoords.Sort((a, b) =>
+					{
+						var toASqr = VoxelUtility.GetCoordSqrDistance(_currentCenterCoord, a);
+						var toBSqr = VoxelUtility.GetCoordSqrDistance(_currentCenterCoord, b);
+
+						return toASqr.CompareTo(toBSqr);
+					});
 				}
 
 				// Streaming
@@ -232,27 +265,29 @@ namespace UnityService.Rendering
 				{
 					var coord = _waitBuildChunkCoords[i];
 
+					if (_buildingChunkCoords.Count == MaxMeshBuildingJobCount)
+					{
+						break;
+					}
+
 					if (_chunks.TryGetValue(coord, out var chunk))
 					{
-						if (chunk.State == ChunkState.Activated && _buildingChunkCoords.Count < MaxMeshBuildingJobCount)
-						{
-							var blockIdMap = _chunkData[coord].BlockIdMap;
+						var blockIdMap = _chunkData[coord].BlockIdMap;
 
-							chunk.RebuildMesh(
-								blockIdMap,
-								GetSolidMap(coord),
-								GetSolidMap(coord - (1 << VoxelConstants.ChunkCoordXExponent)),
-								GetSolidMap(coord + (1 << VoxelConstants.ChunkCoordXExponent)),
-								GetSolidMap(coord + (1 << VoxelConstants.ChunkCoordYExponent)),
-								GetSolidMap(coord - (1 << VoxelConstants.ChunkCoordYExponent)),
-								GetSolidMap(coord + (1 << VoxelConstants.ChunkCoordZExponent)),
-								GetSolidMap(coord - (1 << VoxelConstants.ChunkCoordZExponent))
-								);
+						chunk.RebuildMesh(
+							blockIdMap,
+							GetSolidMap(coord),
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[3]),
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[1]),
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[5]),
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[4]),
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[2]),
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[0])
+							);
 
-							_waitBuildChunkCoords.RemoveAt(i--);
+						_waitBuildChunkCoords.RemoveAt(i--);
 
-							_buildingChunkCoords.Add(coord);
-						}
+						_buildingChunkCoords.Add(coord);
 					}
 					else
 					{
@@ -269,7 +304,7 @@ namespace UnityService.Rendering
 					{
 						chunk.UpdateBuildMesh();
 
-						if (chunk.State == ChunkState.Done)
+						if (!chunk.IsBuilding)
 						{
 							_buildingChunkCoords.RemoveAt(i--);
 						}
@@ -314,6 +349,8 @@ namespace UnityService.Rendering
 			var chunkGo = objectPoolService.Spawn(_chunkPoolGuid, spawnPos);
 			var chunk = chunkGo.GetComponent<Chunk>();
 
+			chunk.gameObject.name = $"{VoxelUtility.GetCoordX(coord)}, {VoxelUtility.GetCoordY(coord)}, {VoxelUtility.GetCoordZ(coord)}";
+
 			_chunks.Add(coord, chunk);
 
 			chunk.Initialize();
@@ -339,11 +376,11 @@ namespace UnityService.Rendering
 				var chunkData = new ChunkData(chunkType);
 
 				_chunkData.Add(coord, chunkData);
-			}
 
-			if (chunkType != -1)
-			{
-				_waitBuildChunkCoords.Add(coord);
+				if (chunkData.NeedBuild)
+				{
+					_waitBuildChunkCoords.Add(coord);
+				}
 			}
 		}
 
@@ -355,6 +392,7 @@ namespace UnityService.Rendering
 				return;
 			}
 
+			chunk.Dispose();
 			_chunks.Remove(coord);
 
 			if (!ServiceManager.TryGetService<IObjectPoolService>(out var objectPoolService))

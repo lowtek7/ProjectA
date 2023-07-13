@@ -69,5 +69,15 @@ namespace UnityService.Rendering
 		public static readonly int ChunkCoordXBitRange = 0xFFF0000;
 
 		public static readonly int InvalidCoordId = ChunkCoordXBitRange + ChunkCoordYBitRange + ChunkCoordZBitRange + 1;
+
+		public static readonly int[] NearCoordAdders =
+		{
+			-(1 << ChunkCoordZExponent),	// Back
+			1 << ChunkCoordXExponent,		// Right
+			1 << ChunkCoordZExponent,		// Forward
+			-(1 << ChunkCoordXExponent),	// Left
+			-(1 << ChunkCoordYExponent),	// Down
+			1 << ChunkCoordYExponent,		// Up
+		};
 	}
 }

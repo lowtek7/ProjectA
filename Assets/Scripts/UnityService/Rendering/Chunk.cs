@@ -6,20 +6,10 @@ using UnityEngine;
 
 namespace UnityService.Rendering
 {
-	public enum ChunkState
-	{
-		None,
-		Activated,
-		Building,
-		Done
-	}
-
 	public class Chunk : MonoBehaviour, IDisposable
 	{
 		private MeshFilter _meshFilter;
 		private MeshRenderer _meshRenderer;
-
-		public ChunkState State { get; private set; } = ChunkState.None;
 
 		private BuildingMeshJob? _currentBuildingMeshJob;
 		private JobHandle? _currentBuildingMeshJobHandler;
@@ -27,6 +17,8 @@ namespace UnityService.Rendering
 		private Vector3[] _verticesPool;
 		private int[] _trianglesPool;
 		private Vector2[] _uvsPool;
+
+		public bool IsBuilding { get; private set; } = false;
 
 		private struct BuildingMeshJob : IJob
 		{
@@ -77,7 +69,7 @@ namespace UnityService.Rendering
 					VoxelConstants.BlockSideCount / 2;
 
 				vertices = new NativeArray<Vector3>(normalSideCount * 4, lifeType);
-				triangles = new NativeArray<int>(normalSideCount * 2, lifeType);
+				triangles = new NativeArray<int>(normalSideCount * 6, lifeType);
 				uvs = new NativeArray<Vector2>(normalSideCount * 4, lifeType);
 
 				// Vertex, Uv, Triangle 순서로 저장될 것
@@ -202,10 +194,13 @@ namespace UnityService.Rendering
 					var nearYWeight = nearY << VoxelConstants.ChunkAxisExponent;
 					var nearZWeight = nearZ;
 
-					if (isSolidData[nearXWeight | nearYWeight | nearZWeight])
-					{
-						continue;
-					}
+					// if (isSolidData == _isSolidSelf)
+					// {
+						if (isSolidData[nearXWeight | nearYWeight | nearZWeight])
+						{
+							continue;
+						}
+					// }
 
 					var blockSideId = (blockId << 3) | s;
 
@@ -269,13 +264,11 @@ namespace UnityService.Rendering
 		public void Initialize()
 		{
 			_meshRenderer.enabled = false;
-
-			State = ChunkState.Activated;
 		}
 
 		public void Dispose()
 		{
-			State = ChunkState.None;
+			IsBuilding = false;
 
 			_meshRenderer.enabled = false;
 
@@ -292,12 +285,7 @@ namespace UnityService.Rendering
 			bool[] isSolidUp, bool[] isSolidDown,
 			bool[] isSolidForward, bool[] isSolidBack)
 		{
-			if (State != ChunkState.Activated)
-			{
-				return;
-			}
-
-			State = ChunkState.Building;
+			IsBuilding = true;
 
 			var buildingMeshJob = new BuildingMeshJob(blockIdMap, isSolidSelf,
 				isSolidLeft, isSolidRight, isSolidUp, isSolidDown, isSolidForward, isSolidBack);
@@ -308,12 +296,8 @@ namespace UnityService.Rendering
 
 		public void UpdateBuildMesh()
 		{
-			if (State != ChunkState.Building)
-			{
-				return;
-			}
-
-			if (_currentBuildingMeshJobHandler == null || !_currentBuildingMeshJobHandler.Value.IsCompleted ||
+			if (!IsBuilding ||
+			    _currentBuildingMeshJobHandler is not { IsCompleted: true } ||
 			    _currentBuildingMeshJob == null)
 			{
 				return;
@@ -327,11 +311,13 @@ namespace UnityService.Rendering
 			var uvsSeg = CopyNativeArray(buildingMeshJob.uvs, ref _uvsPool, buildingMeshJob.meshDataCounts[1]);
 			var trianglesSeg = CopyNativeArray(buildingMeshJob.triangles, ref _trianglesPool, buildingMeshJob.meshDataCounts[2]);
 
+			// TODO : Array가 새로 할당되었으면 사이즈가 동일하다는 뜻이므로, Segment를 통하지 않고 바로 넣어도 될 것임
+
 			var mesh = new Mesh
 			{
-				vertices = verticesSeg.Array,
-				triangles = trianglesSeg.Array,
-				uv = uvsSeg.Array
+				vertices = verticesSeg.ToArray(),
+				triangles = trianglesSeg.ToArray(),
+				uv = uvsSeg.ToArray()
 			};
 
 			buildingMeshJob.Dispose();
@@ -343,7 +329,7 @@ namespace UnityService.Rendering
 			_meshFilter.mesh = mesh;
 			_meshRenderer.enabled = true;
 
-			State = ChunkState.Done;
+			IsBuilding = false;
 		}
 
 		private ArraySegment<T> CopyNativeArray<T>(NativeArray<T> from, ref T[] to, int count) where T : unmanaged
@@ -359,7 +345,7 @@ namespace UnityService.Rendering
 
 			RAMGUnsafe.UnsafeUtility.CopyToFast(slice, to);
 
-			var segment = new ArraySegment<T>(to, 0, length);
+			var segment = new ArraySegment<T>(to, 0, count);
 
 			return segment;
 		}
