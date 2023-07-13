@@ -35,14 +35,14 @@
                 },
                 {
                     "rid": 1009
+                },
+                {
+                    "rid": 1010
                 }
             ]
         },
         {
             "components": [
-                {
-                    "rid": 1010
-                },
                 {
                     "rid": 1011
                 },
@@ -54,6 +54,9 @@
                 },
                 {
                     "rid": 1014
+                },
+                {
+                    "rid": 1015
                 }
             ]
         }
@@ -132,22 +135,22 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            131,
-                            144,
-                            49,
-                            29,
-                            178,
-                            230,
-                            249,
-                            79,
-                            152,
-                            3,
-                            139,
-                            126,
-                            220,
+                            110,
+                            232,
+                            231,
+                            125,
+                            44,
+                            167,
+                            151,
+                            66,
                             173,
-                            37,
-                            166
+                            19,
+                            171,
+                            251,
+                            58,
+                            99,
+                            196,
+                            50
                         ]
                     }
                 }
@@ -162,7 +165,7 @@
                 "data": {
                     "position": {
                         "x": -1.0,
-                        "y": 0.0,
+                        "y": 5.0,
                         "z": 0.0
                     },
                     "direction": {
@@ -293,6 +296,15 @@
             {
                 "rid": 1010,
                 "type": {
+                    "class": "GravityComponent",
+                    "ns": "Game.Ecs.Component",
+                    "asm": "Game"
+                },
+                "data": {}
+            },
+            {
+                "rid": 1011,
+                "type": {
                     "class": "UnitComponent",
                     "ns": "Game.Ecs.Component",
                     "asm": "Game"
@@ -321,7 +333,7 @@
                 }
             },
             {
-                "rid": 1011,
+                "rid": 1012,
                 "type": {
                     "class": "UnitInstanceComponent",
                     "ns": "Game.Ecs.Component",
@@ -330,28 +342,28 @@
                 "data": {
                     "instanceGuid": {
                         "guidBytes": [
-                            161,
-                            24,
-                            103,
-                            100,
-                            50,
-                            242,
-                            245,
-                            72,
-                            149,
-                            94,
-                            155,
-                            231,
-                            247,
-                            241,
-                            114,
-                            175
+                            88,
+                            217,
+                            178,
+                            218,
+                            55,
+                            154,
+                            93,
+                            77,
+                            181,
+                            185,
+                            246,
+                            70,
+                            48,
+                            39,
+                            37,
+                            172
                         ]
                     }
                 }
             },
             {
-                "rid": 1012,
+                "rid": 1013,
                 "type": {
                     "class": "TransformComponent",
                     "ns": "Game.Ecs.Component",
@@ -377,7 +389,7 @@
                 }
             },
             {
-                "rid": 1013,
+                "rid": 1014,
                 "type": {
                     "class": "StageSpecComponent",
                     "ns": "Game.Ecs.Component",
@@ -407,7 +419,7 @@
                 }
             },
             {
-                "rid": 1014,
+                "rid": 1015,
                 "type": {
                     "class": "CapsuleColliderComponent",
                     "ns": "Game.Ecs.Component",

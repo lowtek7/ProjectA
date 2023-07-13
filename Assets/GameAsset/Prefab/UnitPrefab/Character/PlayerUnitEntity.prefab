@@ -69,6 +69,7 @@ MonoBehaviour:
   - rid: 8986602489903841451
   - rid: 1400488748929777664
   - rid: 7904022502624198873
+  - rid: 1400488951828185088
   references:
     version: 2
     RefIds:
@@ -79,6 +80,8 @@ MonoBehaviour:
         direction: {x: 0, y: 1, z: 0}
         radius: 0.25
         height: 2
+    - rid: 1400488951828185088
+      type: {class: GravityComponent, ns: Game.Ecs.Component, asm: Game}
     - rid: 2371249708091310080
       type: {class: PlayerCameraComponent, ns: Game.Ecs.Component, asm: Game}
       data:
