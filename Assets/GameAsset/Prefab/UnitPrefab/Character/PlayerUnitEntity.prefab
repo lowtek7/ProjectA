@@ -86,8 +86,8 @@ MonoBehaviour:
         maxRadius: 15
         minAzimuthInRad: 0
         maxAzimuthInRad: 360
-        minElevationInRad: 0
-        maxElevationInRad: 80
+        minElevationInRad: 1
+        maxElevationInRad: 179
     - rid: 7904022502624198873
       type: {class: NameComponent, ns: Game.Ecs.Component, asm: Game}
       data:
