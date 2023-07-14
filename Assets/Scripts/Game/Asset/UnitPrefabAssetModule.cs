@@ -126,14 +126,6 @@ namespace Game.Asset
 					{
 					}
 				}
-				else
-				{
-					var result = GameObject.Instantiate(unitPrefabData.GameObject, Vector3.zero, Quaternion.identity, parent);
-
-					if (result.TryGetComponent(out unitTemplate))
-					{
-					}
-				}
 
 				return true;
 			}
