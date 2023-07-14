@@ -18,7 +18,7 @@ namespace Game
 
 		[SerializeField]
 		private Camera gameCamera;
-		
+
 		[SerializeField]
 		private PoolManager poolManager;
 
@@ -45,9 +45,9 @@ namespace Game
 		// guid로 pool에서 gameobject 검색해서 가져와서 사용 할거임.
 		// 관측 하고 있는 서비스 같은게 있어야 함
 		// pool은 명령 받아서 그냥 실행하는 라이브러리
-		// system이 하나 있어야 할듯? view에서만 상주할 시스템 
+		// system이 하나 있어야 할듯? view에서만 상주할 시스템
 		// 시스템이 view component 검색(query)해서 정보 얻어오면 pool에서 끌어와서 생성하자.
-		
+
 		/// <summary>
 		/// 여기서 게임 환경을 로드하게 된다
 		/// </summary>
@@ -77,13 +77,14 @@ namespace Game
 
 		private IEnumerator LoadAll()
 		{
+			yield return WorldDataAssetLoader.LoadAll();
 			assetFactory.Init(poolManager);
 			yield return assetFactory.LoadAll();
-			
+
 			// 월드 셋팅
 			_gameManager = new GameManager();
 			_gameManager.Init(this);
-			
+
 			// 이제 플레이 가능한 상태
 			canPlay = true;
 		}

@@ -1,0 +1,72 @@
+<linker>
+  <assembly fullname="Build, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Build.ComponentSpecBehaviour" preserve="all" />
+  </assembly>
+  <assembly fullname="Game, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Game.Asset.SystemOrderSettingData" preserve="all" />
+    <type fullname="Game.Unit.UnitTemplate" preserve="all" />
+    <type fullname="Game.Ecs.Component.BoundsComponent" preserve="nothing" serialized="true" />
+    <type fullname="Game.Ecs.Component.CapsuleColliderComponent" preserve="nothing" serialized="true" />
+    <type fullname="Game.Ecs.Component.MovementComponent" preserve="nothing" serialized="true" />
+    <type fullname="Game.Ecs.Component.NameComponent" preserve="nothing" serialized="true" />
+    <type fullname="Game.Ecs.Component.PlayerCameraComponent" preserve="nothing" serialized="true" />
+    <type fullname="Game.Ecs.Component.PlayerComponent" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="JSPool, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Library.JSPool.PoolItem" preserve="all" />
+  </assembly>
+  <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
+  </assembly>
+  <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.InstanceProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.LegacyResourcesProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.AnimationClip" preserve="all" />
+    <type fullname="UnityEngine.Animator" preserve="all" />
+    <type fullname="UnityEngine.AnimatorOverrideController" preserve="all" />
+    <type fullname="UnityEngine.Avatar" preserve="all" />
+    <type fullname="UnityEngine.RuntimeAnimatorController" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.AudioSource" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.GameObject" preserve="all" />
+    <type fullname="UnityEngine.Material" preserve="all" />
+    <type fullname="UnityEngine.Mesh" preserve="all" />
+    <type fullname="UnityEngine.MeshFilter" preserve="all" />
+    <type fullname="UnityEngine.MeshRenderer" preserve="all" />
+    <type fullname="UnityEngine.MonoBehaviour" preserve="all" />
+    <type fullname="UnityEngine.Object" preserve="all" />
+    <type fullname="UnityEngine.Shader" preserve="all" />
+    <type fullname="UnityEngine.SkinnedMeshRenderer" preserve="all" />
+    <type fullname="UnityEngine.Sprite" preserve="all" />
+    <type fullname="UnityEngine.SpriteRenderer" preserve="all" />
+    <type fullname="UnityEngine.TextAsset" preserve="all" />
+    <type fullname="UnityEngine.Texture2D" preserve="all" />
+    <type fullname="UnityEngine.Transform" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.ParticleSystem" preserve="all" />
+    <type fullname="UnityEngine.ParticleSystemRenderer" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.CapsuleCollider" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityService, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityService.Texture.BlockSpecHolder" preserve="all" />
+    <type fullname="UnityService.Texture.PackedTextureUvHolder" preserve="all" />
+    <type fullname="UnityService.Texture.TexturePacker" preserve="all" />
+    <type fullname="UnityService.Texture.BlockSpec" preserve="nothing" serialized="true" />
+    <type fullname="UnityService.Texture.PackedTextureUvHolder/PackedTextureUv" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="View, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="View.Behaviours.EntityAnimationBehaviour" preserve="all" />
+    <type fullname="View.Behaviours.EntityTransformBehaviour" preserve="all" />
+  </assembly>
+</linker>

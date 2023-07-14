@@ -25,6 +25,18 @@ namespace Service.SaveLoad
 			return JsonUtility.FromJson<VirtualWorld>(json);
 		}
 
+		public static VirtualWorld LoadWorld(TextAsset asset)
+		{
+			var json = asset.text;
+
+			if (string.IsNullOrEmpty(json))
+			{
+				return new VirtualWorld();
+			}
+
+			return JsonUtility.FromJson<VirtualWorld>(json);
+		}
+
 		public static void SaveWorld(string worldPath, VirtualWorld virtualWorld)
 		{
 			var utf8WithoutBom = new UTF8Encoding(false);

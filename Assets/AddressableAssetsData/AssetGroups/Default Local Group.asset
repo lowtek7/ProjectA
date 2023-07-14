@@ -41,6 +41,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Textures
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9a0ef1d6175457248a1d83bd916e09aa
+    m_Address: WorldData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - WorldData
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 71554528ed30bbe4098c32edfac362f1, type: 2}
   m_SchemaSet:

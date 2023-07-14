@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BlitzEcs;
 using Core.Unity;
 using Core.Utility;
+using Game.Asset;
 using Game.Ecs.Component;
 using Library.JSPool;
 using Service;
@@ -86,7 +87,7 @@ namespace Game.World
 				notAwakeServices.Add(service);
 			}
 
-			var virtualWorld = SaveLoadService.LoadWorld(SaveLoadConstants.WorldDataPath);
+			var virtualWorld = SaveLoadService.LoadWorld(WorldDataAssetLoader.WorldDataAsset);
 			virtualWorld.Realize(world);
 
 			foreach (var service in ServiceManager.Services)
