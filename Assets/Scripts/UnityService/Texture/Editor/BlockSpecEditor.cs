@@ -8,12 +8,12 @@ namespace UnityService.Texture.Editor
 	{
 		static readonly string[] DirectionStr =
 		{
-			"back",
 			"right",
-			"forward",
 			"left",
-			"down",
 			"up",
+			"down",
+			"forward",
+			"back",
 		};
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

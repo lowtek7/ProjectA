@@ -279,12 +279,12 @@ namespace UnityService.Rendering
 						chunk.RebuildMesh(
 							blockIdMap,
 							GetSolidMap(coord),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[3]),
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[0]),
 							GetSolidMap(coord + VoxelConstants.NearCoordAdders[1]),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[5]),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[4]),
 							GetSolidMap(coord + VoxelConstants.NearCoordAdders[2]),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[0])
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[3]),
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[4]),
+							GetSolidMap(coord + VoxelConstants.NearCoordAdders[5])
 							);
 
 						_waitBuildChunkCoords.RemoveAt(i--);

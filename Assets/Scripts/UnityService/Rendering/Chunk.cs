@@ -51,14 +51,14 @@ namespace UnityService.Rendering
 			private int _trianglesIndexWalker;
 			private int _uvsIndexWalker;
 
-			public BuildingMeshJob(int[] blockIdMap, bool[] isSolidSelf, bool[] isSolidLeft, bool[] isSolidRight,
+			public BuildingMeshJob(int[] blockIdMap, bool[] isSolidSelf, bool[] isSolidRight, bool[] isSolidLeft,
 				bool[] isSolidUp, bool[] isSolidDown, bool[] isSolidForward, bool[] isSolidBack)
 			{
 				var lifeType = Allocator.TempJob;
 
 				_isSolidSelf = new NativeArray<bool>(isSolidSelf, lifeType);
-				_isSolidLeft = new NativeArray<bool>(isSolidLeft, lifeType);
 				_isSolidRight = new NativeArray<bool>(isSolidRight, lifeType);
+				_isSolidLeft = new NativeArray<bool>(isSolidLeft, lifeType);
 				_isSolidUp = new NativeArray<bool>(isSolidUp, lifeType);
 				_isSolidDown = new NativeArray<bool>(isSolidDown, lifeType);
 				_isSolidForward = new NativeArray<bool>(isSolidForward, lifeType);
@@ -141,14 +141,6 @@ namespace UnityService.Rendering
 					switch (s)
 					{
 						case 0:
-							if (--nearZ < 0)
-							{
-								nearZ = VoxelConstants.ChunkAxisCount - 1;
-								isSolidData = _isSolidBack;
-							}
-
-							break;
-						case 1:
 							if (++nearX >= VoxelConstants.ChunkAxisCount)
 							{
 								nearX = 0;
@@ -156,15 +148,7 @@ namespace UnityService.Rendering
 							}
 
 							break;
-						case 2:
-							if (++nearZ >= VoxelConstants.ChunkAxisCount)
-							{
-								nearZ = 0;
-								isSolidData = _isSolidForward;
-							}
-
-							break;
-						case 3:
+						case 1:
 							if (--nearX < 0)
 							{
 								nearX = VoxelConstants.ChunkAxisCount - 1;
@@ -172,7 +156,15 @@ namespace UnityService.Rendering
 							}
 
 							break;
-						case 4:
+						case 2:
+							if (++nearY >= VoxelConstants.ChunkAxisCount)
+							{
+								nearY = 0;
+								isSolidData = _isSolidUp;
+							}
+
+							break;
+						case 3:
 							if (--nearY < 0)
 							{
 								nearY = VoxelConstants.ChunkAxisCount - 1;
@@ -180,11 +172,19 @@ namespace UnityService.Rendering
 							}
 
 							break;
-						case 5:
-							if (++nearY >= VoxelConstants.ChunkAxisCount)
+						case 4:
+							if (++nearZ >= VoxelConstants.ChunkAxisCount)
 							{
-								nearY = 0;
-								isSolidData = _isSolidUp;
+								nearZ = 0;
+								isSolidData = _isSolidForward;
+							}
+
+							break;
+						case 5:
+							if (--nearZ < 0)
+							{
+								nearZ = VoxelConstants.ChunkAxisCount - 1;
+								isSolidData = _isSolidBack;
 							}
 
 							break;
@@ -274,12 +274,12 @@ namespace UnityService.Rendering
 		}
 
 		public void RebuildMesh(int[] blockIdMap, bool[] isSolidSelf,
-			bool[] isSolidLeft, bool[] isSolidRight,
+			bool[] isSolidRight, bool[] isSolidLeft,
 			bool[] isSolidUp, bool[] isSolidDown,
 			bool[] isSolidForward, bool[] isSolidBack)
 		{
 			var buildingMeshJob = new BuildingMeshJob(blockIdMap, isSolidSelf,
-				isSolidLeft, isSolidRight, isSolidUp, isSolidDown, isSolidForward, isSolidBack);
+				isSolidRight, isSolidLeft, isSolidUp, isSolidDown, isSolidForward, isSolidBack);
 
 			_currentBuildingMeshJobHandler = buildingMeshJob.Schedule();
 			_currentBuildingMeshJob = buildingMeshJob;
