@@ -25,7 +25,7 @@ namespace UnityService.Rendering
 		private string chunkPoolGuid;
 
 		[SerializeField]
-		private int loadCoordMagnitude = 3;
+		private int loadCoordDistance = 3;
 
 		private Guid _chunkPoolGuid;
 
@@ -107,17 +107,15 @@ namespace UnityService.Rendering
 			_playerQuery = new Query<PlayerComponent, TransformComponent>(world);
 
 			// 대략 구체에 가까운 모양새로 생성
-			for (int x = -loadCoordMagnitude; x <= loadCoordMagnitude; x++)
+			for (int x = -loadCoordDistance; x <= loadCoordDistance; x++)
 			{
-				for (int y = -loadCoordMagnitude; y <= loadCoordMagnitude; y++)
+				for (int y = -loadCoordDistance; y <= loadCoordDistance; y++)
 				{
-					for (int z = -loadCoordMagnitude; z <= loadCoordMagnitude; z++)
+					for (int z = -loadCoordDistance; z <= loadCoordDistance; z++)
 					{
-						var coordVector = new Vector3Int(x, y, z);
-
-						if (coordVector.sqrMagnitude <= loadCoordMagnitude * loadCoordMagnitude)
+						if (x * x + y * y + z * z <= loadCoordDistance * loadCoordDistance)
 						{
-							_chunkLocalCoords.Add(coordVector);
+							_chunkLocalCoords.Add(new Vector3Int(x, y, z));
 						}
 					}
 				}
@@ -203,11 +201,13 @@ namespace UnityService.Rendering
 				// Remove
 				if (_currentCenterCoord != prevCenterCoord)
 				{
+					Debug.LogError($"{VoxelUtility.ConvertIdToPos(prevCenterCoord)} -> {VoxelUtility.ConvertIdToPos(_currentCenterCoord)}");
+
 					foreach (var keyValue in _chunks)
 					{
 						var coord = keyValue.Key;
 
-						if (VoxelUtility.GetCoordSqrDistance(_currentCenterCoord, coord) > loadCoordMagnitude * loadCoordMagnitude)
+						if (VoxelUtility.GetCoordSqrDistance(_currentCenterCoord, coord) > loadCoordDistance * loadCoordDistance)
 						{
 							_removeChunkCoordBuffer.Add(coord);
 						}
@@ -235,13 +235,15 @@ namespace UnityService.Rendering
 								if (VoxelUtility.TryMoveCoord(movedCoordId,
 									    nearOffset.x, nearOffset.y, nearOffset.z, out var nearCoordId))
 								{
-									if (_chunks.ContainsKey(nearCoordId) &&
+									if (_chunks.TryGetValue(nearCoordId, out var nearChunk) &&
 									    _chunkData.TryGetValue(nearCoordId, out var data) && data.NeedBuild)
 									{
 										if (!_waitBuildChunkCoords.Contains(nearCoordId))
 										{
 											_waitBuildChunkCoords.Add(nearCoordId);
 										}
+
+										nearChunk.StopBuildMesh();
 
 										// 이미 Building 중이면 취소
 										_buildingChunkCoords.Remove(nearCoordId);
@@ -300,7 +302,7 @@ namespace UnityService.Rendering
 				{
 					var coord = _buildingChunkCoords[i];
 
-					if (_chunks.TryGetValue(coord, out var chunk))
+					if (_chunks.TryGetValue(coord, out var chunk) && chunk.IsBuilding)
 					{
 						chunk.UpdateBuildMesh();
 
@@ -311,6 +313,9 @@ namespace UnityService.Rendering
 					}
 					else
 					{
+						// 모종의 이유로 청크 목록에서 사라졌다면 로그 출력
+						Debug.LogError($"Building Chunk at { VoxelUtility.ConvertIdToPos(coord) } disappeared.");
+
 						_buildingChunkCoords.RemoveAt(i--);
 					}
 				}
@@ -334,7 +339,7 @@ namespace UnityService.Rendering
 		{
 			if (_chunks.ContainsKey(coord))
 			{
-				Debug.LogError("왠진 모르겠는데 청크 인덱스 좌표가 이미 들어가있음");
+				Debug.LogError($"Cannot add Chunk at same coord : { VoxelUtility.ConvertIdToPos(coord) }");
 				return;
 			}
 
@@ -349,7 +354,7 @@ namespace UnityService.Rendering
 			var chunkGo = objectPoolService.Spawn(_chunkPoolGuid, spawnPos);
 			var chunk = chunkGo.GetComponent<Chunk>();
 
-			chunk.gameObject.name = $"{VoxelUtility.GetCoordX(coord)}, {VoxelUtility.GetCoordY(coord)}, {VoxelUtility.GetCoordZ(coord)}";
+			chunk.gameObject.name = $"Chunk ({VoxelUtility.GetCoordX(coord)}, {VoxelUtility.GetCoordY(coord)}, {VoxelUtility.GetCoordZ(coord)})";
 
 			_chunks.Add(coord, chunk);
 
@@ -371,16 +376,16 @@ namespace UnityService.Rendering
 				chunkType = 2;
 			}
 
-			if (!_chunkData.ContainsKey(coord))
+			if (!_chunkData.TryGetValue(coord, out var chunkData))
 			{
-				var chunkData = new ChunkData(chunkType);
+				chunkData = new ChunkData(chunkType);
 
 				_chunkData.Add(coord, chunkData);
+			}
 
-				if (chunkData.NeedBuild)
-				{
-					_waitBuildChunkCoords.Add(coord);
-				}
+			if (chunkData.NeedBuild)
+			{
+				_waitBuildChunkCoords.Add(coord);
 			}
 		}
 
@@ -395,15 +400,15 @@ namespace UnityService.Rendering
 			chunk.Dispose();
 			_chunks.Remove(coord);
 
+			_waitBuildChunkCoords.Remove(coord);
+			_buildingChunkCoords.Remove(coord);
+
 			if (!ServiceManager.TryGetService<IObjectPoolService>(out var objectPoolService))
 			{
 				return;
 			}
 
 			objectPoolService.Despawn(chunk.gameObject);
-
-			_waitBuildChunkCoords.Remove(coord);
-			_buildingChunkCoords.Remove(coord);
 		}
 	}
 }

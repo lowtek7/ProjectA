@@ -4,9 +4,9 @@ namespace UnityService.Rendering
 {
 	public static class VoxelUtility
 	{
-		public static int GetCoordAxis(float value)
+		public static int GetCoordAxis(float worldValue)
 		{
-			return Mathf.FloorToInt(value) >> VoxelConstants.ChunkAxisExponent;
+			return Mathf.RoundToInt(worldValue) >> VoxelConstants.ChunkAxisExponent;
 		}
 
 		/// <summary>

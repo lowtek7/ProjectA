@@ -18,7 +18,7 @@ namespace UnityService.Rendering
 		private int[] _trianglesPool;
 		private Vector2[] _uvsPool;
 
-		public bool IsBuilding { get; private set; } = false;
+		public bool IsBuilding => _currentBuildingMeshJob != null;
 
 		private struct BuildingMeshJob : IJob
 		{
@@ -268,16 +268,9 @@ namespace UnityService.Rendering
 
 		public void Dispose()
 		{
-			IsBuilding = false;
-
 			_meshRenderer.enabled = false;
 
-			//
-			_currentBuildingMeshJobHandler?.Complete();
-			_currentBuildingMeshJob?.Dispose();
-
-			_currentBuildingMeshJob = null;
-			_currentBuildingMeshJobHandler = null;
+			StopBuildMesh();
 		}
 
 		public void RebuildMesh(int[] blockIdMap, bool[] isSolidSelf,
@@ -285,8 +278,6 @@ namespace UnityService.Rendering
 			bool[] isSolidUp, bool[] isSolidDown,
 			bool[] isSolidForward, bool[] isSolidBack)
 		{
-			IsBuilding = true;
-
 			var buildingMeshJob = new BuildingMeshJob(blockIdMap, isSolidSelf,
 				isSolidLeft, isSolidRight, isSolidUp, isSolidDown, isSolidForward, isSolidBack);
 
@@ -296,9 +287,7 @@ namespace UnityService.Rendering
 
 		public void UpdateBuildMesh()
 		{
-			if (!IsBuilding ||
-			    _currentBuildingMeshJobHandler is not { IsCompleted: true } ||
-			    _currentBuildingMeshJob == null)
+			if (_currentBuildingMeshJobHandler is not { IsCompleted: true } || _currentBuildingMeshJob == null)
 			{
 				return;
 			}
@@ -328,8 +317,15 @@ namespace UnityService.Rendering
 			mesh.RecalculateNormals();
 			_meshFilter.mesh = mesh;
 			_meshRenderer.enabled = true;
+		}
 
-			IsBuilding = false;
+		public void StopBuildMesh()
+		{
+			_currentBuildingMeshJobHandler?.Complete();
+			_currentBuildingMeshJob?.Dispose();
+
+			_currentBuildingMeshJob = null;
+			_currentBuildingMeshJobHandler = null;
 		}
 
 		private ArraySegment<T> CopyNativeArray<T>(NativeArray<T> from, ref T[] to, int count) where T : unmanaged
