@@ -201,7 +201,7 @@ namespace UnityService.Rendering
 				// Remove
 				if (_currentCenterCoord != prevCenterCoord)
 				{
-					Debug.LogError($"{VoxelUtility.ConvertIdToPos(prevCenterCoord)} -> {VoxelUtility.ConvertIdToPos(_currentCenterCoord)}");
+					Debug.Log($"Player moved Chunk : from {VoxelUtility.ConvertIdToPos(prevCenterCoord)} to {VoxelUtility.ConvertIdToPos(_currentCenterCoord)}");
 
 					foreach (var keyValue in _chunks)
 					{
@@ -393,7 +393,7 @@ namespace UnityService.Rendering
 		{
 			if (!_chunks.TryGetValue(coord, out var chunk))
 			{
-				Debug.LogError("왠진 모르겠는데 청크 인덱스 좌표가 없음");
+				Debug.LogError($"Has no Chunk to Remove at coord : { VoxelUtility.ConvertIdToPos(coord) }.");
 				return;
 			}
 
