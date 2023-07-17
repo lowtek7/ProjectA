@@ -26,11 +26,6 @@ namespace Game.Ecs.System
 			{
 				inputService.Fetch();
 			}
-			
-			if (ServiceManager.TryGetService<IPlayerCameraService>(out var cameraService))
-			{
-				cameraService.Fetch();
-			}
 
 			foreach (var entity in _inputQuery)
 			{

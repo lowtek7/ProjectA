@@ -4,7 +4,6 @@ namespace Service.Camera
 {
 	public interface IPlayerCameraService : IGameService
 	{
-		void Fetch();
 		//구면 좌표계 새로작성 코드
 		void SetSpherical(
 			(float min, float init, float max) radius,
@@ -28,6 +27,8 @@ namespace Service.Camera
 		Vector2 WorldToScreen(Vector3 worldPos);
 
 		Vector3 WorldSize { get; }
+
+		Vector3 ToCartesianPos();
 
 		Transform PlayerCameraTransform { get; }
 	}

@@ -21,9 +21,7 @@ namespace UnityService.Camera
 		private Query<MovementComponent, TransformComponent, PlayerComponent> _movementQuery;
 
 		private bool isMouseClick = false;
-
-		private bool createSpherial = false;
-
+		
 		private Vector3 targetPosition;
 
 		private const float ROTCYCLE = 360f * Mathf.Deg2Rad;
@@ -41,41 +39,6 @@ namespace UnityService.Camera
 		}
 
 		public Transform PlayerCameraTransform => _playerCameraTransform;
-
-		void IPlayerCameraService.Fetch()
-		{
-			foreach (var entity in _cameraQuery)
-			{
-				ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
-
-				if (createSpherial == false)
-				{
-					createSpherial = true;
-
-					SetSpherical((cameraComponent.minRadius, cameraComponent.minRadius, cameraComponent.maxRadius),
-						(cameraComponent.minAzimuthInRad, cameraComponent.minAzimuthInRad, cameraComponent.maxAzimuthInRad),
-						(cameraComponent.minElevationInRad, cameraComponent.minElevationInRad, cameraComponent.maxElevationInRad));
-				}
-
-				AddAzimuth(cameraComponent.MouseXDegree);
-				AddElevation(cameraComponent.MouseYDegree);
-			}
-
-			foreach (var moveEntity in _movementQuery)
-			{
-				ref var transformComponent = ref moveEntity.Get<TransformComponent>();
-
-				// 좀더 넓은 시야를 위해 플레이어의 약간 위쪽위치를 설정
-				var position = transformComponent.Position + Vector3.up;
-
-				// 카메라 줌아웃
-				//playerCamera.transform.position = sphericalCoordinates.TranslateRadius(sw * Time.deltaTime * scrollSpeed).toCartesian + newPosition;
-
-				playerCamera.transform.position = position + ToCartesianPos();
-
-				playerCamera.transform.LookAt(transformComponent.Position);
-			}
-		}
 
 		//구면 카메라 코드
 		public void SetSpherical(
@@ -198,7 +161,7 @@ namespace UnityService.Camera
 			}
 		}
 
-		private Vector3 ToCartesianPos()
+		public Vector3 ToCartesianPos()
 		{
 			Vector3 position = Vector3.zero;
 
