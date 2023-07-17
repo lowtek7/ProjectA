@@ -87,8 +87,8 @@ MonoBehaviour:
       data:
         minRadius: 3
         maxRadius: 15
-        minAzimuthInRad: 0
-        maxAzimuthInRad: 360
+        minAzimuthInRad: 1
+        maxAzimuthInRad: 359
         minElevationInRad: 1
         maxElevationInRad: 179
     - rid: 7904022502624198873
