@@ -1,12 +1,12 @@
 ﻿using System;
-using Service.Rendering;
+using Game.World.Stage;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
 namespace UnityService.Rendering
 {
-	public class Chunk : MonoBehaviour, IDisposable
+	public class ChunkMeshBuilder : MonoBehaviour, IDisposable
 	{
 		private MeshFilter _meshFilter;
 		private MeshRenderer _meshRenderer;
@@ -28,7 +28,7 @@ namespace UnityService.Rendering
 
 			public NativeArray<int> meshDataCounts;
 
-			private NativeArray<int> _blockMap;
+			private NativeArray<ushort> _blockMap;
 
 			[ReadOnly]
 			private NativeArray<bool> _isSolidSelf;
@@ -51,7 +51,7 @@ namespace UnityService.Rendering
 			private int _trianglesIndexWalker;
 			private int _uvsIndexWalker;
 
-			public BuildingMeshJob(int[] blockIdMap, bool[] isSolidSelf, bool[] isSolidRight, bool[] isSolidLeft,
+			public BuildingMeshJob(ushort[] blockIdMap, bool[] isSolidSelf, bool[] isSolidRight, bool[] isSolidLeft,
 				bool[] isSolidUp, bool[] isSolidDown, bool[] isSolidForward, bool[] isSolidBack)
 			{
 				var lifeType = Allocator.TempJob;
@@ -65,7 +65,7 @@ namespace UnityService.Rendering
 				_isSolidBack = new NativeArray<bool>(isSolidBack, lifeType);
 
 				// Capacity를 미리 크게 잡아둠
-				var normalSideCount = VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount *
+				var normalSideCount = ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount *
 					VoxelConstants.BlockSideCount / 2;
 
 				vertices = new NativeArray<Vector3>(normalSideCount * 4, lifeType);
@@ -80,7 +80,7 @@ namespace UnityService.Rendering
 				_trianglesIndexWalker = 0;
 				_uvsIndexWalker = 0;
 
-				_blockMap = new NativeArray<int>(blockIdMap, lifeType);
+				_blockMap = new NativeArray<ushort>(blockIdMap, lifeType);
 			}
 
 			public void Dispose()
@@ -103,19 +103,19 @@ namespace UnityService.Rendering
 
 			public void Execute()
 			{
-				for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
+				for (int y = 0; y < ChunkConstants.ChunkAxisCount; y++)
 				{
-					var yWeight = y << VoxelConstants.ChunkAxisExponent;
+					var yWeight = y << ChunkConstants.ChunkAxisExponent;
 
-					for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
+					for (int x = 0; x < ChunkConstants.ChunkAxisCount; x++)
 					{
-						var xWeight = x << (VoxelConstants.ChunkAxisExponent << 1);
+						var xWeight = x << (ChunkConstants.ChunkAxisExponent << 1);
 
-						for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
+						for (int z = 0; z < ChunkConstants.ChunkAxisCount; z++)
 						{
 							var index = xWeight | yWeight | z;
 
-							if (_blockMap[index] >= 0) {
+							if (_blockMap[index] != ChunkConstants.InvalidBlockId) {
 								AddBlock(x, y, z, _blockMap[index]);
 							}
 						}
@@ -141,7 +141,7 @@ namespace UnityService.Rendering
 					switch (s)
 					{
 						case 0:
-							if (++nearX >= VoxelConstants.ChunkAxisCount)
+							if (++nearX >= ChunkConstants.ChunkAxisCount)
 							{
 								nearX = 0;
 								isSolidData = _isSolidRight;
@@ -151,13 +151,13 @@ namespace UnityService.Rendering
 						case 1:
 							if (--nearX < 0)
 							{
-								nearX = VoxelConstants.ChunkAxisCount - 1;
+								nearX = ChunkConstants.ChunkAxisCount - 1;
 								isSolidData = _isSolidLeft;
 							}
 
 							break;
 						case 2:
-							if (++nearY >= VoxelConstants.ChunkAxisCount)
+							if (++nearY >= ChunkConstants.ChunkAxisCount)
 							{
 								nearY = 0;
 								isSolidData = _isSolidUp;
@@ -167,13 +167,13 @@ namespace UnityService.Rendering
 						case 3:
 							if (--nearY < 0)
 							{
-								nearY = VoxelConstants.ChunkAxisCount - 1;
+								nearY = ChunkConstants.ChunkAxisCount - 1;
 								isSolidData = _isSolidDown;
 							}
 
 							break;
 						case 4:
-							if (++nearZ >= VoxelConstants.ChunkAxisCount)
+							if (++nearZ >= ChunkConstants.ChunkAxisCount)
 							{
 								nearZ = 0;
 								isSolidData = _isSolidForward;
@@ -183,15 +183,15 @@ namespace UnityService.Rendering
 						case 5:
 							if (--nearZ < 0)
 							{
-								nearZ = VoxelConstants.ChunkAxisCount - 1;
+								nearZ = ChunkConstants.ChunkAxisCount - 1;
 								isSolidData = _isSolidBack;
 							}
 
 							break;
 					}
 
-					var nearXWeight = nearX << (VoxelConstants.ChunkAxisExponent << 1);
-					var nearYWeight = nearY << VoxelConstants.ChunkAxisExponent;
+					var nearXWeight = nearX << (ChunkConstants.ChunkAxisExponent << 1);
+					var nearYWeight = nearY << ChunkConstants.ChunkAxisExponent;
 					var nearZWeight = nearZ;
 
 					// if (isSolidData == _isSolidSelf)
@@ -242,10 +242,10 @@ namespace UnityService.Rendering
 
 			// Capacity를 미리 크게 잡아둠
 			var normalSideCount =
-				VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.BlockSideCount;
+				ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * VoxelConstants.BlockSideCount;
 
 			_verticesPool = new Vector3[normalSideCount * 4];
-			_trianglesPool = new int[normalSideCount * 2];
+			_trianglesPool = new int[normalSideCount * 6];
 			_uvsPool = new Vector2[normalSideCount * 4];
 		}
 
@@ -273,7 +273,7 @@ namespace UnityService.Rendering
 			StopBuildMesh();
 		}
 
-		public void RebuildMesh(int[] blockIdMap, bool[] isSolidSelf,
+		public void RebuildMesh(ushort[] blockIdMap, bool[] isSolidSelf,
 			bool[] isSolidRight, bool[] isSolidLeft,
 			bool[] isSolidUp, bool[] isSolidDown,
 			bool[] isSolidForward, bool[] isSolidBack)

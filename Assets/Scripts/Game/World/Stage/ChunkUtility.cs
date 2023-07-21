@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
-namespace UnityService.Rendering
+namespace Game.World.Stage
 {
-	public static class VoxelUtility
+	public static class ChunkUtility
 	{
 		public static int GetCoordAxis(float worldValue)
 		{
-			return Mathf.RoundToInt(worldValue) >> VoxelConstants.ChunkAxisExponent;
+			return Mathf.RoundToInt(worldValue) >> ChunkConstants.ChunkAxisExponent;
 		}
 
 		/// <summary>
@@ -18,27 +18,27 @@ namespace UnityService.Rendering
 		/// <returns></returns>
 		public static int GetCoordId(int x, int y, int z)
 		{
-			return ((x + VoxelConstants.ChunkCoordXOffset) << VoxelConstants.ChunkCoordXExponent) |
-			       ((y + VoxelConstants.ChunkCoordYOffset) << VoxelConstants.ChunkCoordYExponent) |
-			       ((z + VoxelConstants.ChunkCoordZOffset) << VoxelConstants.ChunkCoordZExponent);
+			return ((x + ChunkConstants.ChunkCoordXOffset) << ChunkConstants.ChunkCoordXExponent) |
+			       ((y + ChunkConstants.ChunkCoordYOffset) << ChunkConstants.ChunkCoordYExponent) |
+			       ((z + ChunkConstants.ChunkCoordZOffset) << ChunkConstants.ChunkCoordZExponent);
 		}
 
 		public static int GetCoordX(int coordId)
 		{
-			return ((coordId & VoxelConstants.ChunkCoordXBitRange) >> VoxelConstants.ChunkCoordXExponent) -
-			       VoxelConstants.ChunkCoordXOffset;
+			return ((coordId & ChunkConstants.ChunkCoordXBitRange) >> ChunkConstants.ChunkCoordXExponent) -
+			       ChunkConstants.ChunkCoordXOffset;
 		}
 
 		public static int GetCoordY(int coordId)
 		{
-			return ((coordId & VoxelConstants.ChunkCoordYBitRange) >> VoxelConstants.ChunkCoordYExponent) -
-			       VoxelConstants.ChunkCoordYOffset;
+			return ((coordId & ChunkConstants.ChunkCoordYBitRange) >> ChunkConstants.ChunkCoordYExponent) -
+			       ChunkConstants.ChunkCoordYOffset;
 		}
 
 		public static int GetCoordZ(int coordId)
 		{
-			return ((coordId & VoxelConstants.ChunkCoordZBitRange) >> VoxelConstants.ChunkCoordZExponent) -
-			       VoxelConstants.ChunkCoordZOffset;
+			return ((coordId & ChunkConstants.ChunkCoordZBitRange) >> ChunkConstants.ChunkCoordZExponent) -
+			       ChunkConstants.ChunkCoordZOffset;
 		}
 
 		public static Vector3Int ConvertIdToPos(int coordId)
@@ -73,16 +73,16 @@ namespace UnityService.Rendering
 			var y = GetCoordY(coordId) + yDiff;
 			var z = GetCoordZ(coordId) + zDiff;
 
-			if (x >= -VoxelConstants.ChunkCoordXOffset && x < VoxelConstants.ChunkCoordXOffset &&
-			    y >= -VoxelConstants.ChunkCoordYOffset && y < VoxelConstants.ChunkCoordYOffset &&
-			    z >= -VoxelConstants.ChunkCoordZOffset && z < VoxelConstants.ChunkCoordZOffset)
+			if (x >= -ChunkConstants.ChunkCoordXOffset && x < ChunkConstants.ChunkCoordXOffset &&
+			    y >= -ChunkConstants.ChunkCoordYOffset && y < ChunkConstants.ChunkCoordYOffset &&
+			    z >= -ChunkConstants.ChunkCoordZOffset && z < ChunkConstants.ChunkCoordZOffset)
 			{
 				movedCoordId = GetCoordId(x, y, z);
 
 				return true;
 			}
 
-			movedCoordId = VoxelConstants.InvalidCoordId;
+			movedCoordId = ChunkConstants.InvalidCoordId;
 
 			return false;
 		}

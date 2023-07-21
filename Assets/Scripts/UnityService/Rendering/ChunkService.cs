@@ -6,6 +6,7 @@ using Core.Utility;
 using Game;
 using Game.Asset;
 using Game.Ecs.Component;
+using Game.World.Stage;
 using Service;
 using Service.ObjectPool;
 using Service.Rendering;
@@ -29,10 +30,7 @@ namespace UnityService.Rendering
 
 		private Guid _chunkPoolGuid;
 
-		private World _world;
-		private Query<PlayerComponent, TransformComponent> _playerQuery;
-
-		private Dictionary<int, Chunk> _chunks;
+		private Dictionary<int, ChunkMeshBuilder> _chunkMeshBuilders;
 
 		private List<int> _removeChunkCoordBuffer;
 		private List<int> _waitBuildChunkCoords;
@@ -40,71 +38,32 @@ namespace UnityService.Rendering
 
 		private readonly List<Vector3Int> _chunkLocalCoords = new();
 
-		private int _currentCenterCoord = VoxelConstants.InvalidCoordId;
+		private int _currentCenterCoord = ChunkConstants.InvalidCoordId;
 
 		public static readonly Dictionary<int, PackedTextureUvInfo> UvInfo = new();
 
 		private static readonly bool[] EmptySolidMap = ArrayUtility.CreateArrayFilledWith(
-			VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount,
+			ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount,
 			true
 			);
 
 		private const int MaxMeshBuildingJobCount = 5;
 
-		private class ChunkData
-		{
-			public bool[] IsSolidMap { get; private set; }
-			public int[] BlockIdMap  { get; private set; }
+		/// <summary>
+		/// Coord -> ChunkComponent Entity
+		/// </summary>
+		private readonly Dictionary<int, int> _chunkEntities = new();
 
-			private int _chunkType;
-
-			public bool NeedBuild => _chunkType != -1;
-
-			// FIXME : 임시
-			public ChunkData(int chunkType)
-			{
-				_chunkType = chunkType;
-
-				var capacity = VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount * VoxelConstants.ChunkAxisCount;
-
-				BlockIdMap = new int[capacity];
-				IsSolidMap = new bool[capacity];
-
-				for (int y = 0; y < VoxelConstants.ChunkAxisCount; y++)
-				{
-					var yWeight = y << VoxelConstants.ChunkAxisExponent;
-
-					for (int x = 0; x < VoxelConstants.ChunkAxisCount; x++)
-					{
-						var xWeight = x << (VoxelConstants.ChunkAxisExponent << 1);
-
-						for (int z = 0; z < VoxelConstants.ChunkAxisCount; z++)
-						{
-							var index = xWeight | yWeight | z;
-
-							if (chunkType == 1 && y < VoxelConstants.ChunkAxisCount - 1)
-							{
-								BlockIdMap[index] = 2;
-							}
-							else
-							{
-								BlockIdMap[index] = chunkType;
-							}
-
-							IsSolidMap[index] = BlockIdMap[index] >= 0;
-						}
-					}
-				}
-			}
-		}
-
-		private readonly Dictionary<int, ChunkData> _chunkData = new();
+		private World _world;
+		private Query<PlayerComponent, TransformComponent> _playerQuery;
+		private Query<ChunkComponent> _chunkQuery;
 
 		public void Init(World world)
 		{
 			_world = world;
 
 			_playerQuery = new Query<PlayerComponent, TransformComponent>(world);
+			_chunkQuery = new Query<ChunkComponent>(world);
 
 			// 대략 구체에 가까운 모양새로 생성
 			for (int x = -loadCoordDistance; x <= loadCoordDistance; x++)
@@ -126,7 +85,7 @@ namespace UnityService.Rendering
 			// 동시에 사용 가능한 Coord 개수로 Add/Remove 버퍼 사이즈를 잡아줌
 			var bufferSize = _chunkLocalCoords.Count;
 
-			_chunks = new(bufferSize);
+			_chunkMeshBuilders = new(bufferSize);
 
 			_removeChunkCoordBuffer = new(bufferSize);
 			_waitBuildChunkCoords = new(bufferSize);
@@ -186,28 +145,43 @@ namespace UnityService.Rendering
 				return;
 			}
 
+			if (_chunkEntities.Count == 0)
+			{
+				foreach (var entity in _chunkQuery)
+				{
+					var chunkComponent = entity.Get<ChunkComponent>();
+
+					_chunkEntities.Add(chunkComponent.coordId, entity.Id);
+				}
+			}
+
+			if (_chunkEntities.Count == 0)
+			{
+				return;
+			}
+
 			foreach (var entity in _playerQuery)
 			{
 				var transformComponent = entity.Get<TransformComponent>();
 				var curPos = transformComponent.Position;
 				var prevCenterCoord = _currentCenterCoord;
 
-				_currentCenterCoord = VoxelUtility.GetCoordId(
-					VoxelUtility.GetCoordAxis(curPos.x),
-					VoxelUtility.GetCoordAxis(curPos.y),
-					VoxelUtility.GetCoordAxis(curPos.z)
+				_currentCenterCoord = ChunkUtility.GetCoordId(
+					ChunkUtility.GetCoordAxis(curPos.x),
+					ChunkUtility.GetCoordAxis(curPos.y),
+					ChunkUtility.GetCoordAxis(curPos.z)
 					);
 
 				// Remove
 				if (_currentCenterCoord != prevCenterCoord)
 				{
-					Debug.Log($"Player moved Chunk : from {VoxelUtility.ConvertIdToPos(prevCenterCoord)} to {VoxelUtility.ConvertIdToPos(_currentCenterCoord)}");
+					Debug.Log($"Player moved Chunk : from {ChunkUtility.ConvertIdToPos(prevCenterCoord)} to {ChunkUtility.ConvertIdToPos(_currentCenterCoord)}");
 
-					foreach (var keyValue in _chunks)
+					foreach (var keyValue in _chunkMeshBuilders)
 					{
 						var coord = keyValue.Key;
 
-						if (VoxelUtility.GetCoordSqrDistance(_currentCenterCoord, coord) > loadCoordDistance * loadCoordDistance)
+						if (ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, coord) > loadCoordDistance * loadCoordDistance)
 						{
 							_removeChunkCoordBuffer.Add(coord);
 						}
@@ -223,8 +197,8 @@ namespace UnityService.Rendering
 					foreach (var localOffset in _chunkLocalCoords)
 					{
 						// 해당 좌표가 청크 범위를 넘어서지 않을 때 & Visualize되어있지 않은 경우만 체크
-						if (VoxelUtility.TryMoveCoord(_currentCenterCoord, localOffset.x, localOffset.y, localOffset.z,
-							    out var movedCoordId) && !_chunks.ContainsKey(movedCoordId))
+						if (ChunkUtility.TryMoveCoord(_currentCenterCoord, localOffset.x, localOffset.y, localOffset.z,
+							    out var movedCoordId) && !_chunkMeshBuilders.ContainsKey(movedCoordId))
 						{
 							AddChunk(movedCoordId);
 
@@ -232,21 +206,31 @@ namespace UnityService.Rendering
 							{
 								var nearOffset = VoxelConstants.NearVoxels[i];
 
-								if (VoxelUtility.TryMoveCoord(movedCoordId,
+								if (ChunkUtility.TryMoveCoord(movedCoordId,
 									    nearOffset.x, nearOffset.y, nearOffset.z, out var nearCoordId))
 								{
-									if (_chunks.TryGetValue(nearCoordId, out var nearChunk) &&
-									    _chunkData.TryGetValue(nearCoordId, out var data) && data.NeedBuild)
+									if (_chunkMeshBuilders.TryGetValue(nearCoordId, out var nearChunk) &&
+									    _chunkEntities.TryGetValue(nearCoordId, out var entityId))
 									{
-										if (!_waitBuildChunkCoords.Contains(nearCoordId))
+										var chunkEntity = new Entity(_world, entityId);
+
+										if (chunkEntity.IsAlive && chunkEntity.Has<ChunkComponent>())
 										{
-											_waitBuildChunkCoords.Add(nearCoordId);
+											var chunkComponent = chunkEntity.Get<ChunkComponent>();
+
+											if (!chunkComponent.isEmpty)
+											{
+												if (!_waitBuildChunkCoords.Contains(nearCoordId))
+												{
+													_waitBuildChunkCoords.Add(nearCoordId);
+												}
+
+												nearChunk.StopBuildMesh();
+
+												// 이미 Building 중이면 취소
+												_buildingChunkCoords.Remove(nearCoordId);
+											}
 										}
-
-										nearChunk.StopBuildMesh();
-
-										// 이미 Building 중이면 취소
-										_buildingChunkCoords.Remove(nearCoordId);
 									}
 								}
 							}
@@ -255,8 +239,8 @@ namespace UnityService.Rendering
 
 					_waitBuildChunkCoords.Sort((a, b) =>
 					{
-						var toASqr = VoxelUtility.GetCoordSqrDistance(_currentCenterCoord, a);
-						var toBSqr = VoxelUtility.GetCoordSqrDistance(_currentCenterCoord, b);
+						var toASqr = ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, a);
+						var toBSqr = ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, b);
 
 						return toASqr.CompareTo(toBSqr);
 					});
@@ -272,24 +256,35 @@ namespace UnityService.Rendering
 						break;
 					}
 
-					if (_chunks.TryGetValue(coord, out var chunk))
+					if (_chunkMeshBuilders.TryGetValue(coord, out var chunk))
 					{
-						var blockIdMap = _chunkData[coord].BlockIdMap;
+						var entityId = _chunkEntities[coord];
+						var chunkEntity = new Entity(_world, entityId);
 
-						chunk.RebuildMesh(
-							blockIdMap,
-							GetSolidMap(coord),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[0]),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[1]),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[2]),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[3]),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[4]),
-							GetSolidMap(coord + VoxelConstants.NearCoordAdders[5])
+						if (chunkEntity.IsAlive && chunkEntity.Has<ChunkComponent>())
+						{
+							var chunkComponent = chunkEntity.Get<ChunkComponent>();
+
+							chunk.RebuildMesh(
+								chunkComponent.blockIdMap,
+								GetSolidMap(coord),
+								GetSolidMap(coord + ChunkConstants.NearCoordAdders[0]),
+								GetSolidMap(coord + ChunkConstants.NearCoordAdders[1]),
+								GetSolidMap(coord + ChunkConstants.NearCoordAdders[2]),
+								GetSolidMap(coord + ChunkConstants.NearCoordAdders[3]),
+								GetSolidMap(coord + ChunkConstants.NearCoordAdders[4]),
+								GetSolidMap(coord + ChunkConstants.NearCoordAdders[5])
 							);
 
-						_waitBuildChunkCoords.RemoveAt(i--);
+							_waitBuildChunkCoords.RemoveAt(i--);
 
-						_buildingChunkCoords.Add(coord);
+							_buildingChunkCoords.Add(coord);
+						}
+						else
+						{
+							Debug.LogError($"Cannot find ChunkComponent at {coord}.");
+							_waitBuildChunkCoords.RemoveAt(i--);
+						}
 					}
 					else
 					{
@@ -302,7 +297,7 @@ namespace UnityService.Rendering
 				{
 					var coord = _buildingChunkCoords[i];
 
-					if (_chunks.TryGetValue(coord, out var chunk) && chunk.IsBuilding)
+					if (_chunkMeshBuilders.TryGetValue(coord, out var chunk) && chunk.IsBuilding)
 					{
 						chunk.UpdateBuildMesh();
 
@@ -314,7 +309,7 @@ namespace UnityService.Rendering
 					else
 					{
 						// 모종의 이유로 청크 목록에서 사라졌다면 로그 출력
-						Debug.LogError($"Building Chunk at { VoxelUtility.ConvertIdToPos(coord) } disappeared.");
+						Debug.LogError($"Building Chunk at { ChunkUtility.ConvertIdToPos(coord) } disappeared.");
 
 						_buildingChunkCoords.RemoveAt(i--);
 					}
@@ -327,9 +322,16 @@ namespace UnityService.Rendering
 
 		private bool[] GetSolidMap(int coord)
 		{
-			if (_chunkData.TryGetValue(coord, out var data))
+			if (_chunkEntities.TryGetValue(coord, out var entityId))
 			{
-				return data.IsSolidMap;
+				var chunkEntity = new Entity(_world, entityId);
+
+				if (chunkEntity.IsAlive && chunkEntity.Has<ChunkComponent>())
+				{
+					var chunkComponent = chunkEntity.Get<ChunkComponent>();
+
+					return chunkComponent.isSolidMap;
+				}
 			}
 
 			return EmptySolidMap;
@@ -337,9 +339,9 @@ namespace UnityService.Rendering
 
 		private void AddChunk(int coord)
 		{
-			if (_chunks.ContainsKey(coord))
+			if (_chunkMeshBuilders.ContainsKey(coord))
 			{
-				Debug.LogError($"Cannot add Chunk at same coord : { VoxelUtility.ConvertIdToPos(coord) }");
+				Debug.LogError($"Cannot add Chunk at same coord : { ChunkUtility.ConvertIdToPos(coord) }");
 				return;
 			}
 
@@ -348,57 +350,44 @@ namespace UnityService.Rendering
 				return;
 			}
 
-			var spawnCoordPos = new Vector3(VoxelUtility.GetCoordX(coord), VoxelUtility.GetCoordY(coord), VoxelUtility.GetCoordZ(coord));
-			var spawnPos = spawnCoordPos * VoxelConstants.ChunkAxisCount;
+			var spawnCoordPos = new Vector3(ChunkUtility.GetCoordX(coord), ChunkUtility.GetCoordY(coord), ChunkUtility.GetCoordZ(coord));
+			var spawnPos = spawnCoordPos * ChunkConstants.ChunkAxisCount;
 
 			var chunkGo = objectPoolService.Spawn(_chunkPoolGuid, spawnPos);
-			var chunk = chunkGo.GetComponent<Chunk>();
+			var chunk = chunkGo.GetComponent<ChunkMeshBuilder>();
 
-			chunk.gameObject.name = $"Chunk ({VoxelUtility.GetCoordX(coord)}, {VoxelUtility.GetCoordY(coord)}, {VoxelUtility.GetCoordZ(coord)})";
+			chunk.gameObject.name = $"Chunk ({ChunkUtility.GetCoordX(coord)}, {ChunkUtility.GetCoordY(coord)}, {ChunkUtility.GetCoordZ(coord)})";
 
-			_chunks.Add(coord, chunk);
+			_chunkMeshBuilders.Add(coord, chunk);
 
 			chunk.Initialize();
 
-			// FIXME : 테스트용 코드
-			int chunkType;
+			if (_chunkEntities.TryGetValue(coord, out var entityId))
+			{
+				var chunkEntity = new Entity(_world, entityId);
 
-			if (VoxelUtility.GetCoordY(coord) >= 0)
-			{
-				chunkType = -1;
-			}
-			else if (VoxelUtility.GetCoordY(coord) == -1)
-			{
-				chunkType = 1;
-			}
-			else
-			{
-				chunkType = 2;
-			}
+				if (chunkEntity.IsAlive && chunkEntity.Has<ChunkComponent>())
+				{
+					var chunkComponent = chunkEntity.Get<ChunkComponent>();
 
-			if (!_chunkData.TryGetValue(coord, out var chunkData))
-			{
-				chunkData = new ChunkData(chunkType);
-
-				_chunkData.Add(coord, chunkData);
-			}
-
-			if (chunkData.NeedBuild)
-			{
-				_waitBuildChunkCoords.Add(coord);
+					if (!chunkComponent.isEmpty)
+					{
+						_waitBuildChunkCoords.Add(coord);
+					}
+				}
 			}
 		}
 
 		private void RemoveChunk(int coord)
 		{
-			if (!_chunks.TryGetValue(coord, out var chunk))
+			if (!_chunkMeshBuilders.TryGetValue(coord, out var chunk))
 			{
-				Debug.LogError($"Has no Chunk to Remove at coord : { VoxelUtility.ConvertIdToPos(coord) }.");
+				Debug.LogError($"Has no Chunk to Remove at coord : { ChunkUtility.ConvertIdToPos(coord) }.");
 				return;
 			}
 
 			chunk.Dispose();
-			_chunks.Remove(coord);
+			_chunkMeshBuilders.Remove(coord);
 
 			_waitBuildChunkCoords.Remove(coord);
 			_buildingChunkCoords.Remove(coord);
