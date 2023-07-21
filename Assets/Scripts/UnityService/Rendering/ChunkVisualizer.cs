@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UnityService.Rendering
 {
-	public class ChunkMeshBuilder : MonoBehaviour, IDisposable
+	public class ChunkVisualizer : MonoBehaviour, IDisposable
 	{
 		private MeshFilter _meshFilter;
 		private MeshRenderer _meshRenderer;

@@ -89,8 +89,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99d0e721397549c0b37a992a4f998b5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkPoolGuid: e95dd735-6ab0-470e-84e2-b14c109adf2e
-  loadCoordMagnitude: 3
+  visualizerPoolGuid: e95dd735-6ab0-470e-84e2-b14c109adf2e
+  loadCoordDistance: 3
 --- !u!1 &1202181620193407008
 GameObject:
   m_ObjectHideFlags: 0
