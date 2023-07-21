@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SystemOrderSettingData
   m_EditorClassIdentifier: 
   systemOrders:
+  - Game.Ecs.System.NetworkEntitySystem
   - Game.Ecs.System.InputSystem
   - Game.Ecs.System.CommandSystem
   - Game.Ecs.System.MovementSystem

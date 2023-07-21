@@ -9,7 +9,10 @@
         "KdTree",
         "JSPool",
         "Unity.Collections",
-        "RAMGUnsafe"
+        "Network",
+        "RAMGUnsafe",
+        "LiteNetLib",
+        "MemoryPack"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -35,7 +35,30 @@ namespace Core.Utility
 
 			return results.ToArray();
 		}
-		
+
+		/// <summary>
+		/// 나중에 리팩토링 진행할 예정...
+		/// </summary>
+		/// <param name="assembly"></param>
+		/// <param name="attributeType"></param>
+		/// <returns></returns>
+		public static Type[] GetTypesWithAttribute(Assembly assembly, Type attributeType)
+		{
+			List<Type> results = new List<Type>();
+
+			var types = assembly.GetTypes();
+			foreach (var type in types)
+			{
+				var result = type.GetCustomAttribute(attributeType);
+				if (result != null)
+				{
+					results.Add(type);
+				}
+			}
+
+			return results.ToArray();
+		}
+
 		public static Type[] GetTypesWithInterface(Type interfaceType)
 		{
 			var playerAssemblies = GetUserCreatedAssemblies(AppDomain.CurrentDomain);
@@ -61,6 +84,32 @@ namespace Core.Utility
 			return results.ToArray();
 		}
 
+		/// <summary>
+		/// 나중에 리팩토링 진행할 예정...
+		/// </summary>
+		/// <param name="assembly"></param>
+		/// <param name="interfaceType"></param>
+		/// <returns></returns>
+		public static Type[] GetTypesWithInterface(Assembly assembly, Type interfaceType)
+		{
+			List<Type> results = new List<Type>();
+
+			var types = assembly.GetTypes();
+			foreach (var type in types)
+			{
+				if (interfaceType == type) continue;
+
+				var interfaces = type.GetInterfaces();
+				var resultIndex = Array.FindIndex(interfaces, t => t == interfaceType);
+				if (resultIndex >= 0)
+				{
+					results.Add(type);
+				}
+			}
+
+			return results.ToArray();
+		}
+
 		public static Type[] GetTypesByFullNames(IEnumerable<string> typeNames)
 		{
 			var playerAssemblies = GetUserCreatedAssemblies(AppDomain.CurrentDomain);
@@ -77,7 +126,7 @@ namespace Core.Utility
 					{
 						break;
 					}
-					
+
 					var index = typeNameList.FindIndex(x => x == type.FullName);
 
 					if (index >= 0)

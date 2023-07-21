@@ -3,8 +3,10 @@ using BlitzEcs;
 using Core.Unity;
 using Core.Utility;
 using Game.Ecs.Component;
+using Network.NetCommand.Client.Entity;
 using Service;
 using Service.Collision;
+using Service.Network;
 using UnityEngine;
 
 namespace Game.Ecs.System
@@ -43,6 +45,29 @@ namespace Game.Ecs.System
 					else
 					{
 						transformComponent.Position += (dir * dist);
+					}
+
+					if (entity.Has<PlayerComponent>() && entity.Has<NetIdComponent>())
+					{
+						var playerComponent = entity.Get<PlayerComponent>();
+						var netIdComponent = entity.Get<NetIdComponent>();
+
+						if (playerComponent.PlayerType == PlayerType.Local)
+						{
+							if (ServiceManager.TryGetService(out INetClientService clientService))
+							{
+								var pos = transformComponent.Position;
+								// dispose는 받는쪽에서 알아서 해줄 예정.
+								var command = CMD_ENTITY_MOVE.Create();
+
+								command.Id = netIdComponent.NetId;
+								command.Time = DateTime.UtcNow.ToUnixTime();
+								command.MovementFlags = MovementFlags.None;
+								command.SetPosition(pos.x, pos.y, pos.z);
+
+								clientService.SendCommand(command);
+							}
+						}
 					}
 				}
 

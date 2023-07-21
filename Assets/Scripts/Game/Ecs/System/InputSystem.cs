@@ -34,18 +34,21 @@ namespace Game.Ecs.System
 
 				foreach (var moveEntity in _movementQuery)
 				{
-					ref var movementComponent = ref moveEntity.Get<MovementComponent>();
-					ref var transformComponent = ref moveEntity.Get<TransformComponent>();
-
-					// 임시적으로 디렉션을 무브 디렉션을 사용하게 하자.
-					if (moveDirection != Vector3.zero)
+					if (moveEntity.Get<PlayerComponent>().PlayerType == PlayerType.Local)
 					{
-						transformComponent.Direction = moveDirection;
-						movementComponent.TargetRotation = Quaternion.LookRotation(moveDirection);
-					}
+						ref var movementComponent = ref moveEntity.Get<MovementComponent>();
+						ref var transformComponent = ref moveEntity.Get<TransformComponent>();
 
-					movementComponent.MoveDir = moveDirection;
-					movementComponent.IsRun = inputComponent.IsRun;
+						// 임시적으로 디렉션을 무브 디렉션을 사용하게 하자.
+						if (moveDirection != Vector3.zero)
+						{
+							transformComponent.Direction = moveDirection;
+							movementComponent.TargetRotation = Quaternion.LookRotation(moveDirection);
+						}
+
+						movementComponent.MoveDir = moveDirection;
+						movementComponent.IsRun = inputComponent.IsRun;
+					}
 				}
 			}
 		}

@@ -12,13 +12,13 @@ namespace UnityService
 	public class UnityServiceAttribute : Attribute
 	{
 		public Type ServiceInterfaceType { get; }
-		
+
 		public UnityServiceAttribute(Type serviceInterfaceType)
 		{
 			ServiceInterfaceType = serviceInterfaceType;
 		}
 	}
-	
+
 	/// <summary>
 	/// 유니티 서비스들을 자동으로 주입하는 인젝터.
 	/// 추후 좋은 방법이 있다면 그러한 구조로 개선.
@@ -36,7 +36,7 @@ namespace UnityService
 				if (unityServiceAttribute != null)
 				{
 					var interfaceType = unityServiceAttribute.ServiceInterfaceType;
-					var result = FindObjectOfType(type);
+					var result = FindAnyObjectByType(type);
 
 					if (result is IGameService gameService)
 					{

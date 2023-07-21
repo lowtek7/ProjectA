@@ -126,10 +126,9 @@ namespace UnityService.Input
 				{
 					mouseXDegree = UnityEngine.Input.GetAxis("Mouse X");
 					mouseYDegree = UnityEngine.Input.GetAxis("Mouse Y");
-					
 				}
 			}
-			
+
 			foreach (var entity in cameraQuery)
 			{
 				ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
