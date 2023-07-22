@@ -26,6 +26,18 @@ namespace RuntimeDebugger
 
 		private readonly List<Type> _removedByFilterBuffer = new();
 
+		private AdvancedTypePopup _popup;
+
+		private void OnEnable()
+		{
+			DisposePopup();
+		}
+
+		private void OnDisable()
+		{
+			DisposePopup();
+		}
+
 		private void OnGUI()
 		{
 			if (ServiceManager.TryGetService(out IWorldGetterService worldGetterService))
@@ -106,16 +118,14 @@ namespace RuntimeDebugger
 
 				using (var scope = new EditorGUILayout.ScrollViewScope(scrollPos))
 				{
-					var index = 0;
+					var count = 0;
 
 					foreach (var entityId in world.EntityIds)
 					{
-						if (entityCount <= index)
+						if (entityCount < ++count)
 						{
 							break;
 						}
-
-						index++;
 
 						if (!foldMap.TryGetValue(entityId, out var componentFoldMap))
 						{
@@ -232,17 +242,37 @@ namespace RuntimeDebugger
 			}
 
 			var state = new AdvancedDropdownState();
-			var popup = new AdvancedTypePopup(componentTypes,
-				13,
-				state);
 
-			popup.SetTypes(componentTypes);
-			popup.Show(new Rect(0, 0, 400, 400));
+			_popup ??= new AdvancedTypePopup(componentTypes, 13, state);
 
-			popup.OnItemSelected += (item) =>
+			_popup.OnItemSelected -= AddIncludeFilter;
+			_popup.OnItemSelected -= AddExcludeFilter;
+
+			_popup.OnItemSelected += target == _includedComponents ? AddIncludeFilter : AddExcludeFilter;
+
+			_popup.SetTypes(componentTypes);
+			_popup.Show(new Rect(0, 0, 400, 400));
+		}
+
+		private void AddIncludeFilter(AdvancedTypePopupItem item)
+		{
+			_includedComponents.Add(item.Type);
+		}
+
+		private void AddExcludeFilter(AdvancedTypePopupItem item)
+		{
+			_excludedComponents.Add(item.Type);
+		}
+
+		private void DisposePopup()
+		{
+			if (_popup != null)
 			{
-				target.Add(item.Type);
-			};
+				_popup.OnItemSelected -= AddIncludeFilter;
+				_popup.OnItemSelected -= AddExcludeFilter;
+			}
+
+			_popup = null;
 		}
 	}
 }
