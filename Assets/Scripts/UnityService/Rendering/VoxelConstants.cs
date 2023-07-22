@@ -37,17 +37,6 @@ namespace UnityService.Rendering
 			new(1, 1),
 		};
 
-		public static readonly Vector3Int[] NearVoxels =
-		{
-			Vector3Int.right,
-			Vector3Int.left,
-			Vector3Int.up,
-			Vector3Int.down,
-			Vector3Int.forward,
-			Vector3Int.back,
-		};
-
-		public static readonly int BlockSideCount = VoxelTris.GetLength(0);
 		public static readonly int VertexInSideCount = VoxelTris.GetLength(1);
 	}
 }

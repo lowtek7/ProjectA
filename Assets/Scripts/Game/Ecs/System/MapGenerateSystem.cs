@@ -82,7 +82,6 @@ namespace Game.Ecs.System
 							coordId = coordId,
 							blockIdMap = blockIdMap,
 							isSolidMap = isSolidMap,
-							isEmpty = chunkType == ChunkConstants.InvalidBlockId,
 						});
 					}
 

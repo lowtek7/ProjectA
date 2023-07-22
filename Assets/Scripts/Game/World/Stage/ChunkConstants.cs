@@ -1,4 +1,6 @@
-﻿namespace Game.World.Stage
+﻿using UnityEngine;
+
+namespace Game.World.Stage
 {
 	public static class ChunkConstants
 	{
@@ -35,6 +37,18 @@
 			-(1 << ChunkCoordZExponent),	// Back
 		};
 
+		public static readonly Vector3Int[] NearVoxels =
+		{
+			Vector3Int.right,
+			Vector3Int.left,
+			Vector3Int.up,
+			Vector3Int.down,
+			Vector3Int.forward,
+			Vector3Int.back,
+		};
+
 		public static readonly ushort InvalidBlockId = ushort.MaxValue;
+
+		public static readonly int BlockSideCount = 6;
 	}
 }

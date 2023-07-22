@@ -66,7 +66,7 @@ namespace UnityService.Rendering
 
 				// Capacity를 미리 크게 잡아둠
 				var normalSideCount = ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount *
-					VoxelConstants.BlockSideCount / 2;
+					ChunkConstants.BlockSideCount / 2;
 
 				vertices = new NativeArray<Vector3>(normalSideCount * 4, lifeType);
 				triangles = new NativeArray<int>(normalSideCount * 6, lifeType);
@@ -131,7 +131,7 @@ namespace UnityService.Rendering
 			{
 				var pos = new Vector3(x, y, z);
 
-				for (int s = 0; s < VoxelConstants.BlockSideCount; s++)
+				for (int s = 0; s < ChunkConstants.BlockSideCount; s++)
 				{
 					var nearX = x;
 					var nearY = y;
@@ -242,7 +242,7 @@ namespace UnityService.Rendering
 
 			// Capacity를 미리 크게 잡아둠
 			var normalSideCount =
-				ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * VoxelConstants.BlockSideCount;
+				ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * ChunkConstants.BlockSideCount;
 
 			_verticesPool = new Vector3[normalSideCount * 4];
 			_trianglesPool = new int[normalSideCount * 6];
@@ -296,27 +296,31 @@ namespace UnityService.Rendering
 
 			_currentBuildingMeshJobHandler.Value.Complete();
 
-			var verticesSeg = CopyNativeArray(buildingMeshJob.vertices, ref _verticesPool, buildingMeshJob.meshDataCounts[0]);
-			var uvsSeg = CopyNativeArray(buildingMeshJob.uvs, ref _uvsPool, buildingMeshJob.meshDataCounts[1]);
-			var trianglesSeg = CopyNativeArray(buildingMeshJob.triangles, ref _trianglesPool, buildingMeshJob.meshDataCounts[2]);
-
-			// TODO : Array가 새로 할당되었으면 사이즈가 동일하다는 뜻이므로, Segment를 통하지 않고 바로 넣어도 될 것임
-
-			var mesh = new Mesh
+			// 비어있지 않은 경우에만 데이터를 넣어줌
+			if (buildingMeshJob.meshDataCounts[0] > 0)
 			{
-				vertices = verticesSeg.ToArray(),
-				triangles = trianglesSeg.ToArray(),
-				uv = uvsSeg.ToArray()
-			};
+				var verticesSeg = CopyNativeArray(buildingMeshJob.vertices, ref _verticesPool, buildingMeshJob.meshDataCounts[0]);
+				var uvsSeg = CopyNativeArray(buildingMeshJob.uvs, ref _uvsPool, buildingMeshJob.meshDataCounts[1]);
+				var trianglesSeg = CopyNativeArray(buildingMeshJob.triangles, ref _trianglesPool, buildingMeshJob.meshDataCounts[2]);
+
+				// TODO : Array가 새로 할당되었으면 사이즈가 동일하다는 뜻이므로, Segment를 통하지 않고 바로 넣어도 될 것임
+
+				var mesh = new Mesh
+				{
+					vertices = verticesSeg.ToArray(),
+					triangles = trianglesSeg.ToArray(),
+					uv = uvsSeg.ToArray()
+				};
+
+				mesh.RecalculateNormals();
+				_meshFilter.mesh = mesh;
+				_meshRenderer.enabled = true;
+			}
 
 			buildingMeshJob.Dispose();
 
 			_currentBuildingMeshJob = null;
 			_currentBuildingMeshJobHandler = null;
-
-			mesh.RecalculateNormals();
-			_meshFilter.mesh = mesh;
-			_meshRenderer.enabled = true;
 		}
 
 		public void StopBuildMesh()

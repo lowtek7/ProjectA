@@ -15,8 +15,6 @@ namespace Game.Ecs.Component
 		/// </summary>
 		public bool[] isSolidMap;
 
-		public bool isEmpty;
-
 		public IComponent Clone()
 		{
 			var newBlockIdMap = new ushort[blockIdMap.Length];
@@ -30,7 +28,6 @@ namespace Game.Ecs.Component
 				coordId = coordId,
 				blockIdMap = newBlockIdMap,
 				isSolidMap = newIsSolidMap,
-				isEmpty = isEmpty,
 			};
 		}
 	}

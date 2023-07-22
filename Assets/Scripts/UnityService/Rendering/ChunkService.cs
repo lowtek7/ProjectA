@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using BlitzEcs;
 using Core.Utility;
 using Game;
@@ -49,38 +48,20 @@ namespace UnityService.Rendering
 
 		private const int MaxBuildingJobCount = 5;
 
-		/// <summary>
-		/// Coord -> ChunkComponent Entity
-		/// </summary>
-		private readonly Dictionary<int, int> _chunkEntities = new();
+		public int CoordViewDistance => loadCoordDistance;
+
+		private bool _needSortWaitBuild = false;
+
+		private readonly Dictionary<int, Entity> _chunkEntityBuffer = new();
 
 		private World _world;
-		private Query<PlayerComponent, TransformComponent> _playerQuery;
+
 		private Query<ChunkComponent> _chunkQuery;
 
 		public void Init(World world)
 		{
 			_world = world;
-
-			_playerQuery = new Query<PlayerComponent, TransformComponent>(world);
-			_chunkQuery = new Query<ChunkComponent>(world);
-
-			// 대략 구체에 가까운 모양새로 생성
-			for (int x = -loadCoordDistance; x <= loadCoordDistance; x++)
-			{
-				for (int y = -loadCoordDistance; y <= loadCoordDistance; y++)
-				{
-					for (int z = -loadCoordDistance; z <= loadCoordDistance; z++)
-					{
-						if (x * x + y * y + z * z <= loadCoordDistance * loadCoordDistance)
-						{
-							_visualizeLocalCoords.Add(new Vector3Int(x, y, z));
-						}
-					}
-				}
-			}
-
-			_visualizeLocalCoords.Sort((a, b) => a.sqrMagnitude.CompareTo(b.sqrMagnitude));
+			_chunkQuery = new Query<ChunkComponent>(_world);
 
 			// 동시에 사용 가능한 Coord 개수로 Add/Remove 버퍼 사이즈를 잡아줌
 			var bufferSize = _visualizeLocalCoords.Count;
@@ -137,195 +118,107 @@ namespace UnityService.Rendering
 			}
 		}
 
-		public void LateUpdate()
+		public void StartFetch()
 		{
-			// 월드가 생성되기 전까지는 동작하지 않도록
-			if (_world == null)
+			foreach (var chunkEntity in _chunkQuery)
 			{
-				return;
-			}
+				var chunkComponent = chunkEntity.Get<ChunkComponent>();
 
-			if (_chunkEntities.Count == 0)
+				_chunkEntityBuffer.Add(chunkComponent.coordId, chunkEntity);
+			}
+		}
+
+		public void EndFetch()
+		{
+			if (_needSortWaitBuild)
 			{
-				foreach (var entity in _chunkQuery)
+				_waitBuildVisualizerCoords.Sort((a, b) =>
 				{
-					var chunkComponent = entity.Get<ChunkComponent>();
+					var toASqr = ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, a);
+					var toBSqr = ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, b);
 
-					_chunkEntities.Add(chunkComponent.coordId, entity.Id);
-				}
+					return toASqr.CompareTo(toBSqr);
+				});
+
+				_needSortWaitBuild = false;
 			}
 
-			if (_chunkEntities.Count == 0)
+			// Streaming
+			for (int i = 0; i < _waitBuildVisualizerCoords.Count; i++)
 			{
-				return;
-			}
+				var coord = _waitBuildVisualizerCoords[i];
 
-			foreach (var entity in _playerQuery)
-			{
-				var transformComponent = entity.Get<TransformComponent>();
-				var curPos = transformComponent.Position;
-				var prevCenterCoord = _currentCenterCoord;
-
-				_currentCenterCoord = ChunkUtility.GetCoordId(
-					ChunkUtility.GetCoordAxis(curPos.x),
-					ChunkUtility.GetCoordAxis(curPos.y),
-					ChunkUtility.GetCoordAxis(curPos.z)
-					);
-
-				// Remove
-				if (_currentCenterCoord != prevCenterCoord)
+				if (_buildingVisualizerCoords.Count == MaxBuildingJobCount)
 				{
-					Debug.Log($"Player moved Chunk : from {ChunkUtility.ConvertIdToPos(prevCenterCoord)} to {ChunkUtility.ConvertIdToPos(_currentCenterCoord)}");
-
-					foreach (var keyValue in _visualizers)
-					{
-						var coord = keyValue.Key;
-
-						if (ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, coord) > loadCoordDistance * loadCoordDistance)
-						{
-							_removeVisualizerCoordBuffer.Add(coord);
-						}
-					}
-
-					foreach (var coord in _removeVisualizerCoordBuffer)
-					{
-						RemoveVisualizer(coord);
-					}
-
-					_removeVisualizerCoordBuffer.Clear();
-
-					foreach (var localOffset in _visualizeLocalCoords)
-					{
-						// 해당 좌표가 청크 범위를 넘어서지 않을 때 & Visualize되어있지 않은 경우만 체크
-						if (ChunkUtility.TryMoveCoord(_currentCenterCoord, localOffset.x, localOffset.y, localOffset.z,
-							    out var movedCoordId) && !_visualizers.ContainsKey(movedCoordId))
-						{
-							AddVisualizer(movedCoordId);
-
-							for (int i = 0; i < VoxelConstants.BlockSideCount; i++)
-							{
-								var nearOffset = VoxelConstants.NearVoxels[i];
-
-								if (ChunkUtility.TryMoveCoord(movedCoordId,
-									    nearOffset.x, nearOffset.y, nearOffset.z, out var nearCoordId))
-								{
-									if (_visualizers.TryGetValue(nearCoordId, out var nearChunkBuilder) &&
-									    _chunkEntities.TryGetValue(nearCoordId, out var entityId))
-									{
-										var chunkEntity = new Entity(_world, entityId);
-
-										if (chunkEntity.IsAlive && chunkEntity.Has<ChunkComponent>())
-										{
-											var chunkComponent = chunkEntity.Get<ChunkComponent>();
-
-											if (!chunkComponent.isEmpty)
-											{
-												if (!_waitBuildVisualizerCoords.Contains(nearCoordId))
-												{
-													_waitBuildVisualizerCoords.Add(nearCoordId);
-												}
-
-												nearChunkBuilder.StopBuildMesh();
-
-												// 이미 Building 중이면 취소
-												_buildingVisualizerCoords.Remove(nearCoordId);
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-
-					_waitBuildVisualizerCoords.Sort((a, b) =>
-					{
-						var toASqr = ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, a);
-						var toBSqr = ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, b);
-
-						return toASqr.CompareTo(toBSqr);
-					});
+					break;
 				}
 
-				// Streaming
-				for (int i = 0; i < _waitBuildVisualizerCoords.Count; i++)
+				if (_visualizers.TryGetValue(coord, out var visualizer))
 				{
-					var coord = _waitBuildVisualizerCoords[i];
+					var entityId = _chunkEntityBuffer[coord];
+					var chunkEntity = new Entity(_world, entityId);
 
-					if (_buildingVisualizerCoords.Count == MaxBuildingJobCount)
+					if (chunkEntity.IsAlive && chunkEntity.Has<ChunkComponent>())
 					{
-						break;
-					}
+						var chunkComponent = chunkEntity.Get<ChunkComponent>();
 
-					if (_visualizers.TryGetValue(coord, out var visualizer))
-					{
-						var entityId = _chunkEntities[coord];
-						var chunkEntity = new Entity(_world, entityId);
+						visualizer.RebuildMesh(
+							chunkComponent.blockIdMap,
+							GetSolidMap(coord),
+							GetSolidMap(coord + ChunkConstants.NearCoordAdders[0]),
+							GetSolidMap(coord + ChunkConstants.NearCoordAdders[1]),
+							GetSolidMap(coord + ChunkConstants.NearCoordAdders[2]),
+							GetSolidMap(coord + ChunkConstants.NearCoordAdders[3]),
+							GetSolidMap(coord + ChunkConstants.NearCoordAdders[4]),
+							GetSolidMap(coord + ChunkConstants.NearCoordAdders[5])
+						);
 
-						if (chunkEntity.IsAlive && chunkEntity.Has<ChunkComponent>())
-						{
-							var chunkComponent = chunkEntity.Get<ChunkComponent>();
+						_waitBuildVisualizerCoords.RemoveAt(i--);
 
-							visualizer.RebuildMesh(
-								chunkComponent.blockIdMap,
-								GetSolidMap(coord),
-								GetSolidMap(coord + ChunkConstants.NearCoordAdders[0]),
-								GetSolidMap(coord + ChunkConstants.NearCoordAdders[1]),
-								GetSolidMap(coord + ChunkConstants.NearCoordAdders[2]),
-								GetSolidMap(coord + ChunkConstants.NearCoordAdders[3]),
-								GetSolidMap(coord + ChunkConstants.NearCoordAdders[4]),
-								GetSolidMap(coord + ChunkConstants.NearCoordAdders[5])
-							);
-
-							_waitBuildVisualizerCoords.RemoveAt(i--);
-
-							_buildingVisualizerCoords.Add(coord);
-						}
-						else
-						{
-							Debug.LogError($"Cannot find ChunkComponent at {coord}.");
-							_waitBuildVisualizerCoords.RemoveAt(i--);
-						}
+						_buildingVisualizerCoords.Add(coord);
 					}
 					else
 					{
+						Debug.LogError($"Cannot find ChunkComponent at {coord}.");
 						_waitBuildVisualizerCoords.RemoveAt(i--);
 					}
 				}
-
-				// Check Build Done
-				for (int i = 0; i < _buildingVisualizerCoords.Count; i++)
+				else
 				{
-					var coord = _buildingVisualizerCoords[i];
+					_waitBuildVisualizerCoords.RemoveAt(i--);
+				}
+			}
 
-					if (_visualizers.TryGetValue(coord, out var visualizer) && visualizer.IsBuilding)
+			// Check Build Done
+			for (int i = 0; i < _buildingVisualizerCoords.Count; i++)
+			{
+				var coord = _buildingVisualizerCoords[i];
+
+				if (_visualizers.TryGetValue(coord, out var visualizer) && visualizer.IsBuilding)
+				{
+					visualizer.UpdateBuildMesh();
+
+					if (!visualizer.IsBuilding)
 					{
-						visualizer.UpdateBuildMesh();
-
-						if (!visualizer.IsBuilding)
-						{
-							_buildingVisualizerCoords.RemoveAt(i--);
-						}
-					}
-					else
-					{
-						// 모종의 이유로 청크 목록에서 사라졌다면 로그 출력
-						Debug.LogError($"Building ChunkVisualizer at { ChunkUtility.ConvertIdToPos(coord) } disappeared.");
-
 						_buildingVisualizerCoords.RemoveAt(i--);
 					}
 				}
+				else
+				{
+					// 모종의 이유로 청크 목록에서 사라졌다면 로그 출력
+					Debug.LogError($"Building ChunkVisualizer at { ChunkUtility.ConvertIdToPos(coord) } disappeared.");
 
-				// FIXME
-				break;
+					_buildingVisualizerCoords.RemoveAt(i--);
+				}
 			}
+
+			_chunkEntityBuffer.Clear();
 		}
 
 		private bool[] GetSolidMap(int coord)
 		{
-			if (_chunkEntities.TryGetValue(coord, out var entityId))
+			if (_chunkEntityBuffer.TryGetValue(coord, out var chunkEntity))
 			{
-				var chunkEntity = new Entity(_world, entityId);
-
 				if (chunkEntity.IsAlive && chunkEntity.Has<ChunkComponent>())
 				{
 					var chunkComponent = chunkEntity.Get<ChunkComponent>();
@@ -337,11 +230,27 @@ namespace UnityService.Rendering
 			return EmptySolidMap;
 		}
 
-		private void AddVisualizer(int coord)
+		private bool TryGetCoord(Entity chunkEntity, out int coordId)
 		{
-			if (_visualizers.ContainsKey(coord))
+			if (chunkEntity.Has<ChunkComponent>())
 			{
-				Debug.LogError($"Cannot add ChunkVisualizer at same coord : { ChunkUtility.ConvertIdToPos(coord) }");
+				var chunkComponent = chunkEntity.Get<ChunkComponent>();
+
+				coordId = chunkComponent.coordId;
+
+				return true;
+			}
+
+			coordId = ChunkConstants.InvalidCoordId;
+
+			return false;
+		}
+
+		public void AddVisualizer(Entity entity)
+		{
+			if (!TryGetCoord(entity, out var coordId) || _visualizers.ContainsKey(coordId))
+			{
+				Debug.LogError($"Cannot add ChunkVisualizer at same coord : { ChunkUtility.ConvertIdToPos(coordId) }");
 				return;
 			}
 
@@ -350,54 +259,70 @@ namespace UnityService.Rendering
 				return;
 			}
 
-			var spawnCoordPos = new Vector3(ChunkUtility.GetCoordX(coord), ChunkUtility.GetCoordY(coord), ChunkUtility.GetCoordZ(coord));
+			var spawnCoordPos = new Vector3(ChunkUtility.GetCoordX(coordId), ChunkUtility.GetCoordY(coordId), ChunkUtility.GetCoordZ(coordId));
 			var spawnPos = spawnCoordPos * ChunkConstants.ChunkAxisCount;
 
 			var visualizerGo = objectPoolService.Spawn(_visualizerPoolGuid, spawnPos);
 			var visualizer = visualizerGo.GetComponent<ChunkVisualizer>();
 
-			visualizer.gameObject.name = $"ChunkVisualizer ({ChunkUtility.GetCoordX(coord)}, {ChunkUtility.GetCoordY(coord)}, {ChunkUtility.GetCoordZ(coord)})";
+			visualizer.gameObject.name = $"ChunkVisualizer ({ChunkUtility.GetCoordX(coordId)}, {ChunkUtility.GetCoordY(coordId)}, {ChunkUtility.GetCoordZ(coordId)})";
 
-			_visualizers.Add(coord, visualizer);
+			_visualizers.Add(coordId, visualizer);
 
 			visualizer.Initialize();
 
-			if (_chunkEntities.TryGetValue(coord, out var entityId))
-			{
-				var chunkEntity = new Entity(_world, entityId);
+			_waitBuildVisualizerCoords.Add(coordId);
 
-				if (chunkEntity.IsAlive && chunkEntity.Has<ChunkComponent>())
-				{
-					var chunkComponent = chunkEntity.Get<ChunkComponent>();
-
-					if (!chunkComponent.isEmpty)
-					{
-						_waitBuildVisualizerCoords.Add(coord);
-					}
-				}
-			}
+			_needSortWaitBuild = true;
 		}
 
-		private void RemoveVisualizer(int coord)
+		public void RemoveVisualizer(Entity entity)
 		{
-			if (!_visualizers.TryGetValue(coord, out var visualizer))
+			if (!TryGetCoord(entity, out var coordId) || !_visualizers.TryGetValue(coordId, out var visualizer))
 			{
-				Debug.LogError($"Has no ChunkVisualizer to Remove at coord : { ChunkUtility.ConvertIdToPos(coord) }.");
+				Debug.LogError($"Has no ChunkVisualizer to Remove at coord : { ChunkUtility.ConvertIdToPos(coordId) }.");
 				return;
 			}
 
 			visualizer.Dispose();
-			_visualizers.Remove(coord);
+			_visualizers.Remove(coordId);
 
-			_waitBuildVisualizerCoords.Remove(coord);
-			_buildingVisualizerCoords.Remove(coord);
+			_waitBuildVisualizerCoords.Remove(coordId);
+			_buildingVisualizerCoords.Remove(coordId);
 
-			if (!ServiceManager.TryGetService<IObjectPoolService>(out var objectPoolService))
+			if (ServiceManager.TryGetService<IObjectPoolService>(out var objectPoolService))
+			{
+				objectPoolService.Despawn(visualizer.gameObject);
+			}
+		}
+
+		public void UpdateVisualizer(Entity entity)
+		{
+			if (!TryGetCoord(entity, out var coordId))
 			{
 				return;
 			}
 
-			objectPoolService.Despawn(visualizer.gameObject);
+			if (!_visualizers.TryGetValue(coordId, out var visualizer))
+			{
+				Debug.LogWarning($"Has no ChunkVisualizer at coord : { ChunkUtility.ConvertIdToPos(coordId) }.");
+
+				AddVisualizer(entity);
+
+				visualizer = _visualizers[coordId];
+			}
+
+			if (!_waitBuildVisualizerCoords.Contains(coordId))
+			{
+				_waitBuildVisualizerCoords.Add(coordId);
+
+				_needSortWaitBuild = true;
+			}
+
+			visualizer.StopBuildMesh();
+
+			// 이미 Building 중이면 취소
+			_buildingVisualizerCoords.Remove(coordId);
 		}
 	}
 }
