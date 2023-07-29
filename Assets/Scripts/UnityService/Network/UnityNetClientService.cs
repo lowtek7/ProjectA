@@ -207,7 +207,7 @@ namespace UnityService.Network
 
 				var memoryPackReader = new MemoryPackReader(body, state);
 				// command를 불러오기전에 Disconnect 체크가 필요한가?
-				var command = packetManager.ToCommand(ref memoryPackReader);
+				var command = packetManager.ToCommand(opcode, ref memoryPackReader);
 
 				if (command is IDisposable disposable)
 				{

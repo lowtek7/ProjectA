@@ -40,11 +40,8 @@ namespace Network.Packet.Handler
 			}
 		}
 
-		public INetCommand ToCommand(ref MemoryPackReader reader)
+		public INetCommand ToCommand(Opcode opcode, ref MemoryPackReader reader)
 		{
-			var length = reader.ReadValue<ushort>();
-			var opcode = (Opcode) reader.ReadValue<short>();
-
 			if (PacketHandlers.TryGetValue(opcode, out var packetHandler))
 			{
 				return packetHandler.ToCommand(ref reader);
