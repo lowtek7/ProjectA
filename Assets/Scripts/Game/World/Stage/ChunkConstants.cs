@@ -6,6 +6,7 @@ namespace Game.World.Stage
 	{
 		public static readonly int ChunkAxisExponent = 4;
 		public static readonly int ChunkAxisCount = 1 << ChunkAxisExponent;
+		public static readonly int MaxBlockCountInChunk = ChunkAxisCount * ChunkAxisCount * ChunkAxisCount;
 
 		public static readonly int ChunkCoordZExponent = 0;
 		private static readonly int ChunkCoordZBitCount = 4;

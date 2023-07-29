@@ -65,8 +65,7 @@ namespace UnityService.Rendering
 				_isSolidBack = new NativeArray<bool>(isSolidBack, lifeType);
 
 				// Capacity를 미리 크게 잡아둠
-				var normalSideCount = ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount *
-					ChunkConstants.BlockSideCount / 2;
+				var normalSideCount = ChunkConstants.MaxBlockCountInChunk * ChunkConstants.BlockSideCount / 2;
 
 				vertices = new NativeArray<Vector3>(normalSideCount * 4, lifeType);
 				triangles = new NativeArray<int>(normalSideCount * 6, lifeType);

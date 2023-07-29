@@ -1,4 +1,5 @@
-﻿using BlitzEcs;
+﻿using System.Collections.Generic;
+using BlitzEcs;
 using Core.Unity;
 using Game.Ecs.Component;
 using Game.World.Stage;
@@ -26,6 +27,7 @@ namespace Game.Ecs.System
 
 				if (stagePropertyComponent.CanGenerate)
 				{
+
 					for (var coordId = 0; coordId < ChunkConstants.TotalChunkCount; coordId++)
 					{
 						// FIXME : 테스트용 코드
@@ -45,8 +47,9 @@ namespace Game.Ecs.System
 							chunkType = 2;
 						}
 
-						var capacity = ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount;
+						var capacity = ChunkConstants.MaxBlockCountInChunk;
 
+						var childBounds = new List<MultiBoundsComponent.ChildBoundsInfo>(capacity);
 						var blockIdMap = new ushort[capacity];
 						var isSolidMap = new bool[capacity];
 
@@ -72,6 +75,15 @@ namespace Game.Ecs.System
 									}
 
 									isSolidMap[index] = blockIdMap[index] != ChunkConstants.InvalidBlockId;
+
+									if (isSolidMap[index])
+									{
+										childBounds.Add(new MultiBoundsComponent.ChildBoundsInfo
+										{
+											centerOffset = new Vector3(x, y, z) + Vector3.one * 0.5f,
+											size = Vector3.one
+										});
+									}
 								}
 							}
 						}
@@ -89,6 +101,17 @@ namespace Game.Ecs.System
 						{
 							Direction = Vector3.up,
 							Position = ChunkUtility.ConvertIdToPos(coordId) * ChunkConstants.ChunkAxisCount
+						});
+
+						chunkEntity.Add(new StageSpecComponent
+						{
+							StageGuid = stagePropertyComponent.StageGuid
+						});
+
+						chunkEntity.Add(new MultiBoundsComponent
+						{
+							ChildBounds = childBounds,
+							Capacity = childBounds.Capacity,
 						});
 					}
 

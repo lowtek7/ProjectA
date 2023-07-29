@@ -37,7 +37,7 @@ namespace UnityService.Rendering
 		public static readonly Dictionary<int, PackedTextureUvInfo> UvInfo = new();
 
 		private static readonly bool[] EmptySolidMap = ArrayUtility.CreateArrayFilledWith(
-			ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount,
+			ChunkConstants.MaxBlockCountInChunk,
 			true
 			);
 
