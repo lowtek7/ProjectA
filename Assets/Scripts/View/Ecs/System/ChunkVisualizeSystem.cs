@@ -65,9 +65,12 @@ namespace View.Ecs.System
 
 			chunkService.StartFetch();
 
+			// Distance가 플레이 도중 바뀌었을 때 캐싱해둔 CoordOffset을 갱신
 			if (chunkService.CoordViewDistance != _coordViewDistance)
 			{
 				_coordViewDistance = chunkService.CoordViewDistance;
+
+				_visualizeLocalCoords.Clear();
 
 				for (int x = -_coordViewDistance; x <= _coordViewDistance; x++)
 				{
@@ -98,8 +101,10 @@ namespace View.Ecs.System
 					ChunkUtility.GetCoordAxis(curPos.z)
 				);
 
+				// 플레이어의 Coord가 변경되었을 때
 				if (_currentCenterCoord != prevCenterCoord)
 				{
+					// 시각화되어있던 청크들 중 범위에서 벗어나는 것은 가상화
 					foreach (var visualizedChunkEntity in _visualizedChunkQuery)
 					{
 						var chunkComponent = visualizedChunkEntity.Get<ChunkComponent>();
@@ -113,10 +118,12 @@ namespace View.Ecs.System
 						}
 						else
 						{
+							// 시각화가 유지되어야 하는 것은 버퍼에 넣어둠
 							_visualizedChunkBuffer.Add(chunkComponent.coordId, visualizedChunkEntity);
 						}
 					}
 
+					// 가상 청크 버퍼 갱신
 					foreach (var chunkEntity in _virtualChunkQuery)
 					{
 						var chunkComponent = chunkEntity.Get<ChunkComponent>();
@@ -126,6 +133,7 @@ namespace View.Ecs.System
 
 					foreach (var localOffset in _visualizeLocalCoords)
 					{
+						// 활성화하려는 청크의 Coord가 존재한다면
 						if (ChunkUtility.TryMoveCoord(_currentCenterCoord, localOffset.x, localOffset.y, localOffset.z,
 							    out var movedCoordId) && _virtualChunkBuffer.TryGetValue(movedCoordId, out var chunkEntity))
 						{
@@ -133,6 +141,7 @@ namespace View.Ecs.System
 
 							chunkService.AddVisualizer(chunkEntity);
 
+							// 근처 6방향의 시각화된 청크도 갱신
 							for (int i = 0; i < ChunkConstants.BlockSideCount; i++)
 							{
 								var nearOffset = ChunkConstants.NearVoxels[i];

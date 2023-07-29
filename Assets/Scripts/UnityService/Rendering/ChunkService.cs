@@ -31,13 +31,8 @@ namespace UnityService.Rendering
 
 		private Dictionary<int, ChunkVisualizer> _visualizers;
 
-		private List<int> _removeVisualizerCoordBuffer;
 		private List<int> _waitBuildVisualizerCoords;
 		private List<int> _buildingVisualizerCoords;
-
-		private readonly List<Vector3Int> _visualizeLocalCoords = new();
-
-		private int _currentCenterCoord = ChunkConstants.InvalidCoordId;
 
 		public static readonly Dictionary<int, PackedTextureUvInfo> UvInfo = new();
 
@@ -52,23 +47,39 @@ namespace UnityService.Rendering
 
 		private bool _needSortWaitBuild = false;
 
-		private readonly Dictionary<int, Entity> _chunkEntityBuffer = new();
-
 		private World _world;
 
 		private Query<ChunkComponent> _chunkQuery;
+
+		private Query<PlayerComponent, TransformComponent> _playerQuery;
+
+		private readonly Dictionary<int, Entity> _chunkEntityBuffer = new();
 
 		public void Init(World world)
 		{
 			_world = world;
 			_chunkQuery = new Query<ChunkComponent>(_world);
+			_playerQuery = new Query<PlayerComponent, TransformComponent>(_world);
+
+			var bufferSize = 0;
 
 			// 동시에 사용 가능한 Coord 개수로 Add/Remove 버퍼 사이즈를 잡아줌
-			var bufferSize = _visualizeLocalCoords.Count;
+			for (int x = -loadCoordDistance; x <= loadCoordDistance; x++)
+			{
+				for (int y = -loadCoordDistance; y <= loadCoordDistance; y++)
+				{
+					for (int z = -loadCoordDistance; z <= loadCoordDistance; z++)
+					{
+						if (x * x + y * y + z * z <= loadCoordDistance * loadCoordDistance)
+						{
+							bufferSize++;
+						}
+					}
+				}
+			}
 
 			_visualizers = new(bufferSize);
 
-			_removeVisualizerCoordBuffer = new(bufferSize);
 			_waitBuildVisualizerCoords = new(bufferSize);
 			_buildingVisualizerCoords = new(MaxBuildingJobCount);
 
@@ -120,6 +131,7 @@ namespace UnityService.Rendering
 
 		public void StartFetch()
 		{
+			// 청크들을 캐싱해둘 순 없으니, 매번 버퍼를 갱신해둠
 			foreach (var chunkEntity in _chunkQuery)
 			{
 				var chunkComponent = chunkEntity.Get<ChunkComponent>();
@@ -130,17 +142,39 @@ namespace UnityService.Rendering
 
 		public void EndFetch()
 		{
+			// 신규 시각화 요청이 존재하여, 목록을 다시 정렬할 필요가 있다면
 			if (_needSortWaitBuild)
 			{
-				_waitBuildVisualizerCoords.Sort((a, b) =>
+				var currentPlayerCoord = ChunkConstants.InvalidCoordId;
+
+				foreach (var playerEntity in _playerQuery)
 				{
-					var toASqr = ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, a);
-					var toBSqr = ChunkUtility.GetCoordSqrDistance(_currentCenterCoord, b);
+					var transformComponent = playerEntity.Get<TransformComponent>();
+					var curPos = transformComponent.Position;
 
-					return toASqr.CompareTo(toBSqr);
-				});
+					currentPlayerCoord = ChunkUtility.GetCoordId(
+						ChunkUtility.GetCoordAxis(curPos.x),
+						ChunkUtility.GetCoordAxis(curPos.y),
+						ChunkUtility.GetCoordAxis(curPos.z)
+					);
 
-				_needSortWaitBuild = false;
+
+					break;
+				}
+
+				if (currentPlayerCoord != ChunkConstants.InvalidCoordId)
+				{
+					// 플레이어와
+					_waitBuildVisualizerCoords.Sort((a, b) =>
+					{
+						var toASqr = ChunkUtility.GetCoordSqrDistance(currentPlayerCoord, a);
+						var toBSqr = ChunkUtility.GetCoordSqrDistance(currentPlayerCoord, b);
+
+						return toASqr.CompareTo(toBSqr);
+					});
+
+					_needSortWaitBuild = false;
+				}
 			}
 
 			// Streaming
@@ -259,7 +293,7 @@ namespace UnityService.Rendering
 				return;
 			}
 
-			var spawnCoordPos = new Vector3(ChunkUtility.GetCoordX(coordId), ChunkUtility.GetCoordY(coordId), ChunkUtility.GetCoordZ(coordId));
+			Vector3 spawnCoordPos = ChunkUtility.ConvertIdToPos(coordId);
 			var spawnPos = spawnCoordPos * ChunkConstants.ChunkAxisCount;
 
 			var visualizerGo = objectPoolService.Spawn(_visualizerPoolGuid, spawnPos);
