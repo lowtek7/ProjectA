@@ -149,6 +149,11 @@ namespace UnityService.Rendering
 
 				foreach (var playerEntity in _playerQuery)
 				{
+					if (playerEntity.Get<PlayerComponent>().PlayerType != PlayerType.Local)
+					{
+						continue;
+					}
+
 					var transformComponent = playerEntity.Get<TransformComponent>();
 					var curPos = transformComponent.Position;
 
@@ -157,7 +162,6 @@ namespace UnityService.Rendering
 						ChunkUtility.GetCoordAxis(curPos.y),
 						ChunkUtility.GetCoordAxis(curPos.z)
 					);
-
 
 					break;
 				}

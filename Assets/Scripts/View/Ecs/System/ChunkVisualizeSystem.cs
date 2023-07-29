@@ -91,6 +91,11 @@ namespace View.Ecs.System
 
 			foreach (var playerEntity in _playerQuery)
 			{
+				if (playerEntity.Get<PlayerComponent>().PlayerType != PlayerType.Local)
+				{
+					continue;
+				}
+
 				var transformComponent = playerEntity.Get<TransformComponent>();
 				var curPos = transformComponent.Position;
 				var prevCenterCoord = _currentCenterCoord;
