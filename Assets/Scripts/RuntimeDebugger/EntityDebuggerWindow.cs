@@ -28,6 +28,8 @@ namespace RuntimeDebugger
 
 		private AdvancedTypePopup _popup;
 
+		private readonly Dictionary<Type, FieldInfo[]> _componentToFields = new();
+
 		private void OnEnable()
 		{
 			DisposePopup();
@@ -118,6 +120,21 @@ namespace RuntimeDebugger
 
 				using (var scope = new EditorGUILayout.ScrollViewScope(scrollPos))
 				{
+					if (_componentToFields.Count == 0)
+					{
+						for (int i = 0; i < componentCount; i++)
+						{
+							if (world.TryGetIComponentPool(i, out var pool))
+							{
+								var componentType = pool.ComponentType;
+								var fields = componentType.GetFields(
+									BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+								_componentToFields.Add(componentType, fields);
+							}
+						}
+					}
+
 					var count = 0;
 
 					foreach (var entityId in world.EntityIds)
@@ -193,7 +210,7 @@ namespace RuntimeDebugger
 									{
 										EditorGUI.indentLevel++;
 
-										foreach (var fieldInfo in componentType.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+										foreach (var fieldInfo in _componentToFields[componentType])
 										{
 											using (new EditorGUILayout.HorizontalScope())
 											{
@@ -220,6 +237,7 @@ namespace RuntimeDebugger
 			else
 			{
 				foldMap.Clear();
+				_componentToFields.Clear();
 			}
 		}
 
