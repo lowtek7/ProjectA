@@ -1,20 +1,29 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using BlitzEcs;
+using Core.Utility;
+using Game.Ecs.Component;
+using Game.Unit;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using MemoryPack;
+using Network.NetCommand.Client.Entity;
+using Network.NetCommand.Client.Player;
+using Network.NetCommand.Server.Player;
+using Network.Packet;
 using Network.Packet.Handler;
+using Service;
 using Service.Network;
 using UnityEngine;
 
 namespace UnityService.Network
 {
 	[UnityService(typeof(INetClientService))]
-	public class UnityNetClientService : MonoBehaviour, INetClientService, INetEventListener, INetLogger
+	public class UnityNetClientService : MonoBehaviour, INetClientService, INetEventListener, INetLogger, IGameServiceCallback, ILoaderService
 	{
 		private NetManager netClient;
 
@@ -23,20 +32,37 @@ namespace UnityService.Network
 		private PacketManager packetManager;
 
 		[SerializeField]
+		private bool onlineMode = false;
+
+		[SerializeField]
 		private string hostAddress;
 
 		private int currentPort;
 
 		private readonly Queue<INetCommand> commands = new Queue<INetCommand>();
 
+		private readonly Dictionary<int, int> netIdToEntityIds = new Dictionary<int, int>();
+
 		private static int DefaultPort => 47221;
 
 		private int currentNetId = -1;
 
+		/// <summary>
+		/// 임시로 월드 스테이지 Guid 설정.
+		/// </summary>
+		private Guid worldStageGuid;
+
 		public int NetId => currentNetId;
+
+		private World currentWorld;
+
+		private NetPeer localPeer;
 
 		public void Init(World world)
 		{
+			netIdToEntityIds.Clear();
+
+			currentWorld = world;
 			currentNetId = -1;
 			packetManager = new PacketManager();
 			netClient = new NetManager(this);
@@ -53,12 +79,12 @@ namespace UnityService.Network
 				var addressArray = hostAddress.Split(':');
 
 				currentPort = Convert.ToInt32(addressArray[1]);
-				netClient.Connect(addressArray[0], currentPort, writer);
+				localPeer = netClient.Connect(addressArray[0], currentPort, writer);
 			}
 			else
 			{
 				currentPort = DefaultPort;
-				netClient.Connect(hostAddress, DefaultPort, writer);
+				localPeer = netClient.Connect(hostAddress, DefaultPort, writer);
 			}
 		}
 
@@ -88,11 +114,14 @@ namespace UnityService.Network
 			}
 
 			packetManager = null;
+			currentWorld = null;
+
+			netIdToEntityIds.Clear();
 		}
 
 		private void Update()
 		{
-			if (netClient is not null)
+			if (netClient is not null && localPeer.ConnectionState == ConnectionState.Connected)
 			{
 				netClient.PollEvents();
 
@@ -171,6 +200,32 @@ namespace UnityService.Network
 
 				if (command is IDisposable disposable)
 				{
+					Opcode opcode = (Opcode) command.Opcode;
+
+					switch (opcode)
+					{
+						case Opcode.ERROR_CODE:
+							break;
+						case Opcode.CCMD_PLAYER_JOIN:
+						{
+							if (command is CCMD_PLAYER_SERVERJOIN playerServerJoin)
+							{
+								var netId = playerServerJoin.Id;
+
+								SpawnNetPlayer(netId);
+							}
+							break;
+						}
+						case Opcode.CMD_ENTITY_MOVE:
+						{
+							if (command is CMD_ENTITY_MOVE entityMove)
+							{
+								MoveEntity(entityMove.Id, entityMove);
+							}
+							break;
+						}
+					}
+
 					disposable.Dispose();
 				}
 			}
@@ -191,6 +246,116 @@ namespace UnityService.Network
 		public void WriteNet(NetLogLevel level, string str, params object[] args)
 		{
 			Debug.LogFormat(str, args);
+		}
+
+		public void OnActivate()
+		{
+		}
+
+		public void OnDeactivate()
+		{
+		}
+
+		public void OnLoadWorld()
+		{
+			// 임시로 플레이어 컴포넌트 구성요소 캐싱 해두기.
+			var query = new Query<PlayerComponent, StageSpecComponent>(currentWorld);
+
+			foreach (var entity in query)
+			{
+				var stageSpecComponent = entity.Get<StageSpecComponent>();
+
+				worldStageGuid = stageSpecComponent.StageGuid;
+				break;
+			}
+
+			// 여기서 플레이어가 입장했다고 서버에다 알려줘야한다.
+			// 그렇게 된다면 서버에서는 다른 플레이어 정보도 같이 날려 줄 것이다.
+			if (localPeer.ConnectionState == ConnectionState.Connected)
+			{
+				var command = SCMD_PLAYER_LOGIN.Create();
+
+				command.Id = currentNetId;
+				command.Time = DateTime.UtcNow.ToUnixTime();
+
+				SendCommand(command);
+			}
+
+			Debug.Log("NetClientService:OnLoadWorld Call");
+		}
+
+		private void SpawnNetPlayer(int netId)
+		{
+			if (netIdToEntityIds.ContainsKey(netId))
+			{
+				return;
+			}
+
+			var entity = currentWorld.Spawn();
+			entity.Add(new MovementComponent
+			{
+				WalkSpeed = 1,
+				RunSpeed = 3,
+				RotateSpeed = 1200
+			});
+			entity.Add(new CapsuleColliderComponent
+			{
+				Center = new Vector3(0, 0.5f, 0),
+				Direction = new Vector3(0, 1.0f, 0),
+				Radius = 0.25f,
+				Height = 2f
+			});
+			entity.Add(new GravityComponent());
+			entity.Add(new NetIdComponent
+			{
+				NetId = netId
+			});
+			entity.Add(new StageSpecComponent
+			{
+				StageGuid = worldStageGuid
+			});
+
+			netIdToEntityIds.Add(netId, entity.Id);
+		}
+
+		/// <summary>
+		/// 일단은 단순히 좌표만 동기화 중.
+		/// </summary>
+		/// <param name="netId"></param>
+		/// <param name="entityMove"></param>
+		private void MoveEntity(int netId, CMD_ENTITY_MOVE entityMove)
+		{
+			if (netIdToEntityIds.TryGetValue(netId, out var entityId))
+			{
+				var entity = new Entity(currentWorld, entityId);
+
+				if (entity.IsAlive && entity.Has<TransformComponent>())
+				{
+					ref var transformComponent = ref entity.Get<TransformComponent>();
+
+					transformComponent.Position = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
+				}
+			}
+		}
+
+		public void OnAwake()
+		{
+		}
+
+		public IEnumerator Load()
+		{
+			Debug.Log("NetClientService:Load start");
+
+			if (onlineMode)
+			{
+				// net id가 셋팅 될때 까지 대기시키기.
+				while (currentNetId == -1)
+				{
+					yield return null;
+				}
+			}
+
+			Debug.Log("NetClientService:Load complete");
 		}
 	}
 }

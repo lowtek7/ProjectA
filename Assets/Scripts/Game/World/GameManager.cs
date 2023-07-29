@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using BlitzEcs;
 using Core.Unity;
@@ -85,6 +86,17 @@ namespace Game.World
 				service.Init(world);
 
 				notAwakeServices.Add(service);
+			}
+		}
+
+		public IEnumerator LoadWorld()
+		{
+			foreach (var service in ServiceManager.Services)
+			{
+				if (service is ILoaderService loaderService)
+				{
+					yield return loaderService.Load();
+				}
 			}
 
 			var virtualWorld = SaveLoadService.LoadWorld(WorldDataAssetLoader.WorldDataAsset);

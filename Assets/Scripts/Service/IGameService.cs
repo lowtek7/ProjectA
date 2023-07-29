@@ -1,4 +1,6 @@
-﻿namespace Service
+﻿using System.Collections;
+
+namespace Service
 {
 	/// <summary>
 	/// 서비스를 구축하지 않았기 때문에 임시적으로 여기서
@@ -30,5 +32,13 @@
 		/// IUpdate.Update 부르기 전에 무조건 한번 호출 되는 함수.
 		/// </summary>
 		void OnAwake();
+	}
+
+	/// <summary>
+	/// 특정 서비스들은 로드방식일수도 있다... 로드를 기다릴 수 있는 코루틴이 존재하게 될 것이다.
+	/// </summary>
+	public interface ILoaderService
+	{
+		IEnumerator Load();
 	}
 }

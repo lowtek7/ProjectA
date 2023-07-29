@@ -85,6 +85,8 @@ namespace Game
 			_gameManager = new GameManager();
 			_gameManager.Init(this);
 
+			yield return _gameManager.LoadWorld();
+
 			// 이제 플레이 가능한 상태
 			canPlay = true;
 		}
