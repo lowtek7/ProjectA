@@ -49,7 +49,6 @@ namespace UnityService.Network
 
 		private byte[] buffer = new byte[4096];
 
-
 		/// <summary>
 		/// 임시로 월드 스테이지 Guid 설정.
 		/// </summary>
@@ -351,11 +350,34 @@ namespace UnityService.Network
 			{
 				var entity = new Entity(currentWorld, entityId);
 
-				if (entity.IsAlive && entity.Has<TransformComponent>())
+				if (entity.IsAlive && entity.Has<TransformComponent>() && entity.Has<MovementComponent>())
 				{
 					ref var transformComponent = ref entity.Get<TransformComponent>();
+					ref var movementComponent = ref entity.Get<MovementComponent>();
 
-					transformComponent.Position = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
+					if (entityMove.MovementFlags == MovementFlags.Rotate)
+					{
+						transformComponent.Rotation = new Quaternion(entityMove.X, entityMove.Y, entityMove.Z, entityMove.W);
+					}
+					else
+					{
+						var currentPos = transformComponent.Position;
+						var targetPos = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
+						//var lerpPos = Vector3.Lerp()
+
+						if ((entityMove.MovementFlags & MovementFlags.Walk) != 0)
+						{
+							movementComponent.MoveDir = (targetPos - currentPos).normalized;
+						}
+
+						if ((entityMove.MovementFlags & MovementFlags.Run) != 0)
+						{
+							movementComponent.MoveDir = (targetPos - currentPos).normalized;
+							movementComponent.IsRun = true;
+						}
+
+						transformComponent.Position = targetPos;
+					}
 				}
 			}
 		}

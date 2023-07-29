@@ -65,6 +65,16 @@ namespace Game.Ecs.System
 								command.MovementFlags = MovementFlags.None;
 								command.SetPosition(pos.x, pos.y, pos.z);
 
+								if (movementComponent.IsMoving)
+								{
+									command.MovementFlags |= MovementFlags.Walk;
+								}
+
+								if (movementComponent.IsRunning)
+								{
+									command.MovementFlags |= MovementFlags.Run;
+								}
+
 								clientService.SendCommand(command);
 							}
 						}
@@ -79,6 +89,28 @@ namespace Game.Ecs.System
 						movementComponent.TargetRotation, rotationDist);
 
 					transformComponent.Rotation = currentRotation;
+
+					if (entity.Has<PlayerComponent>() && entity.Has<NetIdComponent>())
+					{
+						var playerComponent = entity.Get<PlayerComponent>();
+						var netIdComponent = entity.Get<NetIdComponent>();
+
+						if (playerComponent.PlayerType == PlayerType.Local)
+						{
+							if (ServiceManager.TryGetService(out INetClientService clientService))
+							{
+								// dispose는 받는쪽에서 알아서 해줄 예정.
+								var command = CMD_ENTITY_MOVE.Create();
+
+								command.Id = netIdComponent.NetId;
+								command.Time = DateTime.UtcNow.ToUnixTime();
+								command.MovementFlags = MovementFlags.Rotate;
+								command.SetRotation(currentRotation.x, currentRotation.y, currentRotation.z, currentRotation.w);
+
+								clientService.SendCommand(command);
+							}
+						}
+					}
 				}
 			}
 		}
