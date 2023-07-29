@@ -47,6 +47,9 @@ namespace UnityService.Network
 
 		private int currentNetId = -1;
 
+		private byte[] buffer = new byte[4096];
+
+
 		/// <summary>
 		/// 임시로 월드 스테이지 Guid 설정.
 		/// </summary>
@@ -194,14 +197,20 @@ namespace UnityService.Network
 		{
 			using (var state = MemoryPackReaderOptionalStatePool.Rent(MemoryPackSerializerOptions.Default))
 			{
-				var memoryPackReader = new MemoryPackReader(reader.RawData, state);
+				var length = reader.GetUShort();
+				var opcodeValue = reader.GetShort();
+				var opcode = (Opcode) opcodeValue;
+
+				reader.GetBytes(buffer, length);
+
+				var body = buffer.AsSpan(new Range(0, length));
+
+				var memoryPackReader = new MemoryPackReader(body, state);
 				// command를 불러오기전에 Disconnect 체크가 필요한가?
 				var command = packetManager.ToCommand(ref memoryPackReader);
 
 				if (command is IDisposable disposable)
 				{
-					Opcode opcode = (Opcode) command.Opcode;
-
 					switch (opcode)
 					{
 						case Opcode.ERROR_CODE:
