@@ -2,6 +2,7 @@
 using Core.Unity;
 using Game.Ecs.Component;
 using Game.World.Stage;
+using UnityEngine;
 
 namespace Game.Ecs.System
 {
@@ -82,6 +83,12 @@ namespace Game.Ecs.System
 							coordId = coordId,
 							blockIdMap = blockIdMap,
 							isSolidMap = isSolidMap,
+						});
+
+						chunkEntity.Add(new TransformComponent
+						{
+							Direction = Vector3.up,
+							Position = ChunkUtility.ConvertIdToPos(coordId) * ChunkConstants.ChunkAxisCount
 						});
 					}
 
