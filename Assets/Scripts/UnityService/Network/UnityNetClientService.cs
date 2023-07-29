@@ -307,6 +307,15 @@ namespace UnityService.Network
 				RunSpeed = 3,
 				RotateSpeed = 1200
 			});
+			entity.Add(new UnitComponent
+			{
+				SourceGuid = Guid.Parse("e43acb59-4e52-48c7-8715-1025d20f345b")
+			});
+			entity.Add(new UnitInstanceComponent
+			{
+				InstanceGuid = Guid.NewGuid()
+			});
+			entity.Add(new TransformComponent());
 			entity.Add(new PlayerComponent
 			{
 				PlayerType = PlayerType.Remote
