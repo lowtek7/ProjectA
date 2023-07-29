@@ -298,6 +298,10 @@ namespace UnityService.Network
 				RunSpeed = 3,
 				RotateSpeed = 1200
 			});
+			entity.Add(new PlayerComponent
+			{
+				PlayerType = PlayerType.Remote
+			});
 			entity.Add(new CapsuleColliderComponent
 			{
 				Center = new Vector3(0, 0.5f, 0),
