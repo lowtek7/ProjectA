@@ -271,8 +271,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: poolItems.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[0].prefab
+      value: 
+      objectReference: {fileID: 8437570332950855499, guid: 45462784663814d4ba3f9903ebff98c5, type: 3}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[1].prefab
+      value: 
+      objectReference: {fileID: 2649889999284191728, guid: f7793e55b15393849852aefd4ffb2928, type: 3}
     - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: poolItems.Array.data[2].prefab
       value: 
@@ -285,6 +293,14 @@ PrefabInstance:
       propertyPath: poolItems.Array.data[4].prefab
       value: 
       objectReference: {fileID: 34536163113152759, guid: f6d61bef78174414299ed4b8c1dec971, type: 3}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[0].initialPoolSize
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
+      propertyPath: poolItems.Array.data[1].initialPoolSize
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 4588829211958928796, guid: bdfd7823a94eb384688f58e58c40da93, type: 3}
       propertyPath: poolItems.Array.data[2].initialPoolSize
       value: 20
@@ -796,7 +812,15 @@ PrefabInstance:
       objectReference: {fileID: 19134841}
     - target: {fileID: 3547440091555167561, guid: 3871dc62e2fe357428d51b393903c7bc, type: 3}
       propertyPath: loadCoordMagnitude
-      value: 7
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6226668791742862435, guid: 3871dc62e2fe357428d51b393903c7bc, type: 3}
+      propertyPath: onlineMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6226668791742862435, guid: 3871dc62e2fe357428d51b393903c7bc, type: 3}
+      propertyPath: hostAddress
+      value: 112.170.99.235
       objectReference: {fileID: 0}
     - target: {fileID: 6755856973212789297, guid: 3871dc62e2fe357428d51b393903c7bc, type: 3}
       propertyPath: audioListener
