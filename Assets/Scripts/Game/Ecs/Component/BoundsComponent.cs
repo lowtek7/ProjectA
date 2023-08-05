@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Core.Unity;
 using UnityEngine;
 
@@ -10,36 +11,82 @@ namespace Game.Ecs.Component
 	[Serializable]
 	public struct BoundsComponent : IComponent
 	{
-		[SerializeField]
-		private Vector3 boundsSize;
-
-		[SerializeField]
-		private Vector3 offset;
-
-		public Vector3 BoundsSize
+		[Serializable]
+		public struct ChildBoundsInfo
 		{
-			get => boundsSize;
-			set => boundsSize = value;
+			public Vector3 centerOffset;
+			public Vector3 size;
 		}
 
-		public Vector3 Offset
+		[SerializeField]
+		private int capacity;
+
+		public int Capacity
 		{
-			get => offset;
-			set => offset = value;
+			get => capacity;
+			set
+			{
+				capacity = value;
+
+				// 할당된 Capacity가 더 작은 경우에만 갱신해줌
+				if (childBounds.Capacity < capacity)
+				{
+					childBounds.Capacity = capacity;
+				}
+			}
 		}
 
-		public Bounds GetBounds(Vector3 pos)
+		[SerializeField]
+		private List<ChildBoundsInfo> childBounds;
+
+		public List<ChildBoundsInfo> ChildBounds
 		{
-			return new Bounds(pos + offset, boundsSize);
+			get => childBounds;
+			set => childBounds = value;
+		}
+
+		public bool TryGetBoundsAt(int childIndex, Vector3 position, out Bounds bounds)
+		{
+			if (childIndex < childBounds.Count)
+			{
+				var childInfo = childBounds[childIndex];
+
+				bounds = new Bounds(position + childInfo.centerOffset, childInfo.size);
+
+				return true;
+			}
+
+			bounds = new Bounds();
+
+			return false;
 		}
 
 		public IComponent Clone()
 		{
 			return new BoundsComponent
 			{
-				boundsSize = boundsSize,
-				offset = offset
+				capacity = capacity,
+				// 복사
+				childBounds = new List<ChildBoundsInfo>(childBounds)
 			};
+		}
+
+		public void OnBeforeSerialize()
+		{
+		}
+
+		public void OnAfterDeserialize()
+		{
+			// 역직렬화된 경우 Capacity를 갱신해줌
+			if (childBounds == null)
+			{
+				childBounds = new List<ChildBoundsInfo>(capacity);
+			}
+			else
+			{
+				// ChildBounds의 Capacity와 동기화
+				Capacity = capacity;
+			}
 		}
 	}
 }

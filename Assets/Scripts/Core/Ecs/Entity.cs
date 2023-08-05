@@ -64,5 +64,13 @@ namespace BlitzEcs {
         public static implicit operator int(Entity e) => e.id;
 
         public static Entity Empty => new Entity(null, -1);
+
+        /// <summary>
+        /// Entity 직접 비교 시에도 id만 비교한 결과물과 동일하도록 함
+        /// </summary>
+        public override int GetHashCode()
+        {
+	        return id.GetHashCode();
+        }
     }
 }

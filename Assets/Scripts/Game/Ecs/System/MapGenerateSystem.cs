@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using BlitzEcs;
+﻿using BlitzEcs;
 using Core.Unity;
 using Game.Ecs.Component;
 using Game.World.Stage;
@@ -49,7 +48,7 @@ namespace Game.Ecs.System
 
 						var capacity = ChunkConstants.MaxBlockCountInChunk;
 
-						var childBounds = new List<MultiBoundsComponent.ChildBoundsInfo>(capacity);
+						// var childBounds = new List<BoundsComponent.ChildBoundsInfo>(capacity);
 						var blockIdMap = new ushort[capacity];
 						var isSolidMap = new bool[capacity];
 
@@ -78,11 +77,11 @@ namespace Game.Ecs.System
 
 									if (isSolidMap[index])
 									{
-										childBounds.Add(new MultiBoundsComponent.ChildBoundsInfo
-										{
-											centerOffset = new Vector3(x, y, z) + Vector3.one * 0.5f,
-											size = Vector3.one
-										});
+										// childBounds.Add(new BoundsComponent.ChildBoundsInfo
+										// {
+										// 	centerOffset = new Vector3(x, y, z) + Vector3.one * 0.5f,
+										// 	size = Vector3.one
+										// });
 									}
 								}
 							}
@@ -108,11 +107,11 @@ namespace Game.Ecs.System
 							StageGuid = stagePropertyComponent.StageGuid
 						});
 
-						chunkEntity.Add(new MultiBoundsComponent
-						{
-							ChildBounds = childBounds,
-							Capacity = childBounds.Capacity,
-						});
+						// chunkEntity.Add(new BoundsComponent
+						// {
+						// 	ChildBounds = childBounds,
+						// 	Capacity = childBounds.Capacity,
+						// });
 					}
 
 					stagePropertyComponent.CanGenerate = false;

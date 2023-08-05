@@ -14,7 +14,7 @@ namespace UnityService.Stage
 	[UnityService(typeof(IStagePartitionService))]
 	public class UnityStagePartitionService : MonoBehaviour, IStagePartitionService
 	{
-		private readonly Dictionary<Guid, KdTree<float, HashSet<int>>> _treeMap = new Dictionary<Guid, KdTree<float, HashSet<int>>>();
+		private readonly Dictionary<Guid, KdTree<float, HashSet<PartitionBoundsInfo>>> _treeMap = new();
 
 		private World _world;
 
@@ -45,64 +45,59 @@ namespace UnityService.Stage
 				tree.Clear();
 			}
 
-			_query.ForEach((Entity entity,
-				ref TransformComponent transformComponent,
-				ref StageSpecComponent stageSpecComponent) =>
+			foreach (var entity in _query)
 			{
-				var id = entity.Id;
+				var stageSpecComponent = entity.Get<StageSpecComponent>();
+				var transformComponent = entity.Get<TransformComponent>();
+
 				var stageGuid = stageSpecComponent.StageGuid;
 
 				if (!_treeMap.ContainsKey(stageGuid))
 				{
 					_treeMap.Add(stageGuid,
-						new KdTree<float, HashSet<int>>(Dimensions, new FloatMath(), AddDuplicateBehavior.Skip));
+						new KdTree<float, HashSet<PartitionBoundsInfo>>(Dimensions, new FloatMath(), AddDuplicateBehavior.Skip));
 				}
 
 				var tree = _treeMap[stageGuid];
 				var pos = transformComponent.Position;
 
-				PosToArrayBuffer(pos, ref _arrayBuffer);
-
-				{
-					if (tree.TryFindValueAt(_arrayBuffer, out var idSet))
-					{
-						idSet.Add(id);
-					}
-					else
-					{
-						idSet = new HashSet<int> { id };
-						tree.Add(_arrayBuffer.ToArray(), idSet);
-					}
-				}
-
 				if (entity.Has<BoundsComponent>())
 				{
 					var boundsComponent = entity.Get<BoundsComponent>();
-					var bounds = boundsComponent.GetBounds(pos);
-					bounds.GetPoints(ref pointBuffer);
 
-					// 총 8개의 점을 tree에 기록 해야한다.
-					foreach (var point in pointBuffer)
+					for (int i = 0; i < boundsComponent.ChildBounds.Count; i++)
 					{
-						PosToArrayBuffer(point, ref _arrayBuffer);
-
-						if (tree.TryFindValueAt(_arrayBuffer, out var idSet))
+						if (!boundsComponent.TryGetBoundsAt(i, pos, out var bounds))
 						{
-							idSet.Add(id);
+							continue;
 						}
-						else
+
+						bounds.GetPoints(ref pointBuffer);
+
+						// 총 8개의 점을 tree에 기록 해야한다.
+						foreach (var point in pointBuffer)
 						{
-							idSet = new HashSet<int> { id };
-							tree.Add(_arrayBuffer.ToArray(), idSet);
+							PosToArrayBuffer(point, ref _arrayBuffer);
+
+							var boundsInfo = new PartitionBoundsInfo
+							{
+								entity = entity,
+								boundsIndex = i,
+							};
+
+							if (tree.TryFindValueAt(_arrayBuffer, out var idSet))
+							{
+								idSet.Add(boundsInfo);
+							}
+							else
+							{
+								idSet = new HashSet<PartitionBoundsInfo> { boundsInfo };
+								tree.Add(_arrayBuffer.ToArray(), idSet);
+							}
 						}
 					}
 				}
-			});
-		}
-
-		private float[] PosToArray(Vector3 pos)
-		{
-			return new[] { pos.x, pos.y, pos.z };
+			}
 		}
 
 		/// <summary>
@@ -123,11 +118,11 @@ namespace UnityService.Stage
 		/// 미리 할당된 list 객체를 넣어주어야 한다.
 		/// </summary>
 		/// <param name="entity"></param>
-		/// <param name="overlappedEntities">미리 할당된 list 객체. 겹친 엔티티들을 내뱉는다</param>
-		public void GetBoundsOverlappedEntities(Entity entity, ref List<Entity> overlappedEntities)
+		/// <param name="overlappedBoundsInfos">미리 할당된 list 객체. 겹친 엔티티의 바운드 정보를 내뱉는다</param>
+		public void GetBoundsOverlappedEntities(Entity entity, ref List<PartitionBoundsInfo> overlappedBoundsInfos)
 		{
-			var idSet = new HashSet<Entity>();
-			overlappedEntities.Clear();
+			var infoSet = new HashSet<PartitionBoundsInfo>();
+			overlappedBoundsInfos.Clear();
 
 			if (entity.Has<StageSpecComponent>() &&
 				entity.Has<BoundsComponent>() &&
@@ -135,35 +130,56 @@ namespace UnityService.Stage
 			{
 				var stageGuid = entity.Get<StageSpecComponent>().StageGuid;
 				var pos = entity.Get<TransformComponent>().Position;
-				var bounds = entity.Get<BoundsComponent>().GetBounds(pos);
+				var boundsComponent = entity.Get<BoundsComponent>();
 
-				if (_treeMap.TryGetValue(stageGuid, out var tree))
+				for (int i = 0; i < boundsComponent.ChildBounds.Count; i++)
 				{
-					// 모든 사이즈 중 가장 큰 사이즈의 값을 radius로 사용 해야한다.
-					var radius = Mathf.Max(Mathf.Max(Mathf.Max(1, bounds.size.x), bounds.size.y), bounds.size.z);
-
-					// 버퍼에 pos을 복사
-					PosToArrayBuffer(pos, ref _arrayBuffer);
-
-					var results = tree.RadialSearch(_arrayBuffer, radius);
-
-					foreach (var node in results)
+					if (!boundsComponent.TryGetBoundsAt(i, pos, out var bounds))
 					{
-						// 해당 점들과 비교한다.
-						if (bounds.Contains(new Vector3(node.Point[0], node.Point[1], node.Point[2])))
+						continue;
+					}
+
+					if (_treeMap.TryGetValue(stageGuid, out var tree))
+					{
+						// 모든 사이즈 중 가장 큰 사이즈의 값을 radius로 사용 해야한다.
+						var radius = Mathf.Max(Mathf.Max(Mathf.Max(1, bounds.size.x), bounds.size.y), bounds.size.z);
+
+						// 버퍼에 pos을 복사
+						PosToArrayBuffer(pos, ref _arrayBuffer);
+
+						var results = tree.RadialSearch(_arrayBuffer, radius);
+
+						foreach (var node in results)
 						{
-							foreach (var id in node.Value)
+							// 해당 점들과 비교한다.
+							if (bounds.Contains(new Vector3(node.Point[0], node.Point[1], node.Point[2])))
 							{
-								idSet.Add(new Entity(_world, id));
+								foreach (var boundsInfo in node.Value)
+								{
+									// 자기자신은 결과에서 제외
+									if (boundsInfo.entity.Id != entity.Id)
+									{
+										infoSet.Add(boundsInfo);
+									}
+								}
 							}
 						}
 					}
 				}
 			}
 
-			// 자기자신은 결과에서 제외해주자.
-			idSet.Remove(entity);
-			overlappedEntities.AddRange(idSet);
+			overlappedBoundsInfos.AddRange(infoSet);
 		}
+
+		// public void GetAllOnRay(Vector3 startPos, Vector3 endPos,
+		// 	ref List<Entity> overlappedEntities, bool ignoreStartPos = true)
+		// {
+		//
+		// }
+		//
+		// public PartitionBoundsInfo GetRaycasted(Vector3 startPos, Vector3 endPos, bool ignoreStartPos = true)
+		// {
+		// 	return new PartitionBoundsInfo();
+		// }
 	}
 }
