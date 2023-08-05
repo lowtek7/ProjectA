@@ -273,6 +273,14 @@ namespace UnityService.Network
 			{
 				var stageSpecComponent = entity.Get<StageSpecComponent>();
 
+				if (!entity.Has<NetworkEntityComponent>())
+				{
+					entity.Add<NetworkEntityComponent>();
+				}
+
+				entity.Get<NetworkEntityComponent>().EntityRole = EntityRole.Local;
+				entity.Get<NetworkEntityComponent>().NetId = currentNetId;
+
 				worldStageGuid = stageSpecComponent.StageGuid;
 				break;
 			}
@@ -315,10 +323,7 @@ namespace UnityService.Network
 				InstanceGuid = Guid.NewGuid()
 			});
 			entity.Add(new TransformComponent());
-			entity.Add(new PlayerComponent
-			{
-				PlayerType = PlayerType.Remote
-			});
+			entity.Add(new PlayerComponent());
 			entity.Add(new CapsuleColliderComponent
 			{
 				Center = new Vector3(0, 0.5f, 0),
@@ -327,9 +332,10 @@ namespace UnityService.Network
 				Height = 2f
 			});
 			entity.Add(new GravityComponent());
-			entity.Add(new NetIdComponent
+			entity.Add(new NetworkEntityComponent
 			{
-				NetId = netId
+				NetId = netId,
+				EntityRole = EntityRole.Remote
 			});
 			entity.Add(new StageSpecComponent
 			{

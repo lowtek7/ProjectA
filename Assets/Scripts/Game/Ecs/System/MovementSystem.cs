@@ -27,6 +27,12 @@ namespace Game.Ecs.System
 		{
 			foreach (var entity in _moveQuery)
 			{
+				if (entity.Has<NetworkEntityComponent>() &&
+					entity.Get<NetworkEntityComponent>().EntityRole == EntityRole.Remote)
+				{
+					continue;
+				}
+
 				ref var transformComponent = ref entity.Get<TransformComponent>();
 				var movementComponent = entity.Get<MovementComponent>();
 
@@ -47,12 +53,12 @@ namespace Game.Ecs.System
 						transformComponent.Position += (dir * dist);
 					}
 
-					if (entity.Has<PlayerComponent>() && entity.Has<NetIdComponent>())
+					if (entity.Has<PlayerComponent>() && entity.Has<NetworkEntityComponent>())
 					{
 						var playerComponent = entity.Get<PlayerComponent>();
-						var netIdComponent = entity.Get<NetIdComponent>();
+						var netIdComponent = entity.Get<NetworkEntityComponent>();
 
-						if (playerComponent.PlayerType == PlayerType.Local)
+						if (netIdComponent.EntityRole == EntityRole.Local)
 						{
 							if (ServiceManager.TryGetService(out INetClientService clientService))
 							{
@@ -90,12 +96,12 @@ namespace Game.Ecs.System
 
 					transformComponent.Rotation = currentRotation;
 
-					if (entity.Has<PlayerComponent>() && entity.Has<NetIdComponent>())
+					if (entity.Has<PlayerComponent>() && entity.Has<NetworkEntityComponent>())
 					{
 						var playerComponent = entity.Get<PlayerComponent>();
-						var netIdComponent = entity.Get<NetIdComponent>();
+						var netIdComponent = entity.Get<NetworkEntityComponent>();
 
-						if (playerComponent.PlayerType == PlayerType.Local)
+						if (netIdComponent.EntityRole == EntityRole.Local)
 						{
 							if (ServiceManager.TryGetService(out INetClientService clientService))
 							{

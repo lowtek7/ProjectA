@@ -149,7 +149,8 @@ namespace UnityService.Rendering
 
 				foreach (var playerEntity in _playerQuery)
 				{
-					if (playerEntity.Get<PlayerComponent>().PlayerType != PlayerType.Local)
+					if (playerEntity.Has<NetworkEntityComponent>() &&
+						playerEntity.Get<NetworkEntityComponent>().EntityRole == EntityRole.Remote)
 					{
 						continue;
 					}

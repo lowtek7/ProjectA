@@ -34,21 +34,24 @@ namespace Game.Ecs.System
 
 				foreach (var moveEntity in _movementQuery)
 				{
-					if (moveEntity.Get<PlayerComponent>().PlayerType == PlayerType.Local)
+					if (moveEntity.Has<NetworkEntityComponent>() &&
+						moveEntity.Get<NetworkEntityComponent>().EntityRole == EntityRole.Remote)
 					{
-						ref var movementComponent = ref moveEntity.Get<MovementComponent>();
-						ref var transformComponent = ref moveEntity.Get<TransformComponent>();
-
-						// 임시적으로 디렉션을 무브 디렉션을 사용하게 하자.
-						if (moveDirection != Vector3.zero)
-						{
-							transformComponent.Direction = moveDirection;
-							movementComponent.TargetRotation = Quaternion.LookRotation(moveDirection);
-						}
-
-						movementComponent.MoveDir = moveDirection;
-						movementComponent.IsRun = inputComponent.IsRun;
+						continue;
 					}
+
+					ref var movementComponent = ref moveEntity.Get<MovementComponent>();
+					ref var transformComponent = ref moveEntity.Get<TransformComponent>();
+
+					// 임시적으로 디렉션을 무브 디렉션을 사용하게 하자.
+					if (moveDirection != Vector3.zero)
+					{
+						transformComponent.Direction = moveDirection;
+						movementComponent.TargetRotation = Quaternion.LookRotation(moveDirection);
+					}
+
+					movementComponent.MoveDir = moveDirection;
+					movementComponent.IsRun = inputComponent.IsRun;
 				}
 			}
 		}

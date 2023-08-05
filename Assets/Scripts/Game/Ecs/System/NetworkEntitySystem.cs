@@ -19,24 +19,9 @@ namespace Game.Ecs.System
 		{
 			if (ServiceManager.TryGetService(out INetClientService clientService))
 			{
-				foreach (var entity in playerQuery)
-				{
-					var playerComponent = entity.Get<PlayerComponent>();
-
-					// 로컬 소유의 플레이어는 내 마음대로 컨트롤 할 수 있다.
-					if (playerComponent.PlayerType == PlayerType.Local)
-					{
-						// net id가 없으면 생성해줘야한다
-						if (!entity.Has<NetIdComponent>())
-						{
-							entity.Add<NetIdComponent>();
-						}
-
-						ref var netIdComponent = ref entity.Get<NetIdComponent>();
-
-						netIdComponent.NetId = clientService.NetId;
-					}
-				}
+				// foreach (var entity in playerQuery)
+				// {
+				// }
 			}
 		}
 
