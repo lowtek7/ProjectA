@@ -70,6 +70,7 @@ MonoBehaviour:
   - rid: 1400488748929777664
   - rid: 7904022502624198873
   - rid: 1400488951828185088
+  - rid: 2791814083866787840
   references:
     version: 2
     RefIds:
@@ -79,7 +80,7 @@ MonoBehaviour:
         center: {x: 0, y: 0.5, z: 0}
         direction: {x: 0, y: 1, z: 0}
         radius: 0.25
-        height: 2
+        height: 1.1
     - rid: 1400488951828185088
       type: {class: GravityComponent, ns: Game.Ecs.Component, asm: Game}
     - rid: 2371249708091310080
@@ -91,6 +92,13 @@ MonoBehaviour:
         maxAzimuthInRad: 359
         minElevationInRad: 1
         maxElevationInRad: 179
+    - rid: 2791814083866787840
+      type: {class: BoundsComponent, ns: Game.Ecs.Component, asm: Game}
+      data:
+        capacity: 0
+        childBounds:
+        - centerOffset: {x: 0, y: 0, z: 0}
+          size: {x: 0, y: 0, z: 0}
     - rid: 7904022502624198873
       type: {class: NameComponent, ns: Game.Ecs.Component, asm: Game}
       data:
