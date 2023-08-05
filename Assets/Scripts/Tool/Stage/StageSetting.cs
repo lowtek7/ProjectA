@@ -1,11 +1,10 @@
 ﻿using System;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
 using UnityEngine;
-using UnityEngine.Serialization;
+#if UNITY_EDITOR
+#endif
 
-namespace Build.Stage
+namespace Tool.Stage
 {
 	public class StageSetting : MonoBehaviour
 	{

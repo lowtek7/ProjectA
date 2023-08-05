@@ -10,7 +10,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Build.Editor.System
+namespace Tool.Editor.System
 {
 	[CustomEditor(typeof(SystemOrderSettingData))]
 	public class SystemOrderSettingDataEditor : UnityEditor.Editor
@@ -24,7 +24,7 @@ namespace Build.Editor.System
 			_reorderableList = new ReorderableList(serializedObject,
 				serializedObject.FindProperty("systemOrders"),
 				true, true, true, true);
-			
+
 			_reorderableList.drawElementCallback = DrawElementCallback;
 			_reorderableList.onAddDropdownCallback = OnAddDropdownCallback;
 
@@ -51,7 +51,7 @@ namespace Build.Editor.System
 		private void OnAddDropdownCallback(Rect buttonRect, ReorderableList list)
 		{
 			_typeList = TypeUtility.GetTypesWithInterface(typeof(ISystem)).ToList();
-			
+
 			var listProperty = list.serializedProperty;
 
 			for (int i = 0; i < listProperty.arraySize; i++)
@@ -64,14 +64,14 @@ namespace Build.Editor.System
 					_typeList.RemoveAt(index);
 				}
 			}
-			
+
 			if (_popupCache == null)
 			{
 				var state = new AdvancedDropdownState();
 				_popupCache = new AdvancedTypePopup(_typeList,
 					13,
 					state);
-				
+
 				_popupCache.OnItemSelected += PopupCacheOnOnItemSelected;
 			}
 
@@ -96,7 +96,7 @@ namespace Build.Editor.System
 		private void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
 		{
 			var element = _reorderableList.serializedProperty.GetArrayElementAtIndex(index);
-			
+
 			EditorGUI.LabelField(rect, element.stringValue);
 		}
 

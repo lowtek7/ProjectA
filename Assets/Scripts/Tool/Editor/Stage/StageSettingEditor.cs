@@ -1,9 +1,9 @@
 ﻿using System;
-using Build.Stage;
+using Tool.Stage;
 using UnityEditor;
 using UnityEngine;
 
-namespace Build.Editor.Stage
+namespace Tool.Editor.Stage
 {
 	[CustomEditor(typeof(StageSetting))]
 	public class StageSettingEditor : UnityEditor.Editor
@@ -37,7 +37,7 @@ namespace Build.Editor.Stage
 					EditorGUIUtility.systemCopyBuffer = stageGuid.ToString();
 				}
 			}
-			
+
 			// if (stageGuid != Guid.Empty)
 			// {
 			// 	if (GUILayout.Button("Stage BUILD!"))

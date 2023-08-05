@@ -1,14 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using Build.Editor.Stage;
-using Build.Stage;
-using Core.Virtual;
+﻿using Core.Virtual;
 using Service.SaveLoad;
+using Tool.Editor.Stage;
+using Tool.Stage;
 using UnityEditor;
 using UnityEngine;
 
-namespace Build.Editor
+namespace Tool.Editor
 {
 	public class GameBuildTool : EditorWindow
 	{
@@ -29,7 +26,7 @@ namespace Build.Editor
 				{
 					string prefabPath = AssetDatabase.GUIDToAssetPath(prefabGuid);
 					var gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-					
+
 					if (gameObject != null)
 					{
 						if (gameObject.TryGetComponent<StageSetting>(out var stageSetting))
@@ -38,7 +35,7 @@ namespace Build.Editor
 						}
 					}
 				}
-				
+
 				SaveLoadService.SaveWorld(SaveLoadConstants.WorldDataPath, virtualWorld);
 			}
 		}

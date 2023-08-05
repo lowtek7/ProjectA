@@ -1,12 +1,12 @@
 {
-    "name": "Build.Editor",
+    "name": "Tool.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:3c33906e7901e8248baa45e86e837117",
         "GUID:e9818aa5e56212c48a2a1676946e05f6",
         "GUID:22ab9aaae7cdbe742ba8a063e2f0134b",
-        "GUID:1ffcc57437e080748b6977c8837f77aa",
-        "GUID:e6234d6c1f7bf4e4db20eddc411c00b8"
+        "GUID:e6234d6c1f7bf4e4db20eddc411c00b8",
+        "GUID:8876445912e294a40a77d73228ebe822"
     ],
     "includePlatforms": [
         "Editor"

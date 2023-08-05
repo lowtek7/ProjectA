@@ -2,7 +2,7 @@ using System;
 using Core.Unity;
 using UnityEngine;
 
-namespace Build.Gizmos
+namespace Tool.Visual.Gizmos
 {
 	/// <summary>
 	/// 컴포넌트 타입에 대한 기즈모 어트리뷰트

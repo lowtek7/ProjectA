@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Build.Stage;
 using Core.Unity;
 using Core.Virtual;
 using Game.Ecs.Component;
 using Game.Unit;
-using UnityEngine;
+using Tool.Stage;
 
-namespace Build.Editor.Stage
+namespace Tool.Editor.Stage
 {
 	public static class StageBuilder
 	{

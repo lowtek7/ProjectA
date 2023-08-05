@@ -1,11 +1,9 @@
 ﻿using System;
-#if UNITY_EDITOR
-using Build.Gizmos;
-#endif
 using Core.Unity;
+using Tool.Visual.Gizmos;
 using UnityEngine;
 
-namespace Build
+namespace Tool
 {
 	/// <summary>
 	/// 엔티티의 컴포넌트 스펙들을 기록해두는 비헤이비어

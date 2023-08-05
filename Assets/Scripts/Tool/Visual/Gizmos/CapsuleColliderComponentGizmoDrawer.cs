@@ -4,7 +4,7 @@ using Game.Ecs.Component;
 using UnityEditor;
 using UnityEngine;
 
-namespace Build.Gizmos
+namespace Tool.Visual.Gizmos
 {
 	[Gizmo(typeof(CapsuleColliderComponent))]
 	public class CapsuleColliderComponentGizmoDrawer : IGizmosDrawer

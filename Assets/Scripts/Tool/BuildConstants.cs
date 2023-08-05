@@ -1,4 +1,4 @@
-﻿namespace Build
+﻿namespace Tool
 {
 	/// <summary>
 	/// 빌드에 관련된 상수들
