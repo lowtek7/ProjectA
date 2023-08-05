@@ -65,9 +65,13 @@ namespace View.Ecs.System
 
 			chunkService.StartFetch();
 
+			var viewDistChanged = false;
+
 			// Distance가 플레이 도중 바뀌었을 때 캐싱해둔 CoordOffset을 갱신
 			if (chunkService.CoordViewDistance != _coordViewDistance)
 			{
+				viewDistChanged = true;
+
 				_coordViewDistance = chunkService.CoordViewDistance;
 
 				_visualizeLocalCoords.Clear();
@@ -107,8 +111,8 @@ namespace View.Ecs.System
 					ChunkUtility.GetCoordAxis(curPos.z)
 				);
 
-				// 플레이어의 Coord가 변경되었을 때
-				if (_currentCenterCoord != prevCenterCoord)
+				// 플레이어의 Coord나 시야 거리가 변경되었을 때
+				if (_currentCenterCoord != prevCenterCoord || viewDistChanged)
 				{
 					// 시각화되어있던 청크들 중 범위에서 벗어나는 것은 가상화
 					foreach (var visualizedChunkEntity in _visualizedChunkQuery)
