@@ -1,6 +1,7 @@
 ﻿using BlitzEcs;
 using Core.Unity;
 using Game.Ecs.Component;
+using Game.Extensions;
 using Service;
 using Service.Camera;
 using Service.Input;
@@ -34,8 +35,7 @@ namespace Game.Ecs.System
 
 				foreach (var moveEntity in _movementQuery)
 				{
-					if (moveEntity.Has<NetworkEntityComponent>() &&
-						moveEntity.Get<NetworkEntityComponent>().EntityRole == EntityRole.Remote)
+					if (moveEntity.IsRemoteEntity())
 					{
 						continue;
 					}

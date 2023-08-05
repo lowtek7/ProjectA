@@ -3,6 +3,7 @@ using BlitzEcs;
 using Core.Unity;
 using Core.Utility;
 using Game.Ecs.Component;
+using Game.Extensions;
 using Network.NetCommand.Client.Entity;
 using Service;
 using Service.Collision;
@@ -27,8 +28,7 @@ namespace Game.Ecs.System
 		{
 			foreach (var entity in _moveQuery)
 			{
-				if (entity.Has<NetworkEntityComponent>() &&
-					entity.Get<NetworkEntityComponent>().EntityRole == EntityRole.Remote)
+				if (entity.IsRemoteEntity())
 				{
 					continue;
 				}
@@ -53,36 +53,33 @@ namespace Game.Ecs.System
 						transformComponent.Position += (dir * dist);
 					}
 
-					if (entity.Has<PlayerComponent>() && entity.Has<NetworkEntityComponent>())
+					if (entity.IsLocalEntity())
 					{
 						var playerComponent = entity.Get<PlayerComponent>();
 						var netIdComponent = entity.Get<NetworkEntityComponent>();
 
-						if (netIdComponent.EntityRole == EntityRole.Local)
+						if (ServiceManager.TryGetService(out INetClientService clientService))
 						{
-							if (ServiceManager.TryGetService(out INetClientService clientService))
+							var pos = transformComponent.Position;
+							// dispose는 받는쪽에서 알아서 해줄 예정.
+							var command = CMD_ENTITY_MOVE.Create();
+
+							command.Id = netIdComponent.NetId;
+							command.Time = DateTime.UtcNow.ToUnixTime();
+							command.MovementFlags = MovementFlags.None;
+							command.SetPosition(pos.x, pos.y, pos.z);
+
+							if (movementComponent.IsMoving)
 							{
-								var pos = transformComponent.Position;
-								// dispose는 받는쪽에서 알아서 해줄 예정.
-								var command = CMD_ENTITY_MOVE.Create();
-
-								command.Id = netIdComponent.NetId;
-								command.Time = DateTime.UtcNow.ToUnixTime();
-								command.MovementFlags = MovementFlags.None;
-								command.SetPosition(pos.x, pos.y, pos.z);
-
-								if (movementComponent.IsMoving)
-								{
-									command.MovementFlags |= MovementFlags.Walk;
-								}
-
-								if (movementComponent.IsRunning)
-								{
-									command.MovementFlags |= MovementFlags.Run;
-								}
-
-								clientService.SendCommand(command);
+								command.MovementFlags |= MovementFlags.Walk;
 							}
+
+							if (movementComponent.IsRunning)
+							{
+								command.MovementFlags |= MovementFlags.Run;
+							}
+
+							clientService.SendCommand(command);
 						}
 					}
 				}
@@ -96,25 +93,22 @@ namespace Game.Ecs.System
 
 					transformComponent.Rotation = currentRotation;
 
-					if (entity.Has<PlayerComponent>() && entity.Has<NetworkEntityComponent>())
+					if (entity.IsLocalEntity())
 					{
 						var playerComponent = entity.Get<PlayerComponent>();
 						var netIdComponent = entity.Get<NetworkEntityComponent>();
 
-						if (netIdComponent.EntityRole == EntityRole.Local)
+						if (ServiceManager.TryGetService(out INetClientService clientService))
 						{
-							if (ServiceManager.TryGetService(out INetClientService clientService))
-							{
-								// dispose는 받는쪽에서 알아서 해줄 예정.
-								var command = CMD_ENTITY_MOVE.Create();
+							// dispose는 받는쪽에서 알아서 해줄 예정.
+							var command = CMD_ENTITY_MOVE.Create();
 
-								command.Id = netIdComponent.NetId;
-								command.Time = DateTime.UtcNow.ToUnixTime();
-								command.MovementFlags = MovementFlags.Rotate;
-								command.SetRotation(currentRotation.x, currentRotation.y, currentRotation.z, currentRotation.w);
+							command.Id = netIdComponent.NetId;
+							command.Time = DateTime.UtcNow.ToUnixTime();
+							command.MovementFlags = MovementFlags.Rotate;
+							command.SetRotation(currentRotation.x, currentRotation.y, currentRotation.z, currentRotation.w);
 
-								clientService.SendCommand(command);
-							}
+							clientService.SendCommand(command);
 						}
 					}
 				}

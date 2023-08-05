@@ -76,5 +76,10 @@ namespace Network.NetCommand.Client.Entity
 		}
 
 		public override short Opcode => (short) Packet.Opcode.CMD_ENTITY_MOVE;
+
+		public override string ToString()
+		{
+			return $"[id({Id}) x({X}), y({Y}), z({Z}), w({W}) flag({MovementFlags})]";
+		}
 	}
 }

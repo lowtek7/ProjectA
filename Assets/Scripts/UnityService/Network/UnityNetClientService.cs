@@ -208,6 +208,8 @@ namespace UnityService.Network
 				// command를 불러오기전에 Disconnect 체크가 필요한가?
 				var command = packetManager.ToCommand(opcode, ref memoryPackReader);
 
+				Debug.Log($"OnNetworkReceive. Peer Id : {peer.Id}, Remote Id : {peer.RemoteId}, length : {length}, opcode : {opcode} command : {command}");
+
 				if (command is IDisposable disposable)
 				{
 					switch (opcode)
@@ -361,9 +363,9 @@ namespace UnityService.Network
 					ref var transformComponent = ref entity.Get<TransformComponent>();
 					ref var movementComponent = ref entity.Get<MovementComponent>();
 
-					if (entityMove.MovementFlags == MovementFlags.Rotate)
+					if ((entityMove.MovementFlags & MovementFlags.Rotate) != 0)
 					{
-						transformComponent.Rotation = new Quaternion(entityMove.X, entityMove.Y, entityMove.Z, entityMove.W);
+						//transformComponent.Rotation = new Quaternion(entityMove.X, entityMove.Y, entityMove.Z, entityMove.W);
 					}
 					else
 					{

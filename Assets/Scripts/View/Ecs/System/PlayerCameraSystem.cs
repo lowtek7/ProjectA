@@ -1,6 +1,7 @@
 ﻿using BlitzEcs;
 using Core.Unity;
 using Game.Ecs.Component;
+using Game.Extensions;
 using Service;
 using Service.Camera;
 using UnityEngine;
@@ -10,9 +11,9 @@ namespace View.Ecs.System
 	public class PlayerCameraSystem : ISystem
 	{
 		private Query<PlayerCameraComponent, TransformComponent> query;
-		
+
 		private Query<InputComponent> inputQuery;
-		
+
 		private bool createSpherial = false;
 
 		public void Init(World world)
@@ -27,6 +28,11 @@ namespace View.Ecs.System
 			{
 				foreach (var entity in query)
 				{
+					if (entity.IsRemoteEntity())
+					{
+						continue;
+					}
+
 					ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
 
 					if (createSpherial == false)
@@ -44,6 +50,11 @@ namespace View.Ecs.System
 
 				foreach (var moveEntity in query)
 				{
+					if (moveEntity.IsRemoteEntity())
+					{
+						continue;
+					}
+
 					ref var transformComponent = ref moveEntity.Get<TransformComponent>();
 
 					// 좀더 넓은 시야를 위해 플레이어의 약간 위쪽위치를 설정

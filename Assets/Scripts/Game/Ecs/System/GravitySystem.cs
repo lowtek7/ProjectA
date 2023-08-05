@@ -2,6 +2,7 @@
 using Core.Unity;
 using Core.Utility;
 using Game.Ecs.Component;
+using Game.Extensions;
 using Service;
 using Service.Command;
 using UnityEngine;
@@ -21,6 +22,11 @@ namespace Game.Ecs.System
 		{
 			foreach (var entity in _gravityQuery)
 			{
+				if (entity.IsRemoteEntity())
+				{
+					continue;
+				}
+
 				ref var transformComponent = ref entity.Get<TransformComponent>();
 
 				var dist = (-1.0f * deltaTime);
