@@ -15,7 +15,7 @@ namespace Network.NetCommand
 			return pool.Create();
 		}
 
-		public void Dispose()
+		public virtual void Dispose()
 		{
 			pool.Return(this as T);
 		}

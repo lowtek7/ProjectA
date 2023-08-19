@@ -234,6 +234,14 @@ namespace UnityService.Network
 							}
 							break;
 						}
+						case Opcode.CMD_ENTITY_ROTATE:
+						{
+							if (command is CMD_ENTITY_ROTATE entityRotate)
+							{
+								RotateEntity(entityRotate.Id, entityRotate);
+							}
+							break;
+						}
 					}
 
 					disposable.Dispose();
@@ -363,29 +371,30 @@ namespace UnityService.Network
 					ref var transformComponent = ref entity.Get<TransformComponent>();
 					ref var movementComponent = ref entity.Get<MovementComponent>();
 
-					if ((entityMove.MovementFlags & MovementFlags.Rotate) != 0)
-					{
-						//transformComponent.Rotation = new Quaternion(entityMove.X, entityMove.Y, entityMove.Z, entityMove.W);
-					}
-					else
-					{
-						var currentPos = transformComponent.Position;
-						var targetPos = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
-						//var lerpPos = Vector3.Lerp()
+					var currentPos = transformComponent.Position;
+					var targetPos = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
+					//var lerpPos = Vector3.Lerp()
 
-						if ((entityMove.MovementFlags & MovementFlags.Walk) != 0)
-						{
-							movementComponent.MoveDir = (targetPos - currentPos).normalized;
-						}
+					movementComponent.MoveDir = (targetPos - currentPos).normalized;
+					movementComponent.IsRun = entityMove.MoveType == MoveType.Run;
 
-						if ((entityMove.MovementFlags & MovementFlags.Run) != 0)
-						{
-							movementComponent.MoveDir = (targetPos - currentPos).normalized;
-							movementComponent.IsRun = true;
-						}
+					transformComponent.Position = targetPos;
+				}
+			}
+		}
 
-						transformComponent.Position = targetPos;
-					}
+		private void RotateEntity(int netId, CMD_ENTITY_ROTATE entityRotate)
+		{
+			if (netIdToEntityIds.TryGetValue(netId, out var entityId))
+			{
+				var entity = new Entity(currentWorld, entityId);
+
+				if (entity.IsAlive && entity.Has<TransformComponent>() && entity.Has<MovementComponent>())
+				{
+					ref var transformComponent = ref entity.Get<TransformComponent>();
+					ref var movementComponent = ref entity.Get<MovementComponent>();
+
+					movementComponent.TargetRotation = new Quaternion(entityRotate.X, entityRotate.Y, entityRotate.Z, entityRotate.W);
 				}
 			}
 		}

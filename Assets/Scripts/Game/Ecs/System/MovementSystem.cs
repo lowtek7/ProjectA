@@ -66,17 +66,17 @@ namespace Game.Ecs.System
 
 							command.Id = netIdComponent.NetId;
 							command.Time = DateTime.UtcNow.ToUnixTime();
-							command.MovementFlags = MovementFlags.None;
+							command.MoveType = MoveType.None;
 							command.SetPosition(pos.x, pos.y, pos.z);
 
 							if (movementComponent.IsMoving)
 							{
-								command.MovementFlags |= MovementFlags.Walk;
+								command.MoveType = MoveType.Walk;
 							}
 
 							if (movementComponent.IsRunning)
 							{
-								command.MovementFlags |= MovementFlags.Run;
+								command.MoveType = MoveType.Run;
 							}
 
 							clientService.SendCommand(command);
@@ -101,12 +101,11 @@ namespace Game.Ecs.System
 						if (ServiceManager.TryGetService(out INetClientService clientService))
 						{
 							// dispose는 받는쪽에서 알아서 해줄 예정.
-							var command = CMD_ENTITY_MOVE.Create();
+							var command = CMD_ENTITY_ROTATE.Create();
 
 							command.Id = netIdComponent.NetId;
 							command.Time = DateTime.UtcNow.ToUnixTime();
-							command.MovementFlags = MovementFlags.Rotate;
-							command.SetRotation(currentRotation.x, currentRotation.y, currentRotation.z, currentRotation.w);
+							command.SetRotate(currentRotation.x, currentRotation.y, currentRotation.z, currentRotation.w);
 
 							clientService.SendCommand(command);
 						}
