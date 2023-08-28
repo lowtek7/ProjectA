@@ -394,7 +394,7 @@ namespace UnityService.Network
 					ref var transformComponent = ref entity.Get<TransformComponent>();
 					ref var movementComponent = ref entity.Get<MovementComponent>();
 
-					movementComponent.TargetRotation = new Quaternion(entityRotate.X, entityRotate.Y, entityRotate.Z, entityRotate.W);
+					transformComponent.Rotation = new Quaternion(entityRotate.X, entityRotate.Y, entityRotate.Z, entityRotate.W);
 				}
 			}
 		}
