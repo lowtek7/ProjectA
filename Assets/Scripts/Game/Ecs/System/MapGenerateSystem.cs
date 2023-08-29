@@ -46,43 +46,29 @@ namespace Game.Ecs.System
 							chunkType = 2;
 						}
 
-						var capacity = ChunkConstants.MaxBlockCountInChunk;
+						var capacity = ChunkConstants.MaxLocalBlockCount;
 
-						// var childBounds = new List<BoundsComponent.ChildBoundsInfo>(capacity);
 						var blockIdMap = new ushort[capacity];
 						var isSolidMap = new bool[capacity];
 
-						for (int y = 0; y < ChunkConstants.ChunkAxisCount; y++)
+						for (int y = 0; y < ChunkConstants.LocalBlockAxisCount; y++)
 						{
-							var yWeight = y << ChunkConstants.ChunkAxisExponent;
-
-							for (int x = 0; x < ChunkConstants.ChunkAxisCount; x++)
+							for (int x = 0; x < ChunkConstants.LocalBlockAxisCount; x++)
 							{
-								var xWeight = x << (ChunkConstants.ChunkAxisExponent << 1);
-
-								for (int z = 0; z < ChunkConstants.ChunkAxisCount; z++)
+								for (int z = 0; z < ChunkConstants.LocalBlockAxisCount; z++)
 								{
-									var index = xWeight | yWeight | z;
+									var localBlockId = ChunkUtility.GetLocalBlockId(x, y, z);
 
-									if (chunkType == 1 && y < ChunkConstants.ChunkAxisCount - 1)
+									if (chunkType == 1 && y < ChunkConstants.LocalBlockAxisCount - 1)
 									{
-										blockIdMap[index] = 2;
+										blockIdMap[localBlockId] = 2;
 									}
 									else
 									{
-										blockIdMap[index] = chunkType;
+										blockIdMap[localBlockId] = chunkType;
 									}
 
-									isSolidMap[index] = blockIdMap[index] != ChunkConstants.InvalidBlockId;
-
-									if (isSolidMap[index])
-									{
-										// childBounds.Add(new BoundsComponent.ChildBoundsInfo
-										// {
-										// 	centerOffset = new Vector3(x, y, z) + Vector3.one * 0.5f,
-										// 	size = Vector3.one
-										// });
-									}
+									isSolidMap[localBlockId] = blockIdMap[localBlockId] != ChunkConstants.InvalidBlockId;
 								}
 							}
 						}
@@ -99,19 +85,13 @@ namespace Game.Ecs.System
 						chunkEntity.Add(new TransformComponent
 						{
 							Direction = Vector3.up,
-							Position = ChunkUtility.ConvertIdToPos(coordId) * ChunkConstants.ChunkAxisCount
+							Position = ChunkUtility.ConvertIdToPos(coordId) * ChunkConstants.LocalBlockAxisCount
 						});
 
 						chunkEntity.Add(new StageSpecComponent
 						{
 							StageGuid = stagePropertyComponent.StageGuid
 						});
-
-						// chunkEntity.Add(new BoundsComponent
-						// {
-						// 	ChildBounds = childBounds,
-						// 	Capacity = childBounds.Capacity,
-						// });
 					}
 
 					stagePropertyComponent.CanGenerate = false;

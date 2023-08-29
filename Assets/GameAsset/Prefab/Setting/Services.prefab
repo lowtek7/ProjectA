@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 4703258830726058370}
   - component: {fileID: 3547440091555167561}
   m_Layer: 0
-  m_Name: ChunkService
+  m_Name: ChunkRenderService
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

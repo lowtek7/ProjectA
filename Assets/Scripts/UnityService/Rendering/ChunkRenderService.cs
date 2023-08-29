@@ -18,8 +18,8 @@ namespace UnityService.Rendering
 	/// <summary>
 	/// 여기서는 청크의 인덱스 좌표를 Coord로 사용
 	/// </summary>
-	[UnityService(typeof(IChunkService))]
-	public class ChunkService : MonoBehaviour, IChunkService
+	[UnityService(typeof(IChunkRenderService))]
+	public class ChunkRenderService : MonoBehaviour, IChunkRenderService
 	{
 		[SerializeField]
 		private string visualizerPoolGuid;
@@ -37,7 +37,7 @@ namespace UnityService.Rendering
 		public static readonly Dictionary<int, PackedTextureUvInfo> UvInfo = new();
 
 		private static readonly bool[] EmptySolidMap = ArrayUtility.CreateArrayFilledWith(
-			ChunkConstants.MaxBlockCountInChunk,
+			ChunkConstants.MaxLocalBlockCount,
 			true
 			);
 
@@ -299,7 +299,7 @@ namespace UnityService.Rendering
 			}
 
 			Vector3 spawnCoordPos = ChunkUtility.ConvertIdToPos(coordId);
-			var spawnPos = spawnCoordPos * ChunkConstants.ChunkAxisCount;
+			var spawnPos = spawnCoordPos * ChunkConstants.LocalBlockAxisCount;
 
 			var visualizerGo = objectPoolService.Spawn(_visualizerPoolGuid, spawnPos);
 			var visualizer = visualizerGo.GetComponent<ChunkVisualizer>();

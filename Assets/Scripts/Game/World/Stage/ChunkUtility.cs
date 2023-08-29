@@ -6,7 +6,7 @@ namespace Game.World.Stage
 	{
 		public static int GetCoordAxis(float worldValue)
 		{
-			return Mathf.RoundToInt(worldValue) >> ChunkConstants.ChunkAxisExponent;
+			return Mathf.RoundToInt(worldValue) >> ChunkConstants.LocalBlockAxisExponent;
 		}
 
 		/// <summary>
@@ -85,6 +85,23 @@ namespace Game.World.Stage
 			movedCoordId = ChunkConstants.InvalidCoordId;
 
 			return false;
+		}
+
+		public static Vector3Int GetLocalBlockOffset(int localId)
+		{
+			return new Vector3Int(
+				localId & ChunkConstants.LocalBlockXBitRange,
+				localId & ChunkConstants.LocalBlockYBitRange,
+				localId & ChunkConstants.LocalBlockZBitRange
+				);
+		}
+
+		public static int GetLocalBlockId(int localX, int localY, int localZ)
+		{
+			var xWeight = localX << (ChunkConstants.LocalBlockAxisExponent << 1);
+			var yWeight = localY << ChunkConstants.LocalBlockAxisExponent;
+
+			return xWeight | yWeight | localZ;
 		}
 	}
 }

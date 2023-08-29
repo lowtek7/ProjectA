@@ -65,7 +65,7 @@ namespace UnityService.Rendering
 				_isSolidBack = new NativeArray<bool>(isSolidBack, lifeType);
 
 				// Capacity를 미리 크게 잡아둠
-				var normalSideCount = ChunkConstants.MaxBlockCountInChunk * ChunkConstants.BlockSideCount / 2;
+				var normalSideCount = ChunkConstants.MaxLocalBlockCount * ChunkConstants.BlockSideCount / 2;
 
 				vertices = new NativeArray<Vector3>(normalSideCount * 4, lifeType);
 				triangles = new NativeArray<int>(normalSideCount * 6, lifeType);
@@ -102,20 +102,16 @@ namespace UnityService.Rendering
 
 			public void Execute()
 			{
-				for (int y = 0; y < ChunkConstants.ChunkAxisCount; y++)
+				for (int y = 0; y < ChunkConstants.LocalBlockAxisCount; y++)
 				{
-					var yWeight = y << ChunkConstants.ChunkAxisExponent;
-
-					for (int x = 0; x < ChunkConstants.ChunkAxisCount; x++)
+					for (int x = 0; x < ChunkConstants.LocalBlockAxisCount; x++)
 					{
-						var xWeight = x << (ChunkConstants.ChunkAxisExponent << 1);
-
-						for (int z = 0; z < ChunkConstants.ChunkAxisCount; z++)
+						for (int z = 0; z < ChunkConstants.LocalBlockAxisCount; z++)
 						{
-							var index = xWeight | yWeight | z;
+							var localBlockId = ChunkUtility.GetLocalBlockId(x, y, z);
 
-							if (_blockMap[index] != ChunkConstants.InvalidBlockId) {
-								AddBlock(x, y, z, _blockMap[index]);
+							if (_blockMap[localBlockId] != ChunkConstants.InvalidBlockId) {
+								AddBlock(x, y, z, _blockMap[localBlockId]);
 							}
 						}
 					}
@@ -140,7 +136,7 @@ namespace UnityService.Rendering
 					switch (s)
 					{
 						case 0:
-							if (++nearX >= ChunkConstants.ChunkAxisCount)
+							if (++nearX >= ChunkConstants.LocalBlockAxisCount)
 							{
 								nearX = 0;
 								isSolidData = _isSolidRight;
@@ -150,13 +146,13 @@ namespace UnityService.Rendering
 						case 1:
 							if (--nearX < 0)
 							{
-								nearX = ChunkConstants.ChunkAxisCount - 1;
+								nearX = ChunkConstants.LocalBlockAxisCount - 1;
 								isSolidData = _isSolidLeft;
 							}
 
 							break;
 						case 2:
-							if (++nearY >= ChunkConstants.ChunkAxisCount)
+							if (++nearY >= ChunkConstants.LocalBlockAxisCount)
 							{
 								nearY = 0;
 								isSolidData = _isSolidUp;
@@ -166,13 +162,13 @@ namespace UnityService.Rendering
 						case 3:
 							if (--nearY < 0)
 							{
-								nearY = ChunkConstants.ChunkAxisCount - 1;
+								nearY = ChunkConstants.LocalBlockAxisCount - 1;
 								isSolidData = _isSolidDown;
 							}
 
 							break;
 						case 4:
-							if (++nearZ >= ChunkConstants.ChunkAxisCount)
+							if (++nearZ >= ChunkConstants.LocalBlockAxisCount)
 							{
 								nearZ = 0;
 								isSolidData = _isSolidForward;
@@ -182,15 +178,15 @@ namespace UnityService.Rendering
 						case 5:
 							if (--nearZ < 0)
 							{
-								nearZ = ChunkConstants.ChunkAxisCount - 1;
+								nearZ = ChunkConstants.LocalBlockAxisCount - 1;
 								isSolidData = _isSolidBack;
 							}
 
 							break;
 					}
 
-					var nearXWeight = nearX << (ChunkConstants.ChunkAxisExponent << 1);
-					var nearYWeight = nearY << ChunkConstants.ChunkAxisExponent;
+					var nearXWeight = nearX << (ChunkConstants.LocalBlockAxisExponent << 1);
+					var nearYWeight = nearY << ChunkConstants.LocalBlockAxisExponent;
 					var nearZWeight = nearZ;
 
 					// if (isSolidData == _isSolidSelf)
@@ -203,7 +199,7 @@ namespace UnityService.Rendering
 
 					var blockSideId = (blockId << 3) | s;
 
-					if (!ChunkService.UvInfo.TryGetValue(blockSideId, out var uvInfo))
+					if (!ChunkRenderService.UvInfo.TryGetValue(blockSideId, out var uvInfo))
 					{
 						continue;
 					}
@@ -241,7 +237,7 @@ namespace UnityService.Rendering
 
 			// Capacity를 미리 크게 잡아둠
 			var normalSideCount =
-				ChunkConstants.ChunkAxisCount * ChunkConstants.ChunkAxisCount * ChunkConstants.BlockSideCount;
+				ChunkConstants.LocalBlockAxisCount * ChunkConstants.LocalBlockAxisCount * ChunkConstants.BlockSideCount;
 
 			_verticesPool = new Vector3[normalSideCount * 4];
 			_trianglesPool = new int[normalSideCount * 6];

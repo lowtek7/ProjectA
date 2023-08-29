@@ -2,7 +2,7 @@
 
 namespace Service.Rendering
 {
-	public interface IChunkService : IGameService
+	public interface IChunkRenderService : IGameService
 	{
 		int CoordViewDistance { get; }
 

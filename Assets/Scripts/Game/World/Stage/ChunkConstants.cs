@@ -4,10 +4,6 @@ namespace Game.World.Stage
 {
 	public static class ChunkConstants
 	{
-		public static readonly int ChunkAxisExponent = 4;
-		public static readonly int ChunkAxisCount = 1 << ChunkAxisExponent;
-		public static readonly int MaxBlockCountInChunk = ChunkAxisCount * ChunkAxisCount * ChunkAxisCount;
-
 		public static readonly int ChunkCoordZExponent = 0;
 		private static readonly int ChunkCoordZBitCount = 4;
 		public static readonly int ChunkCoordZOffset = 1 << (ChunkCoordZBitCount - 1);
@@ -48,8 +44,16 @@ namespace Game.World.Stage
 			Vector3Int.back,
 		};
 
+		public static readonly int LocalBlockAxisExponent = 4;
+		public static readonly int LocalBlockAxisCount = 1 << LocalBlockAxisExponent;
+		public static readonly int MaxLocalBlockCount = LocalBlockAxisCount * LocalBlockAxisCount * LocalBlockAxisCount;
+
 		public static readonly ushort InvalidBlockId = ushort.MaxValue;
 
 		public static readonly int BlockSideCount = 6;
+
+		public static readonly int LocalBlockXBitRange = (LocalBlockAxisCount - 1) << (LocalBlockAxisExponent << 1);
+		public static readonly int LocalBlockYBitRange = (LocalBlockAxisCount - 1) << (LocalBlockAxisExponent);
+		public static readonly int LocalBlockZBitRange = LocalBlockAxisCount - 1;
 	}
 }

@@ -48,7 +48,7 @@ namespace View.Ecs.System
 
 		public void LateUpdate(float deltaTime)
 		{
-			if (!ServiceManager.TryGetService<IChunkService>(out var chunkService))
+			if (!ServiceManager.TryGetService<IChunkRenderService>(out var chunkRenderService))
 			{
 				return;
 			}
@@ -63,16 +63,16 @@ namespace View.Ecs.System
 				}
 			}
 
-			chunkService.StartFetch();
+			chunkRenderService.StartFetch();
 
 			var viewDistChanged = false;
 
 			// Distance가 플레이 도중 바뀌었을 때 캐싱해둔 CoordOffset을 갱신
-			if (chunkService.CoordViewDistance != _coordViewDistance)
+			if (chunkRenderService.CoordViewDistance != _coordViewDistance)
 			{
 				viewDistChanged = true;
 
-				_coordViewDistance = chunkService.CoordViewDistance;
+				_coordViewDistance = chunkRenderService.CoordViewDistance;
 
 				_visualizeLocalCoords.Clear();
 
@@ -124,7 +124,7 @@ namespace View.Ecs.System
 						{
 							visualizedChunkEntity.Remove<VisualizedChunkComponent>();
 
-							chunkService.RemoveVisualizer(visualizedChunkEntity);
+							chunkRenderService.RemoveVisualizer(visualizedChunkEntity);
 						}
 						else
 						{
@@ -144,12 +144,13 @@ namespace View.Ecs.System
 					foreach (var localOffset in _visualizeLocalCoords)
 					{
 						// 활성화하려는 청크의 Coord가 존재한다면
-						if (ChunkUtility.TryMoveCoord(_currentCenterCoord, localOffset.x, localOffset.y, localOffset.z,
-							    out var movedCoordId) && _virtualChunkBuffer.TryGetValue(movedCoordId, out var chunkEntity))
+						if (ChunkUtility.TryMoveCoord(_currentCenterCoord,
+							    localOffset.x, localOffset.y, localOffset.z, out var movedCoordId) &&
+						    _virtualChunkBuffer.TryGetValue(movedCoordId, out var chunkEntity))
 						{
 							chunkEntity.Add<VisualizedChunkComponent>();
 
-							chunkService.AddVisualizer(chunkEntity);
+							chunkRenderService.AddVisualizer(chunkEntity);
 
 							// 근처 6방향의 시각화된 청크도 갱신
 							for (int i = 0; i < ChunkConstants.BlockSideCount; i++)
@@ -161,7 +162,7 @@ namespace View.Ecs.System
 								{
 									if (_visualizedChunkBuffer.TryGetValue(nearCoordId, out var nearVisualizedChunkEntity))
 									{
-										chunkService.UpdateVisualizer(nearVisualizedChunkEntity);
+										chunkRenderService.UpdateVisualizer(nearVisualizedChunkEntity);
 									}
 								}
 							}
@@ -176,7 +177,7 @@ namespace View.Ecs.System
 				break;
 			}
 
-			chunkService.EndFetch();
+			chunkRenderService.EndFetch();
 		}
 	}
 }
