@@ -29,7 +29,7 @@ namespace Game.Ecs.Component
 				capacity = value;
 
 				// 할당된 Capacity가 더 작은 경우에만 갱신해줌
-				if (childBounds.Capacity < capacity)
+				if (childBounds != null && childBounds.Capacity < capacity)
 				{
 					childBounds.Capacity = capacity;
 				}
