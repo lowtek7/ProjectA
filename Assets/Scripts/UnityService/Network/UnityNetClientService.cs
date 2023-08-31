@@ -11,11 +11,9 @@ using Game.Unit;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using MemoryPack;
-using Network.NetCommand.Client.Entity;
-using Network.NetCommand.Client.Player;
-using Network.NetCommand.Server.Player;
 using Network.Packet;
 using Network.Packet.Handler;
+using RAMG.Packets;
 using Service;
 using Service.Network;
 using UnityEngine;
@@ -214,11 +212,9 @@ namespace UnityService.Network
 				{
 					switch (opcode)
 					{
-						case Opcode.ERROR_CODE:
-							break;
 						case Opcode.CCMD_PLAYER_JOIN:
 						{
-							if (command is CCMD_PLAYER_SERVERJOIN playerServerJoin)
+							if (command is CCMD_PLAYER_JOIN playerServerJoin)
 							{
 								var netId = playerServerJoin.Id;
 

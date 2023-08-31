@@ -4,7 +4,7 @@ using Core.Unity;
 using Core.Utility;
 using Game.Ecs.Component;
 using Game.Extensions;
-using Network.NetCommand.Client.Entity;
+using RAMG.Packets;
 using Service;
 using Service.Collision;
 using Service.Network;
@@ -67,7 +67,9 @@ namespace Game.Ecs.System
 							command.Id = netIdComponent.NetId;
 							command.Time = DateTime.UtcNow.ToUnixTime();
 							command.MoveType = MoveType.None;
-							command.SetPosition(pos.x, pos.y, pos.z);
+							command.X = pos.x;
+							command.Y = pos.y;
+							command.Z = pos.z;
 
 							if (movementComponent.IsMoving)
 							{
@@ -105,7 +107,10 @@ namespace Game.Ecs.System
 
 							command.Id = netIdComponent.NetId;
 							command.Time = DateTime.UtcNow.ToUnixTime();
-							command.SetRotate(currentRotation.x, currentRotation.y, currentRotation.z, currentRotation.w);
+							command.X = currentRotation.x;
+							command.Y = currentRotation.y;
+							command.Z = currentRotation.z;
+							command.W = currentRotation.w;
 
 							clientService.SendCommand(command);
 						}
