@@ -44,15 +44,6 @@ namespace Game.Ecs.System
 					var dir = movementComponent.MoveDir;
 					var dist = movementComponent.CurrentSpeed * deltaTime;
 
-					if (collisionService.IsCollision(entity, (dir * dist)))
-					{
-						// 충돌 알림
-					}
-					else
-					{
-						transformComponent.Position += (dir * dist);
-					}
-
 					if (entity.IsLocalEntity())
 					{
 						var playerComponent = entity.Get<PlayerComponent>();
@@ -82,6 +73,31 @@ namespace Game.Ecs.System
 							}
 
 							clientService.SendCommand(command);
+						}
+
+						if (collisionService.IsCollision(entity, (dir * dist)))
+						{
+							// 충돌 알림
+						}
+						else
+						{
+							transformComponent.Position += (dir * dist);
+						}
+					}
+					else
+					{
+						// 네트워크 객체의 경우 movement를 다르게 돌려야 한다.
+						var currentSpeed = movementComponent.CurrentSpeed;
+						var moveDir = (movementComponent.MoveDir.normalized) * currentSpeed;
+
+						transformComponent.Position += moveDir;
+
+						var remainingDist = movementComponent.MoveDir.magnitude - moveDir.magnitude;
+
+						if (remainingDist <= 0)
+						{
+							movementComponent.MoveDir = Vector3.zero;
+							movementComponent.IsRun = false;
 						}
 					}
 				}

@@ -369,12 +369,29 @@ namespace UnityService.Network
 
 					var currentPos = transformComponent.Position;
 					var targetPos = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
-					//var lerpPos = Vector3.Lerp()
 
 					movementComponent.MoveDir = (targetPos - currentPos).normalized;
-					movementComponent.IsRun = entityMove.MoveType == MoveType.Run;
 
-					transformComponent.Position = targetPos;
+					// 이동이 말도 안되는 경우 좌표 보정
+					if (((targetPos - currentPos).sqrMagnitude > movementComponent.CurrentSpeed * movementComponent.CurrentSpeed) &&
+						entityMove.MoveType is MoveType.Run or MoveType.Walk)
+					{
+						var reverseDir = (currentPos - targetPos).normalized;
+						movementComponent.MoveDir = (targetPos - currentPos);
+
+						transformComponent.Position = (targetPos + (reverseDir * movementComponent.CurrentSpeed));
+					}
+
+					if (entityMove.MoveType is MoveType.Run or MoveType.Walk)
+					{
+						movementComponent.IsRun = entityMove.MoveType == MoveType.Run;
+					}
+					else
+					{
+						transformComponent.Position = targetPos;
+						movementComponent.MoveDir = Vector3.zero;
+						movementComponent.IsRun = false;
+					}
 				}
 			}
 		}
