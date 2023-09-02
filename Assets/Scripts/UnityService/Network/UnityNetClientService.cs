@@ -226,7 +226,7 @@ namespace UnityService.Network
 						{
 							if (command is CMD_ENTITY_MOVE entityMove)
 							{
-								MoveEntity(entityMove.Id, entityMove);
+								MoveEntity(entityMove.Id, entityMove, peer.RoundTripTime);
 							}
 							break;
 						}
@@ -343,6 +343,7 @@ namespace UnityService.Network
 				NetId = netId,
 				EntityRole = EntityRole.Remote
 			});
+			entity.Add(new NetMovementComponent());
 			entity.Add(new StageSpecComponent
 			{
 				StageGuid = worldStageGuid
@@ -356,7 +357,7 @@ namespace UnityService.Network
 		/// </summary>
 		/// <param name="netId"></param>
 		/// <param name="entityMove"></param>
-		private void MoveEntity(int netId, CMD_ENTITY_MOVE entityMove)
+		private void MoveEntity(int netId, CMD_ENTITY_MOVE entityMove, int rtt)
 		{
 			if (netIdToEntityIds.TryGetValue(netId, out var entityId))
 			{
@@ -364,34 +365,10 @@ namespace UnityService.Network
 
 				if (entity.IsAlive && entity.Has<TransformComponent>() && entity.Has<MovementComponent>())
 				{
-					ref var transformComponent = ref entity.Get<TransformComponent>();
-					ref var movementComponent = ref entity.Get<MovementComponent>();
+					ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
 
-					var currentPos = transformComponent.Position;
-					var targetPos = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
-
-					movementComponent.MoveDir = (targetPos - currentPos).normalized;
-
-					// 이동이 말도 안되는 경우 좌표 보정
-					if (((targetPos - currentPos).sqrMagnitude > movementComponent.CurrentSpeed * movementComponent.CurrentSpeed) &&
-						entityMove.MoveType is MoveType.Run or MoveType.Walk)
-					{
-						var reverseDir = (currentPos - targetPos).normalized;
-						movementComponent.MoveDir = (targetPos - currentPos);
-
-						transformComponent.Position = (targetPos + (reverseDir * movementComponent.CurrentSpeed));
-					}
-
-					if (entityMove.MoveType is MoveType.Run or MoveType.Walk)
-					{
-						movementComponent.IsRun = entityMove.MoveType == MoveType.Run;
-					}
-					else
-					{
-						transformComponent.Position = targetPos;
-						movementComponent.MoveDir = Vector3.zero;
-						movementComponent.IsRun = false;
-					}
+					netMovementComponent.GoalPos = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
+					netMovementComponent.IsMoving = entityMove.MoveType != MoveType.None;
 				}
 			}
 		}
@@ -404,10 +381,9 @@ namespace UnityService.Network
 
 				if (entity.IsAlive && entity.Has<TransformComponent>() && entity.Has<MovementComponent>())
 				{
-					ref var transformComponent = ref entity.Get<TransformComponent>();
-					ref var movementComponent = ref entity.Get<MovementComponent>();
+					ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
 
-					transformComponent.Rotation = new Quaternion(entityRotate.X, entityRotate.Y, entityRotate.Z, entityRotate.W);
+					netMovementComponent.GoalRotation = new Quaternion(entityRotate.X, entityRotate.Y, entityRotate.Z, entityRotate.W);
 				}
 			}
 		}

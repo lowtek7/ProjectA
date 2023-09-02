@@ -28,13 +28,8 @@ namespace Game.Ecs.System
 		{
 			foreach (var entity in _moveQuery)
 			{
-				if (entity.IsRemoteEntity())
-				{
-					continue;
-				}
-
 				ref var transformComponent = ref entity.Get<TransformComponent>();
-				var movementComponent = entity.Get<MovementComponent>();
+				ref var movementComponent = ref entity.Get<MovementComponent>();
 
 				// MoveDir가 zero가 아니라면 계산해줌
 				if (movementComponent.MoveDir != Vector3.zero)
@@ -84,26 +79,10 @@ namespace Game.Ecs.System
 							transformComponent.Position += (dir * dist);
 						}
 					}
-					else
-					{
-						// 네트워크 객체의 경우 movement를 다르게 돌려야 한다.
-						var currentSpeed = movementComponent.CurrentSpeed;
-						var moveDir = (movementComponent.MoveDir.normalized) * currentSpeed;
-
-						transformComponent.Position += moveDir;
-
-						var remainingDist = movementComponent.MoveDir.magnitude - moveDir.magnitude;
-
-						if (remainingDist <= 0)
-						{
-							movementComponent.MoveDir = Vector3.zero;
-							movementComponent.IsRun = false;
-						}
-					}
 				}
 
 				// 캐릭터 회전
-				if (!transformComponent.Rotation.eulerAngles.y.IsAlmostCloseTo(movementComponent.TargetRotation.eulerAngles.y))
+				if (entity.IsLocalEntity() && !transformComponent.Rotation.eulerAngles.y.IsAlmostCloseTo(movementComponent.TargetRotation.eulerAngles.y))
 				{
 					var rotationDist = movementComponent.RotateSpeed * deltaTime;
 					var currentRotation = Quaternion.RotateTowards(transformComponent.Rotation,
@@ -111,25 +90,22 @@ namespace Game.Ecs.System
 
 					transformComponent.Rotation = currentRotation;
 
-					if (entity.IsLocalEntity())
+					var playerComponent = entity.Get<PlayerComponent>();
+					var netIdComponent = entity.Get<NetworkEntityComponent>();
+
+					if (ServiceManager.TryGetService(out INetClientService clientService))
 					{
-						var playerComponent = entity.Get<PlayerComponent>();
-						var netIdComponent = entity.Get<NetworkEntityComponent>();
+						// dispose는 받는쪽에서 알아서 해줄 예정.
+						var command = CMD_ENTITY_ROTATE.Create();
 
-						if (ServiceManager.TryGetService(out INetClientService clientService))
-						{
-							// dispose는 받는쪽에서 알아서 해줄 예정.
-							var command = CMD_ENTITY_ROTATE.Create();
+						command.Id = netIdComponent.NetId;
+						command.Time = DateTime.UtcNow.ToUnixTime();
+						command.X = currentRotation.x;
+						command.Y = currentRotation.y;
+						command.Z = currentRotation.z;
+						command.W = currentRotation.w;
 
-							command.Id = netIdComponent.NetId;
-							command.Time = DateTime.UtcNow.ToUnixTime();
-							command.X = currentRotation.x;
-							command.Y = currentRotation.y;
-							command.Z = currentRotation.z;
-							command.W = currentRotation.w;
-
-							clientService.SendCommand(command);
-						}
+						clientService.SendCommand(command);
 					}
 				}
 			}
