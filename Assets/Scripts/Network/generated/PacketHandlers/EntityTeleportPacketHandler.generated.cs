@@ -7,14 +7,14 @@ using Service.Network;
 
 namespace RAMG.Packets
 {
-	[PacketOpcode(RAMG.Packets.Opcode.CCMD_PLAYER_JOIN)]
-	public partial class PlayerJoinPacketHandler : IPacketHandler
+	[PacketOpcode(RAMG.Packets.Opcode.CMD_ENTITY_TELEPORT)]
+	public partial class EntityTeleportPacketHandler : IPacketHandler
 	{
 		public INetCommand ToCommand(ref MemoryPackReader reader)
 		{
-			var command = CCMD_PLAYER_JOIN.Create();
+			var command = CMD_ENTITY_TELEPORT.Create();
 
-			CCMD_PLAYER_JOIN.Deserialize(ref reader, ref command);
+			CMD_ENTITY_TELEPORT.Deserialize(ref reader, ref command);
 
 			return command;
 		}

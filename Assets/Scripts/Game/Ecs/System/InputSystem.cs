@@ -1,10 +1,14 @@
-﻿using BlitzEcs;
+﻿using System;
+using BlitzEcs;
 using Core.Unity;
+using Core.Utility;
 using Game.Ecs.Component;
 using Game.Extensions;
+using RAMG.Packets;
 using Service;
 using Service.Camera;
 using Service.Input;
+using Service.Network;
 using UnityEngine;
 
 namespace Game.Ecs.System
@@ -48,6 +52,32 @@ namespace Game.Ecs.System
 					{
 						transformComponent.Direction = moveDirection;
 						movementComponent.TargetRotation = Quaternion.LookRotation(moveDirection);
+					}
+					else
+					{
+						// 입력이 없고 이전 프레임에 움직였었다면 처리해주자.
+						if (movementComponent.MoveDir != Vector3.zero)
+						{
+							if (entity.Has<NetworkEntityComponent>() && ServiceManager.TryGetService(out INetClientService clientService))
+							{
+								var netIdComponent = entity.Get<NetworkEntityComponent>();
+								var pos = transformComponent.Position;
+								// dispose는 받는쪽에서 알아서 해줄 예정.
+								var command = CMD_ENTITY_MOVE.Create();
+
+								command.Id = netIdComponent.NetId;
+								command.Time = DateTime.UtcNow.ToUnixTime();
+								command.MoveType = MoveType.None;
+								command.X = pos.x;
+								command.Y = pos.y;
+								command.Z = pos.z;
+								command.VelocityX = 0;
+								command.VelocityY = 0;
+								command.VelocityZ = 0;
+
+								clientService.SendCommand(command);
+							}
+						}
 					}
 
 					movementComponent.MoveDir = moveDirection;

@@ -41,42 +41,70 @@ namespace Game.Ecs.System
 
 					if (entity.IsLocalEntity())
 					{
-						var playerComponent = entity.Get<PlayerComponent>();
-						var netIdComponent = entity.Get<NetworkEntityComponent>();
-
-						if (ServiceManager.TryGetService(out INetClientService clientService))
-						{
-							var pos = transformComponent.Position;
-							// dispose는 받는쪽에서 알아서 해줄 예정.
-							var command = CMD_ENTITY_MOVE.Create();
-
-							command.Id = netIdComponent.NetId;
-							command.Time = DateTime.UtcNow.ToUnixTime();
-							command.MoveType = MoveType.None;
-							command.X = pos.x;
-							command.Y = pos.y;
-							command.Z = pos.z;
-
-							if (movementComponent.IsMoving)
-							{
-								command.MoveType = MoveType.Walk;
-							}
-
-							if (movementComponent.IsRunning)
-							{
-								command.MoveType = MoveType.Run;
-							}
-
-							clientService.SendCommand(command);
-						}
-
 						if (collisionService.IsCollision(entity, (dir * dist)))
 						{
 							// 충돌 알림
 						}
 						else
 						{
-							transformComponent.Position += (dir * dist);
+							var velocity = dir * dist;
+							var playerComponent = entity.Get<PlayerComponent>();
+							var netIdComponent = entity.Get<NetworkEntityComponent>();
+
+							if (ServiceManager.TryGetService(out INetClientService clientService))
+							{
+								var pos = transformComponent.Position;
+								// dispose는 받는쪽에서 알아서 해줄 예정.
+								var command = CMD_ENTITY_MOVE.Create();
+
+								command.Id = netIdComponent.NetId;
+								command.Time = DateTime.UtcNow.ToUnixTime();
+								command.MoveType = MoveType.None;
+								command.X = pos.x;
+								command.Y = pos.y;
+								command.Z = pos.z;
+								command.VelocityX = velocity.x;
+								command.VelocityY = velocity.y;
+								command.VelocityZ = velocity.z;
+
+								if (movementComponent.IsMoving)
+								{
+									command.MoveType = MoveType.Walk;
+								}
+
+								if (movementComponent.IsRunning)
+								{
+									command.MoveType = MoveType.Run;
+								}
+
+								clientService.SendCommand(command);
+							}
+
+							transformComponent.Position += velocity;
+						}
+					}
+				}
+				else
+				{
+					// 캐릭터가 움직이지 않는다면 뭉쳐서 보내는 동기화 패킷에 같이 보내도록 설정.
+					if (entity.IsLocalEntity())
+					{
+						var netIdComponent = entity.Get<NetworkEntityComponent>();
+
+						if (ServiceManager.TryGetService(out INetClientService clientService))
+						{
+							var pos = transformComponent.Position;
+							// dispose는 받는쪽에서 알아서 해줄 예정.
+							var command = CMD_ENTITY_POS_SYNC.Create();
+							var key = $"MOVE_IDLE_{netIdComponent.NetId}";
+
+							command.Id = netIdComponent.NetId;
+							command.Time = DateTime.UtcNow.ToUnixTime();
+							command.X = pos.x;
+							command.Y = pos.y;
+							command.Z = pos.z;
+
+							clientService.SendPeriodCommand(key, PeriodPacketType.HalfSecond, command);
 						}
 					}
 				}

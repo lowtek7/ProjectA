@@ -7,11 +7,9 @@ using System.Net.Sockets;
 using BlitzEcs;
 using Core.Utility;
 using Game.Ecs.Component;
-using Game.Unit;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using MemoryPack;
-using Network.Packet;
 using Network.Packet.Handler;
 using RAMG.Packets;
 using Service;
@@ -39,6 +37,10 @@ namespace UnityService.Network
 
 		private readonly Queue<INetCommand> commands = new Queue<INetCommand>();
 
+		private readonly Queue<INetCommand> periodCommands = new Queue<INetCommand>();
+
+		private readonly Dictionary<int, INetCommand> periodCommandMap = new Dictionary<int, INetCommand>();
+
 		private readonly Dictionary<int, int> netIdToEntityIds = new Dictionary<int, int>();
 
 		private static int DefaultPort => 47221;
@@ -58,10 +60,13 @@ namespace UnityService.Network
 
 		private NetPeer localPeer;
 
+		private float timePassed;
+
 		public void Init(World world)
 		{
 			netIdToEntityIds.Clear();
 
+			timePassed = 0f;
 			currentWorld = world;
 			currentNetId = -1;
 			packetManager = new PacketManager();
@@ -94,7 +99,31 @@ namespace UnityService.Network
 		/// <param name="command"></param>
 		public void SendCommand(INetCommand command)
 		{
+			if (!onlineMode)
+			{
+				return;
+			}
+
 			commands.Enqueue(command);
+		}
+
+		public void SendPeriodCommand(PeriodPacketType periodPacketType, INetCommand command)
+		{
+		}
+
+		public void SendPeriodCommand(string key, PeriodPacketType periodPacketType, INetCommand command)
+		{
+			var hash = key.GetHashCode();
+
+			if (periodCommandMap.TryGetValue(hash, out var prevCommand))
+			{
+				if (prevCommand is IDisposable disposable)
+				{
+					disposable.Dispose();
+				}
+			}
+
+			periodCommandMap[hash] = command;
 		}
 
 		private void OnDestroy()
@@ -121,6 +150,8 @@ namespace UnityService.Network
 
 		private void Update()
 		{
+			var dt = Time.deltaTime;
+
 			if (netClient is not null && localPeer.ConnectionState == ConnectionState.Connected)
 			{
 				netClient.PollEvents();
@@ -129,37 +160,36 @@ namespace UnityService.Network
 
 				if (peer is { ConnectionState: ConnectionState.Connected })
 				{
+					timePassed += dt;
+
+					// 나중에 period 타입에 따라 분리해서 보낼 예정... 지금은 그냥 0.5초마다 싱크하게 간단히 구현.
+					if (timePassed >= 0.5f)
+					{
+						foreach (var keyValues in periodCommandMap)
+						{
+							var command = keyValues.Value;
+
+							SendCommandInternal(peer, command);
+						}
+
+						periodCommandMap.Clear();
+
+						foreach (var command in periodCommands)
+						{
+							SendCommandInternal(peer, command);
+						}
+
+						periodCommands.Clear();
+
+						timePassed = 0f;
+					}
+
+					// FIXME: 나중에는 커맨드가 쌓여있으면 모아서 보내자.
+
 					// 여기서 패킷을 보내야한다.
 					while (commands.TryDequeue(out var command))
 					{
-						if (command is IDisposable disposable)
-						{
-							// 일단 임시로 메모리 스트림 사용...
-							using (var ms = new MemoryStream())
-							{
-								using (var binaryWriter = new BinaryWriter(ms))
-								{
-									// Writer를 사용해 패킷 생성
-									var commandBytes = MemoryPackSerializer.Serialize(command.GetType(), command,
-										MemoryPackSerializerOptions.Utf8);
-									var length = Convert.ToUInt16(commandBytes.Length);
-									var opcode = command.Opcode;
-
-									binaryWriter.Write(length);
-									binaryWriter.Write(opcode);
-									binaryWriter.Write(commandBytes);
-
-									// 패킷 보내기
-									var data = ms.ToArray();
-									peer.Send(data, DeliveryMethod.ReliableOrdered);
-
-									Debug.Log($"Client Send : {data}");
-
-									// 커맨드를 Dispose
-									disposable.Dispose();
-								}
-							}
-						}
+						SendCommandInternal(peer, command);
 					}
 				}
 				else
@@ -167,6 +197,48 @@ namespace UnityService.Network
 					if (commands.Count > 0)
 					{
 						commands.Clear();
+					}
+
+					if (periodCommands.Count > 0)
+					{
+						periodCommands.Clear();
+					}
+
+					if (periodCommandMap.Count > 0)
+					{
+						periodCommandMap.Clear();
+					}
+				}
+			}
+		}
+
+		private void SendCommandInternal(NetPeer peer, INetCommand command)
+		{
+			// 일단 임시로 메모리 스트림 사용...
+			using (var ms = new MemoryStream())
+			{
+				using (var binaryWriter = new BinaryWriter(ms))
+				{
+					// Writer를 사용해 패킷 생성
+					var commandBytes = MemoryPackSerializer.Serialize(command.GetType(), command,
+						MemoryPackSerializerOptions.Utf8);
+					var length = Convert.ToUInt16(commandBytes.Length);
+					var opcode = command.Opcode;
+
+					binaryWriter.Write(length);
+					binaryWriter.Write(opcode);
+					binaryWriter.Write(commandBytes);
+
+					// 패킷 보내기
+					var data = ms.ToArray();
+					peer.Send(data, DeliveryMethod.ReliableOrdered);
+
+					Debug.Log($"Client Send : {data}");
+
+					if (command is IDisposable disposable)
+					{
+						// 커맨드를 Dispose
+						disposable.Dispose();
 					}
 				}
 			}
@@ -212,9 +284,9 @@ namespace UnityService.Network
 				{
 					switch (opcode)
 					{
-						case Opcode.CCMD_PLAYER_JOIN:
+						case Opcode.CCMD_PLAYER_WORLD_JOIN:
 						{
-							if (command is CCMD_PLAYER_JOIN playerServerJoin)
+							if (command is CCMD_PLAYER_WORLD_JOIN playerServerJoin)
 							{
 								var netId = playerServerJoin.Id;
 
@@ -230,11 +302,27 @@ namespace UnityService.Network
 							}
 							break;
 						}
+						case Opcode.CMD_ENTITY_POS_SYNC:
+						{
+							if (command is CMD_ENTITY_POS_SYNC entityPosSync)
+							{
+								PosSyncEntity(entityPosSync.Id, entityPosSync);
+							}
+							break;
+						}
 						case Opcode.CMD_ENTITY_ROTATE:
 						{
 							if (command is CMD_ENTITY_ROTATE entityRotate)
 							{
 								RotateEntity(entityRotate.Id, entityRotate);
+							}
+							break;
+						}
+						case Opcode.CMD_ENTITY_TELEPORT:
+						{
+							if (command is CMD_ENTITY_TELEPORT entityTeleport)
+							{
+								TeleportEntity(entityTeleport.Id, entityTeleport);
 							}
 							break;
 						}
@@ -373,6 +461,31 @@ namespace UnityService.Network
 			}
 		}
 
+		/// <summary>
+		/// 캐릭터가 움직이지 않는 경우 pos 싱크 시도
+		/// </summary>
+		/// <param name="netId"></param>
+		/// <param name="entityPosSync"></param>
+		private void PosSyncEntity(int netId, CMD_ENTITY_POS_SYNC entityPosSync)
+		{
+			if (netIdToEntityIds.TryGetValue(netId, out var entityId))
+			{
+				var entity = new Entity(currentWorld, entityId);
+
+				if (entity.IsAlive && entity.Has<TransformComponent>())
+				{
+					var targetPos = new Vector3(entityPosSync.X, entityPosSync.Y, entityPosSync.Z);
+					ref var transformComponent = ref entity.Get<TransformComponent>();
+					ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
+
+					if (!transformComponent.Position.IsAlmostCloseTo(targetPos))
+					{
+						transformComponent.Position = targetPos;
+					}
+				}
+			}
+		}
+
 		private void RotateEntity(int netId, CMD_ENTITY_ROTATE entityRotate)
 		{
 			if (netIdToEntityIds.TryGetValue(netId, out var entityId))
@@ -384,6 +497,21 @@ namespace UnityService.Network
 					ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
 
 					netMovementComponent.GoalRotation = new Quaternion(entityRotate.X, entityRotate.Y, entityRotate.Z, entityRotate.W);
+				}
+			}
+		}
+
+		private void TeleportEntity(int netId, CMD_ENTITY_TELEPORT entityTeleport)
+		{
+			if (netIdToEntityIds.TryGetValue(netId, out var entityId))
+			{
+				var entity = new Entity(currentWorld, entityId);
+
+				if (entity.IsAlive && entity.Has<TransformComponent>() && entity.Has<MovementComponent>())
+				{
+					ref var transformComponent = ref entity.Get<TransformComponent>();
+
+					transformComponent.Position = new Vector3(entityTeleport.X, entityTeleport.Y, entityTeleport.Z);
 				}
 			}
 		}
