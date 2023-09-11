@@ -34,14 +34,13 @@ namespace Game.Ecs.System
 				// MoveDir가 zero가 아니라면 계산해줌
 				if (movementComponent.MoveDir != Vector3.zero)
 				{
-					ServiceManager.TryGetService<ICollisionService>(out var collisionService);
-
 					var dir = movementComponent.MoveDir;
 					var dist = movementComponent.CurrentSpeed * deltaTime;
 
 					if (entity.IsLocalEntity())
 					{
-						if (collisionService.IsCollision(entity, (dir * dist)))
+						if (ServiceManager.TryGetService<ICollisionService>(out var collisionService) &&
+							collisionService.IsCollision(entity, (dir * dist)))
 						{
 							// 충돌 알림
 						}
