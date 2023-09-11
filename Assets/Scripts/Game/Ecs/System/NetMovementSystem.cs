@@ -34,6 +34,7 @@ namespace Game.Ecs.System
 				ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
 
 				var velocity = netMovementComponent.Velocity;
+				var sqrMagnitude = velocity.sqrMagnitude;
 
 				if (!netMovementComponent.IsMoving)
 				{
@@ -43,9 +44,13 @@ namespace Game.Ecs.System
 					continue;
 				}
 
+				var dir = velocity.normalized;
+
 				movementComponent.IsRun = netMovementComponent.IsRun;
 				transformComponent.Position += velocity * deltaTime;
 				movementComponent.MoveDir = velocity.normalized;
+				movementComponent.IsRun = sqrMagnitude >= movementComponent.RunSpeed;
+				movementComponent.TargetRotation = Quaternion.LookRotation(dir);
 
 				if (netMovementComponent.TargetPos.HasValue)
 				{
@@ -55,7 +60,7 @@ namespace Game.Ecs.System
 					{
 						netMovementComponent.IsMoving = false;
 						movementComponent.IsRun = netMovementComponent.IsRun;
-						movementComponent.MoveDir = velocity.normalized;
+						movementComponent.MoveDir = dir;
 						netMovementComponent.TargetPos = null;
 					}
 				}

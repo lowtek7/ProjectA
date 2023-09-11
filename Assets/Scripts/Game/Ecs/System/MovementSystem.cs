@@ -109,7 +109,7 @@ namespace Game.Ecs.System
 				}
 
 				// 캐릭터 회전
-				if (entity.IsLocalEntity() && !transformComponent.Rotation.eulerAngles.y.IsAlmostCloseTo(movementComponent.TargetRotation.eulerAngles.y))
+				if (!transformComponent.Rotation.eulerAngles.y.IsAlmostCloseTo(movementComponent.TargetRotation.eulerAngles.y))
 				{
 					var rotationDist = movementComponent.RotateSpeed * deltaTime;
 					var currentRotation = Quaternion.RotateTowards(transformComponent.Rotation,
@@ -120,7 +120,7 @@ namespace Game.Ecs.System
 					var playerComponent = entity.Get<PlayerComponent>();
 					var netIdComponent = entity.Get<NetworkEntityComponent>();
 
-					if (ServiceManager.TryGetService(out INetClientService clientService))
+					if (entity.IsLocalEntity() && ServiceManager.TryGetService(out INetClientService clientService))
 					{
 						// dispose는 받는쪽에서 알아서 해줄 예정.
 						var command = CMD_ENTITY_ROTATE.Create();
