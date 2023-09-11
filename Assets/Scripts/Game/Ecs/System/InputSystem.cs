@@ -58,7 +58,7 @@ namespace Game.Ecs.System
 						// 입력이 없고 이전 프레임에 움직였었다면 처리해주자.
 						if (movementComponent.MoveDir != Vector3.zero)
 						{
-							if (ServiceManager.TryGetService(out INetClientService clientService))
+							if (ServiceManager.TryGetService(out INetClientService clientService) && entity.Has<NetworkEntityComponent>())
 							{
 								var netIdComponent = entity.Get<NetworkEntityComponent>();
 								var pos = transformComponent.Position;
