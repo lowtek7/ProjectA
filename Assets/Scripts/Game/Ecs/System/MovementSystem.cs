@@ -79,7 +79,7 @@ namespace Game.Ecs.System
 								clientService.SendCommand(command);
 							}
 
-							transformComponent.Position += velocity;
+							transformComponent.Position += velocity * deltaTime;
 						}
 					}
 				}
