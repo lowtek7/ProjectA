@@ -56,7 +56,7 @@ namespace Game.Ecs.System
 				}
 
 				movementComponent.IsRun = netMovementComponent.IsRun;
-				transformComponent.Position += dir * (speed * deltaTime);
+				transformComponent.Position += dir * speed;
 				movementComponent.MoveDir = dir;
 
 				if (netMovementComponent.GoalPos.IsAlmostCloseTo(transformComponent.Position))

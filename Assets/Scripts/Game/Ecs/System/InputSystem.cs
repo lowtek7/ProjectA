@@ -58,9 +58,9 @@ namespace Game.Ecs.System
 						// 입력이 없고 이전 프레임에 움직였었다면 처리해주자.
 						if (movementComponent.MoveDir != Vector3.zero)
 						{
-							if (ServiceManager.TryGetService(out INetClientService clientService) && entity.Has<NetworkEntityComponent>())
+							if (ServiceManager.TryGetService(out INetClientService clientService) && moveEntity.Has<NetworkEntityComponent>())
 							{
-								var netIdComponent = entity.Get<NetworkEntityComponent>();
+								var netIdComponent = moveEntity.Get<NetworkEntityComponent>();
 								var pos = transformComponent.Position;
 								// dispose는 받는쪽에서 알아서 해줄 예정.
 								var command = CMD_ENTITY_MOVE.Create();
