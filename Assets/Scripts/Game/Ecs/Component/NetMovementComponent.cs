@@ -10,6 +10,8 @@ namespace Game.Ecs.Component
 	{
 		public Vector3 GoalPos { get; set; }
 
+		public Vector3 Velocity { get; set; }
+
 		public Quaternion GoalRotation { get; set; }
 
 		/// <summary>
@@ -17,6 +19,8 @@ namespace Game.Ecs.Component
 		/// moving이 false이면 순간이동 판정.
 		/// </summary>
 		public bool IsMoving { get; set; }
+
+		public bool IsRun { get; set; }
 
 		public IComponent Clone()
 		{

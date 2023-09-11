@@ -220,8 +220,7 @@ namespace UnityService.Network
 				using (var binaryWriter = new BinaryWriter(ms))
 				{
 					// Writer를 사용해 패킷 생성
-					var commandBytes = MemoryPackSerializer.Serialize(command.GetType(), command,
-						MemoryPackSerializerOptions.Utf8);
+					var commandBytes = MemoryPackSerializer.Serialize(command.GetType(), command, MemoryPackSerializerOptions.Utf8);
 					var length = Convert.ToUInt16(commandBytes.Length);
 					var opcode = command.Opcode;
 
@@ -264,72 +263,70 @@ namespace UnityService.Network
 
 		public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
 		{
-			using (var state = MemoryPackReaderOptionalStatePool.Rent(MemoryPackSerializerOptions.Default))
+			using var state = MemoryPackReaderOptionalStatePool.Rent(MemoryPackSerializerOptions.Default);
+
+			var length = reader.GetUShort();
+			var opcodeValue = reader.GetShort();
+			var opcode = (Opcode) opcodeValue;
+
+			reader.GetBytes(buffer, length);
+
+			var body = buffer.AsSpan(new Range(0, length));
+			var memoryPackReader = new MemoryPackReader(body, state);
+			// command를 불러오기전에 Disconnect 체크가 필요한가?
+			var command = packetManager.ToCommand(opcode, ref memoryPackReader);
+
+			Debug.Log($"OnNetworkReceive. Peer Id : {peer.Id}, Remote Id : {peer.RemoteId}, length : {length}, opcode : {opcode} command : {command}");
+
+			if (command is IDisposable disposable)
 			{
-				var length = reader.GetUShort();
-				var opcodeValue = reader.GetShort();
-				var opcode = (Opcode) opcodeValue;
-
-				reader.GetBytes(buffer, length);
-
-				var body = buffer.AsSpan(new Range(0, length));
-
-				var memoryPackReader = new MemoryPackReader(body, state);
-				// command를 불러오기전에 Disconnect 체크가 필요한가?
-				var command = packetManager.ToCommand(opcode, ref memoryPackReader);
-
-				Debug.Log($"OnNetworkReceive. Peer Id : {peer.Id}, Remote Id : {peer.RemoteId}, length : {length}, opcode : {opcode} command : {command}");
-
-				if (command is IDisposable disposable)
+				switch (opcode)
 				{
-					switch (opcode)
+					case Opcode.CCMD_PLAYER_WORLD_JOIN:
 					{
-						case Opcode.CCMD_PLAYER_WORLD_JOIN:
+						if (command is CCMD_PLAYER_WORLD_JOIN playerServerJoin)
 						{
-							if (command is CCMD_PLAYER_WORLD_JOIN playerServerJoin)
-							{
-								var netId = playerServerJoin.Id;
+							var netId = playerServerJoin.Id;
 
-								SpawnNetPlayer(netId);
-							}
-							break;
+							SpawnNetPlayer(netId);
 						}
-						case Opcode.CMD_ENTITY_MOVE:
-						{
-							if (command is CMD_ENTITY_MOVE entityMove)
-							{
-								MoveEntity(entityMove.Id, entityMove, peer.RoundTripTime);
-							}
-							break;
-						}
-						case Opcode.CMD_ENTITY_POS_SYNC:
-						{
-							if (command is CMD_ENTITY_POS_SYNC entityPosSync)
-							{
-								PosSyncEntity(entityPosSync.Id, entityPosSync);
-							}
-							break;
-						}
-						case Opcode.CMD_ENTITY_ROTATE:
-						{
-							if (command is CMD_ENTITY_ROTATE entityRotate)
-							{
-								RotateEntity(entityRotate.Id, entityRotate);
-							}
-							break;
-						}
-						case Opcode.CMD_ENTITY_TELEPORT:
-						{
-							if (command is CMD_ENTITY_TELEPORT entityTeleport)
-							{
-								TeleportEntity(entityTeleport.Id, entityTeleport);
-							}
-							break;
-						}
+						break;
 					}
-
-					disposable.Dispose();
+					case Opcode.CMD_ENTITY_MOVE:
+					{
+						if (command is CMD_ENTITY_MOVE entityMove)
+						{
+							MoveEntity(entityMove.Id, entityMove, peer.RoundTripTime);
+						}
+						break;
+					}
+					case Opcode.CMD_ENTITY_POS_SYNC:
+					{
+						if (command is CMD_ENTITY_POS_SYNC entityPosSync)
+						{
+							PosSyncEntity(entityPosSync.Id, entityPosSync);
+						}
+						break;
+					}
+					case Opcode.CMD_ENTITY_ROTATE:
+					{
+						if (command is CMD_ENTITY_ROTATE entityRotate)
+						{
+							RotateEntity(entityRotate.Id, entityRotate);
+						}
+						break;
+					}
+					case Opcode.CMD_ENTITY_TELEPORT:
+					{
+						if (command is CMD_ENTITY_TELEPORT entityTeleport)
+						{
+							TeleportEntity(entityTeleport.Id, entityTeleport);
+						}
+						break;
+					}
 				}
+
+				disposable.Dispose();
 			}
 		}
 
@@ -453,9 +450,15 @@ namespace UnityService.Network
 
 				if (entity.IsAlive && entity.Has<TransformComponent>() && entity.Has<MovementComponent>())
 				{
+					if (entityMove.MoveType == MoveType.None)
+					{
+						int a = 0;
+					}
+
 					ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
 
 					netMovementComponent.GoalPos = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
+					netMovementComponent.Velocity = new Vector3(entityMove.VelocityX, entityMove.VelocityY, entityMove.VelocityZ);
 					netMovementComponent.IsMoving = entityMove.MoveType != MoveType.None;
 				}
 			}

@@ -1,5 +1,6 @@
 using BlitzEcs;
 using Core.Unity;
+using Core.Utility;
 using Game.Ecs.Component;
 using Game.Extensions;
 using UnityEngine;
@@ -32,25 +33,38 @@ namespace Game.Ecs.System
 				ref var movementComponent = ref entity.Get<MovementComponent>();
 				ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
 
+				var velocity = netMovementComponent.Velocity;
+				var dir = netMovementComponent.Velocity.normalized;
+				var speed = netMovementComponent.Velocity.magnitude;
+
 				if (!netMovementComponent.IsMoving)
 				{
-					transformComponent.Position = netMovementComponent.GoalPos;
+					if (!netMovementComponent.GoalPos.IsAlmostCloseTo(transformComponent.Position) &&
+						netMovementComponent.Velocity != Vector3.zero)
+					{
+						movementComponent.IsRun = netMovementComponent.IsRun;
+						transformComponent.Position += dir * (speed * deltaTime);
+						movementComponent.MoveDir = dir;
+					}
+					else
+					{
+						movementComponent.IsRun = false;
+						movementComponent.MoveDir = Vector3.zero;
+					}
+
 					continue;
 				}
 
-				var targetPos = Vector3.Lerp(transformComponent.Position, netMovementComponent.GoalPos, deltaTime);
-				var speed = (targetPos - transformComponent.Position).magnitude;
+				movementComponent.IsRun = netMovementComponent.IsRun;
+				transformComponent.Position += dir * (speed * deltaTime);
+				movementComponent.MoveDir = dir;
 
-				if (speed >= movementComponent.RunSpeed * deltaTime)
+				if (netMovementComponent.GoalPos.IsAlmostCloseTo(transformComponent.Position))
 				{
-					movementComponent.IsRun = true;
-				}
-				else
-				{
+					netMovementComponent.IsMoving = false;
+					movementComponent.MoveDir = Vector3.zero;
 					movementComponent.IsRun = false;
 				}
-
-				transformComponent.Position = targetPos;
 			}
 		}
 
