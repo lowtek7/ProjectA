@@ -46,6 +46,19 @@ namespace Game.Ecs.System
 				movementComponent.IsRun = netMovementComponent.IsRun;
 				transformComponent.Position += velocity * deltaTime;
 				movementComponent.MoveDir = velocity.normalized;
+
+				if (netMovementComponent.TargetPos.HasValue)
+				{
+					var targetPos = netMovementComponent.TargetPos.Value;
+
+					if (targetPos.IsAlmostCloseTo(transformComponent.Position))
+					{
+						netMovementComponent.IsMoving = false;
+						movementComponent.IsRun = netMovementComponent.IsRun;
+						movementComponent.MoveDir = velocity.normalized;
+						netMovementComponent.TargetPos = null;
+					}
+				}
 			}
 		}
 

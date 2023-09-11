@@ -18,5 +18,19 @@ namespace Core.Utility
 		{
 			return value.x.IsAlmostCloseTo(target.x) && value.y.IsAlmostCloseTo(target.y) && value.z.IsAlmostCloseTo(target.z);
 		}
+
+		/// <summary>
+		/// 거리를 넣어서 가까운지 검사
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="target"></param>
+		/// <param name="distance"></param>
+		/// <returns></returns>
+		public static bool IsAlmostCloseTo(this Vector3 value, Vector3 target, float distance)
+		{
+			var sqrDist = (value - target).sqrMagnitude;
+
+			return sqrDist < (distance * distance);
+		}
 	}
 }

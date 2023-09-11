@@ -475,13 +475,26 @@ namespace UnityService.Network
 					ref var transformComponent = ref entity.Get<TransformComponent>();
 					ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
 
-					if (!transformComponent.Position.IsAlmostCloseTo(targetPos))
+					if (!netMovementComponent.Velocity.IsAlmostZero())
 					{
-						transformComponent.Position = targetPos;
-					}
+						var velocity = netMovementComponent.Velocity;
+						var speed = velocity.magnitude;
+						var dir = (targetPos - transformComponent.Position).normalized;
 
-					netMovementComponent.Velocity = Vector3.zero;
-					netMovementComponent.IsMoving = false;
+						netMovementComponent.TargetPos = targetPos;
+						netMovementComponent.Velocity = dir * speed;
+					}
+					else
+					{
+						if (!transformComponent.Position.IsAlmostCloseTo(targetPos, 0.3f))
+						{
+							transformComponent.Position = targetPos;
+						}
+
+						netMovementComponent.TargetPos = null;
+						netMovementComponent.Velocity = Vector3.zero;
+						netMovementComponent.IsMoving = false;
+					}
 				}
 			}
 		}
