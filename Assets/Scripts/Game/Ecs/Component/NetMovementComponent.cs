@@ -8,8 +8,6 @@ namespace Game.Ecs.Component
 	/// </summary>
 	public struct NetMovementComponent : IComponent
 	{
-		public Vector3 GoalPos { get; set; }
-
 		public Vector3 Velocity { get; set; }
 
 		public Quaternion GoalRotation { get; set; }

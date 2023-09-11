@@ -296,7 +296,7 @@ namespace UnityService.Network
 					{
 						if (command is CMD_ENTITY_MOVE entityMove)
 						{
-							MoveEntity(entityMove.Id, entityMove, peer.RoundTripTime);
+							MoveEntity(entityMove.Id, entityMove);
 						}
 						break;
 					}
@@ -442,7 +442,7 @@ namespace UnityService.Network
 		/// </summary>
 		/// <param name="netId"></param>
 		/// <param name="entityMove"></param>
-		private void MoveEntity(int netId, CMD_ENTITY_MOVE entityMove, int rtt)
+		private void MoveEntity(int netId, CMD_ENTITY_MOVE entityMove)
 		{
 			if (netIdToEntityIds.TryGetValue(netId, out var entityId))
 			{
@@ -450,14 +450,8 @@ namespace UnityService.Network
 
 				if (entity.IsAlive && entity.Has<TransformComponent>() && entity.Has<MovementComponent>())
 				{
-					if (entityMove.MoveType == MoveType.None)
-					{
-						int a = 0;
-					}
-
 					ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
 
-					netMovementComponent.GoalPos = new Vector3(entityMove.X, entityMove.Y, entityMove.Z);
 					netMovementComponent.Velocity = new Vector3(entityMove.VelocityX, entityMove.VelocityY, entityMove.VelocityZ);
 					netMovementComponent.IsMoving = entityMove.MoveType != MoveType.None;
 				}
@@ -485,6 +479,9 @@ namespace UnityService.Network
 					{
 						transformComponent.Position = targetPos;
 					}
+
+					netMovementComponent.Velocity = Vector3.zero;
+					netMovementComponent.IsMoving = false;
 				}
 			}
 		}

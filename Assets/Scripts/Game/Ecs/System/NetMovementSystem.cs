@@ -34,37 +34,18 @@ namespace Game.Ecs.System
 				ref var netMovementComponent = ref entity.Get<NetMovementComponent>();
 
 				var velocity = netMovementComponent.Velocity;
-				var dir = netMovementComponent.Velocity.normalized;
-				var speed = netMovementComponent.Velocity.magnitude;
 
 				if (!netMovementComponent.IsMoving)
 				{
-					if (!netMovementComponent.GoalPos.IsAlmostCloseTo(transformComponent.Position) &&
-						netMovementComponent.Velocity != Vector3.zero)
-					{
-						movementComponent.IsRun = netMovementComponent.IsRun;
-						transformComponent.Position += dir * (speed * deltaTime);
-						movementComponent.MoveDir = dir;
-					}
-					else
-					{
-						movementComponent.IsRun = false;
-						movementComponent.MoveDir = Vector3.zero;
-					}
+					movementComponent.IsRun = false;
+					movementComponent.MoveDir = Vector3.zero;
 
 					continue;
 				}
 
 				movementComponent.IsRun = netMovementComponent.IsRun;
-				transformComponent.Position += dir * speed;
-				movementComponent.MoveDir = dir;
-
-				if (netMovementComponent.GoalPos.IsAlmostCloseTo(transformComponent.Position))
-				{
-					netMovementComponent.IsMoving = false;
-					movementComponent.MoveDir = Vector3.zero;
-					movementComponent.IsRun = false;
-				}
+				transformComponent.Position += velocity * deltaTime;
+				movementComponent.MoveDir = velocity.normalized;
 			}
 		}
 

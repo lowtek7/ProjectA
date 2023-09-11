@@ -47,8 +47,7 @@ namespace Game.Ecs.System
 						}
 						else
 						{
-							var velocity = dir * dist;
-							var playerComponent = entity.Get<PlayerComponent>();
+							var velocity = dir * movementComponent.CurrentSpeed;
 							var netIdComponent = entity.Get<NetworkEntityComponent>();
 
 							if (ServiceManager.TryGetService(out INetClientService clientService))
