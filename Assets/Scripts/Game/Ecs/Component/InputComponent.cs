@@ -12,7 +12,10 @@ namespace Game.Ecs.Component
 		private Vector3 moveDirection;
 
 		[SerializeField]
-		private Vector3 cameraRotation;
+		private Vector2 mouseXYDegree;
+		
+		[SerializeField]
+		private bool changeCameraState;
 
 		[SerializeField]
 		private bool isMouseClick;
@@ -26,11 +29,11 @@ namespace Game.Ecs.Component
 			set => moveDirection = value;
 		}
 
-		public Vector2 CameraRotation
+		public Vector2 MouseXYDegree
 		{
-			get => cameraRotation;
+			get => mouseXYDegree;
 
-			set => cameraRotation = value;
+			set => mouseXYDegree = value;
 		}
 
 		public bool IsMouseClick
@@ -51,7 +54,7 @@ namespace Game.Ecs.Component
 			return new InputComponent
 			{
 				moveDirection = moveDirection,
-				cameraRotation = cameraRotation,
+				mouseXYDegree = mouseXYDegree,
 				isMouseClick= isMouseClick,
 				isRun = isRun,
 			};

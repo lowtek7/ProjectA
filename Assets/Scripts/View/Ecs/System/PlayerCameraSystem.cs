@@ -26,14 +26,24 @@ namespace View.Ecs.System
 		{
 			if (ServiceManager.TryGetService<IPlayerCameraService>(out var cameraService))
 			{
-				foreach (var entity in query)
+				float mouseXDegree = 0.0f;
+				float mouseYDegree = 0.0f;
+				foreach (var inputEntity in inputQuery)
 				{
-					if (entity.IsRemoteEntity())
+					ref var inputComponent = ref inputEntity.Get<InputComponent>();
+
+					mouseXDegree = inputComponent.MouseXYDegree.x;
+					mouseYDegree = inputComponent.MouseXYDegree.y;
+				}
+				
+				foreach (var cameraEntity in query)
+				{
+					if (cameraEntity.IsRemoteEntity())
 					{
 						continue;
 					}
 
-					ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
+					ref var cameraComponent = ref cameraEntity.Get<PlayerCameraComponent>();
 
 					if (createSpherial == false)
 					{
@@ -44,8 +54,8 @@ namespace View.Ecs.System
 							(cameraComponent.minElevationInRad, cameraComponent.minElevationInRad, cameraComponent.maxElevationInRad));
 					}
 
-					cameraService.AddAzimuth(cameraComponent.MouseXDegree);
-					cameraService.AddElevation(cameraComponent.MouseYDegree);
+					cameraService.AddAzimuth(mouseXDegree);
+					cameraService.AddElevation(mouseYDegree);
 				}
 
 				foreach (var moveEntity in query)

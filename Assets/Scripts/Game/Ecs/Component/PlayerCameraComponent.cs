@@ -23,22 +23,6 @@ namespace Game.Ecs.Component
 		private float elevationInRad;
 		public float minElevationInRad, maxElevationInRad;     // 앙각
 
-		private float mouseXDegree;
-		
-		private float mouseYDegree;
-		
-		public float MouseXDegree
-		{
-			get => mouseXDegree;
-			set => mouseXDegree = value;
-		}
-		
-		public float MouseYDegree
-		{
-			get => mouseYDegree;
-			set => mouseYDegree = value;
-		}
-		
 		public float Radius
 		{
 			get => radius;
@@ -69,9 +53,7 @@ namespace Game.Ecs.Component
 				minAzimuthInRad = minAzimuthInRad,
 				maxAzimuthInRad = maxAzimuthInRad,
 				minElevationInRad = minElevationInRad,
-				maxElevationInRad = maxElevationInRad,
-				mouseXDegree = mouseXDegree,
-				mouseYDegree = mouseYDegree
+				maxElevationInRad = maxElevationInRad
 			};
 		}
 	}

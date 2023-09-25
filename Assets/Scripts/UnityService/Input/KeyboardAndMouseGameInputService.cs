@@ -52,6 +52,8 @@ namespace UnityService.Input
 
 			bool isRun = false;
 
+			bool isChangeCamera = false;
+
 			if (UnityEngine.Input.GetKey(KeyCode.W))
 			{
 				zMove += 1;
@@ -80,6 +82,11 @@ namespace UnityService.Input
 			if (UnityEngine.Input.GetKey(KeyCode.C))
 			{
 				yMove -= 1;
+			}
+			
+			if (UnityEngine.Input.GetKey(KeyCode.T))
+			{
+				isChangeCamera = true;
 			}
 
 			if (UnityEngine.Input.GetKey(KeyCode.LeftShift))
@@ -129,19 +136,13 @@ namespace UnityService.Input
 				}
 			}
 
-			foreach (var entity in cameraQuery)
-			{
-				ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
-
-				cameraComponent.MouseXDegree = -mouseXDegree;
-				cameraComponent.MouseYDegree = mouseYDegree;
-			}
-
 			foreach (var entity in inputQuery)
 			{
 				ref var moveInputComponent = ref entity.Get<InputComponent>();
 
 				moveInputComponent.MoveDirection = moveDirection;
+				
+				moveInputComponent.MouseXYDegree = new Vector2(mouseXDegree, mouseYDegree);
 
 				moveInputComponent.IsMouseClick = isMouseClick;
 

@@ -13,6 +13,11 @@ namespace UnityService.Camera
 	{
 		[SerializeField]
 		private UnityEngine.Camera playerCamera;
+		
+		private UnityEngine.Camera currentCamera;
+
+		private UnityEngine.Camera thirdPersonCamera;
+		private UnityEngine.Camera firstPersonCamera;
 
 		private Transform _playerCameraTransform;
 
@@ -95,7 +100,7 @@ namespace UnityService.Camera
 			{
 				ref var cameraComponent = ref entity.Get<PlayerCameraComponent>();
 
-				float addValue = cameraComponent.Azimuth + degree * Mathf.Deg2Rad;
+				float addValue = cameraComponent.Azimuth + -degree * Mathf.Deg2Rad;
 
 				if (addValue <= 0f)
 				{
@@ -199,19 +204,10 @@ namespace UnityService.Camera
 			_playerCameraTransform = playerCamera.transform;
 		}
 
-		private void Awake()
+		public void ChangeCamera()
 		{
+			
 		}
-
-
-		public void OnActivate()
-		{
-
-		}
-
-		public void OnDeactivate()
-		{
-
-		}
+		
 	}
 }
