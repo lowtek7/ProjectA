@@ -25,3 +25,4 @@
 마지막으로 이 프로젝트는 ServerA 저장소의 코드를 이용해서 네트워크 플레이가 가능합니다.<br>
 서버 모드로 돌아가게 된다면 클라이언트의 로직의 일부는 서버에서 담당하게 됩니다.<br>
 <br>
+ServerA 저장소 주소 : https://github.com/lowtek7/ServerA
